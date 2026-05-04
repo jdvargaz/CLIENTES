@@ -1,0 +1,1754 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saderma — Plan de Retorno & Visión Estratégica 2025–2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --card: #141726;
+    --card2: #1a1e30;
+    --border: #252a42;
+    --accent: #7c6ff7;
+    --accent2: #5e9fff;
+    --green: #3ecf8e;
+    --red: #f05252;
+    --yellow: #f5a623;
+    --orange: #f97316;
+    --teal: #14b8a6;
+    --g1: #7c6ff7;
+    --g2: #5e9fff;
+    --text: #e8eaf0;
+    --muted: #8892a4;
+    --white: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0d0f1a 0%, #1a1040 50%, #0d1a30 100%);
+    padding: 60px 40px 44px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124,111,247,0.15) 0%, transparent 60%);
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(62,207,142,0.15);
+    border: 1px solid rgba(62,207,142,0.35);
+    color: #3ecf8e;
+    padding: 5px 18px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .header h1 {
+    font-size: clamp(26px, 4vw, 46px);
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, #a89df8 50%, #5e9fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+  .header-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  .header-kpis {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 44px;
+    flex-wrap: wrap;
+  }
+  .header-kpi { text-align: center; }
+  .header-kpi .val {
+    font-size: 30px;
+    font-weight: 800;
+    color: var(--white);
+    display: block;
+  }
+  .header-kpi .val.green { color: var(--green); }
+  .header-kpi .val.yellow { color: var(--yellow); }
+  .header-kpi .val.purple { color: var(--accent); }
+  .header-kpi .val.blue { color: var(--accent2); }
+  .header-kpi .lbl {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+  }
+  .header-divider { width: 1px; background: var(--border); }
+
+  /* ── NAV ── */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,26,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 0 20px;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 16px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 40px 30px; max-width: 1200px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .card-icon.purple { background: rgba(124,111,247,0.15); }
+  .card-icon.blue { background: rgba(94,159,255,0.15); }
+  .card-icon.green { background: rgba(62,207,142,0.15); }
+  .card-icon.red { background: rgba(240,82,82,0.15); }
+  .card-icon.yellow { background: rgba(245,166,35,0.15); }
+  .card-icon.orange { background: rgba(249,115,22,0.15); }
+  .card-icon.teal { background: rgba(20,184,166,0.15); }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--white); }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── GRID LAYOUTS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 900px) { .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .section { padding: 24px 16px; }
+  }
+
+  /* ── STAT BOXES ── */
+  .stat-box {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .stat-box.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .stat-box.red::before { background: linear-gradient(90deg, var(--red), transparent); }
+  .stat-box.blue::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .stat-box.yellow::before { background: linear-gradient(90deg, var(--yellow), transparent); }
+  .stat-box.purple::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .stat-box.teal::before { background: linear-gradient(90deg, var(--teal), transparent); }
+  .stat-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1;
+  }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-val.yellow { color: var(--yellow); }
+  .stat-val.blue { color: var(--accent2); }
+  .stat-val.purple { color: var(--accent); }
+  .stat-val.teal { color: var(--teal); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-delta { font-size: 13px; margin-top: 8px; font-weight: 600; }
+  .stat-delta.up { color: var(--green); }
+  .stat-delta.down { color: var(--red); }
+  .stat-delta.neutral { color: var(--muted); }
+
+  /* ── CHART CONTAINERS ── */
+  .chart-wrap { position: relative; height: 300px; }
+  .chart-wrap.tall { height: 380px; }
+  .chart-wrap.short { height: 220px; }
+
+  /* ── TABLES ── */
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .data-table th {
+    text-align: left;
+    padding: 10px 14px;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(37,42,66,0.5);
+    color: var(--text);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge.green { background: rgba(62,207,142,0.15); color: var(--green); }
+  .badge.red { background: rgba(240,82,82,0.15); color: var(--red); }
+  .badge.yellow { background: rgba(245,166,35,0.15); color: var(--yellow); }
+  .badge.blue { background: rgba(94,159,255,0.15); color: var(--accent2); }
+  .badge.purple { background: rgba(124,111,247,0.15); color: var(--accent); }
+  .badge.orange { background: rgba(249,115,22,0.15); color: var(--orange); }
+  .badge.teal { background: rgba(20,184,166,0.15); color: var(--teal); }
+
+  /* ── VS COMPARISON ── */
+  .vs-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 16px;
+    align-items: start;
+    margin-bottom: 16px;
+  }
+  .vs-side {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .vs-side.g1 { border-left: 3px solid var(--g1); }
+  .vs-side.g2 { border-left: 3px solid var(--g2); }
+  .vs-tag {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+  .vs-tag.g1 { color: var(--g1); }
+  .vs-tag.g2 { color: var(--g2); }
+  .vs-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .vs-val {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    margin: 4px 0;
+  }
+  .vs-note { font-size: 12px; color: var(--muted); }
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+    padding-top: 30px;
+  }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* ── TIMELINE / PHASES ── */
+  .phase-bar {
+    display: grid;
+    grid-template-columns: 10fr 5fr;
+    gap: 4px;
+    margin: 20px 0;
+  }
+  .phase {
+    border-radius: 10px;
+    padding: 16px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .phase.g1 { background: rgba(124,111,247,0.12); border: 1px solid rgba(124,111,247,0.25); }
+  .phase.g2 { background: rgba(94,159,255,0.12); border: 1px solid rgba(94,159,255,0.25); }
+  .phase-title { font-size: 13px; font-weight: 700; }
+  .phase-title.g1 { color: var(--g1); }
+  .phase-title.g2 { color: var(--g2); }
+  .phase-dates { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── INSIGHT BLOCKS ── */
+  .insight {
+    background: var(--card2);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 12px;
+    border-left: 3px solid;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .insight.green { border-left-color: var(--green); }
+  .insight.yellow { border-left-color: var(--yellow); }
+  .insight.red { border-left-color: var(--red); }
+  .insight.purple { border-left-color: var(--accent); }
+  .insight.blue { border-left-color: var(--accent2); }
+  .insight.teal { border-left-color: var(--teal); }
+  .insight-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .insight-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .insight-text { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+  /* ── PROPOSAL CARDS ── */
+  .prop-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .prop-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+  .prop-card.tiktok::before { background: linear-gradient(90deg, #ff0050, #00f2ea); }
+  .prop-card.google::before { background: linear-gradient(90deg, #4285f4, #34a853, #fbbc04, #ea4335); }
+  .prop-card.youtube::before { background: linear-gradient(90deg, #ff0000, #cc0000); }
+  .prop-card.email::before { background: linear-gradient(90deg, var(--green), #2dd4bf); }
+  .prop-card.meta::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .prop-header { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+  .prop-logo { font-size: 32px; }
+  .prop-title { font-size: 17px; font-weight: 800; color: var(--white); }
+  .prop-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .prop-kpi-row { display: flex; gap: 20px; flex-wrap: wrap; margin: 16px 0; }
+  .prop-kpi { text-align: center; }
+  .prop-kpi .k-val { font-size: 18px; font-weight: 800; color: var(--white); }
+  .prop-kpi .k-lbl { font-size: 10px; color: var(--muted); text-transform: uppercase; }
+  .prop-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+  .prop-tag {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid var(--border);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* ── ACTION PLAN ── */
+  .action-row {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .action-row:last-child { border-bottom: none; }
+  .action-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .action-num.red { background: rgba(240,82,82,0.2); color: var(--red); }
+  .action-num.yellow { background: rgba(245,166,35,0.2); color: var(--yellow); }
+  .action-num.green { background: rgba(62,207,142,0.2); color: var(--green); }
+  .action-num.blue { background: rgba(94,159,255,0.2); color: var(--accent2); }
+  .action-num.purple { background: rgba(124,111,247,0.2); color: var(--accent); }
+  .action-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .action-text { font-size: 13px; color: var(--muted); }
+  .action-meta { display: flex; gap: 10px; margin-top: 8px; flex-wrap: wrap; }
+
+  /* ── PROGRESS BAR ── */
+  .prog-row { margin-bottom: 16px; }
+  .prog-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+  .prog-bar { height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .prog-fill { height: 100%; border-radius: 4px; transition: width .6s; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight-box {
+    background: rgba(62,207,142,0.08);
+    border: 1px solid rgba(62,207,142,0.25);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+  .highlight-box.purple {
+    background: rgba(124,111,247,0.08);
+    border-color: rgba(124,111,247,0.25);
+  }
+  .highlight-box.yellow {
+    background: rgba(245,166,35,0.08);
+    border-color: rgba(245,166,35,0.25);
+  }
+  .highlight-box .hl-title { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 8px; }
+  .highlight-box .hl-text { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  /* ── CHANNEL GRID ── */
+  .channel-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .channel-icon { font-size: 28px; margin-bottom: 8px; }
+  .channel-name { font-size: 13px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+  .channel-status { font-size: 11px; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div style="position:relative;z-index:1">
+    <div class="header-badge">📋 Plan de Retorno — Saderma</div>
+    <h1>Análisis de Gestión & Estrategia<br>Ene 2025 — Mar 2026</h1>
+    <p class="header-sub">Visión comparativa · Canales digitales · Propuestas de expansión</p>
+    <div class="header-kpis">
+      <div class="header-kpi">
+        <span class="val">15</span>
+        <span class="lbl">Meses analizados</span>
+      </div>
+      <div class="header-divider"></div>
+      <div class="header-kpi">
+        <span class="val purple">$25M</span>
+        <span class="lbl">Inversión Gestión 1 (COP)</span>
+      </div>
+      <div class="header-divider"></div>
+      <div class="header-kpi">
+        <span class="val blue">$30M</span>
+        <span class="lbl">Inversión Gestión 2 (COP)</span>
+      </div>
+      <div class="header-divider"></div>
+      <div class="header-kpi">
+        <span class="val yellow">+300%</span>
+        <span class="lbl">Crecimiento inversión Nov–Mar</span>
+      </div>
+      <div class="header-divider"></div>
+      <div class="header-kpi">
+        <span class="val green">2</span>
+        <span class="lbl">Canales Gestión 1 vs 1 actual</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="show('resumen',this)">📊 Resumen</button>
+  <button class="nav-btn" onclick="show('inversion',this)">💰 Inversión</button>
+  <button class="nav-btn" onclick="show('alcance',this)">📡 Alcance & Frecuencia</button>
+  <button class="nav-btn" onclick="show('canales',this)">🔄 Canales</button>
+  <button class="nav-btn" onclick="show('eficiencia',this)">⚡ Eficiencia</button>
+  <button class="nav-btn" onclick="show('propuestas',this)">🚀 Propuestas</button>
+</nav>
+
+<!-- ═══════════════════════ SECCIÓN: RESUMEN ═══════════════════════ -->
+<div class="section active" id="resumen">
+  <div class="section-title">Panorama completo · Ene 2025 – Mar 2026</div>
+  <p class="section-desc">15 meses de pauta digital con dos etapas de gestión diferenciadas. Este análisis busca reconocer lo que funcionó, entender el contexto actual y trazar el camino hacia adelante.</p>
+
+  <!-- FASE BAR -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">📅</div>
+      <div>
+        <div class="card-title">Línea de Tiempo — Dos Etapas de Gestión</div>
+        <div class="card-sub">Ene 2025 a Mar 2026 · 15 meses totales</div>
+      </div>
+    </div>
+    <div class="phase-bar">
+      <div class="phase g1">
+        <div class="phase-title g1">Gestión 1</div>
+        <div class="phase-dates">Ene 2025 → Oct 2025 · 10 meses</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="badge purple">Meta Ads</span>
+          <span class="badge green">Email Marketing</span>
+          <span class="badge purple">Tráfico + Conversiones</span>
+          <span class="badge purple">Estacional</span>
+        </div>
+      </div>
+      <div class="phase g2">
+        <div class="phase-title g2">Gestión 2</div>
+        <div class="phase-dates">Nov 2025 → Mar 2026 · 5 meses</div>
+        <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+          <span class="badge blue">Meta Ads</span>
+          <span class="badge blue">Solo Ventas Web</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESUMEN SIDE BY SIDE -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">🟣</div>
+        <div>
+          <div class="card-title" style="color:var(--g1)">Gestión 1</div>
+          <div class="card-sub">Ene 2025 – Oct 2025 · 10 meses</div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="stat-box purple">
+          <div class="stat-val purple">$2.5M</div>
+          <div class="stat-label">Inversión mensual prom.</div>
+        </div>
+        <div class="stat-box green">
+          <div class="stat-val green">2</div>
+          <div class="stat-label">Canales activos</div>
+        </div>
+        <div class="stat-box purple">
+          <div class="stat-val" style="font-size:22px">41.7K</div>
+          <div class="stat-label">Alcance/mes (Meta)</div>
+        </div>
+        <div class="stat-box green">
+          <div class="stat-val green">✓</div>
+          <div class="stat-label">Email Marketing activo</div>
+        </div>
+      </div>
+      <div class="insight green">
+        <div class="insight-icon">✅</div>
+        <div>
+          <div class="insight-title">Fortalezas clave</div>
+          <div class="insight-text">Cobertura de todo el embudo (awareness, consideración y conversión). Email marketing activo en Mailchimp. Campañas estacionales (Black Friday, fechas especiales). Conocimiento profundo del catálogo y las personas.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">🔵</div>
+        <div>
+          <div class="card-title" style="color:var(--g2)">Gestión 2</div>
+          <div class="card-sub">Nov 2025 – Mar 2026 · 5 meses</div>
+        </div>
+      </div>
+      <div class="grid-2" style="margin-bottom:16px">
+        <div class="stat-box blue">
+          <div class="stat-val blue">$6M</div>
+          <div class="stat-label">Inversión mensual prom.</div>
+        </div>
+        <div class="stat-box yellow">
+          <div class="stat-val yellow">1</div>
+          <div class="stat-label">Canal activo</div>
+        </div>
+        <div class="stat-box blue">
+          <div class="stat-val" style="font-size:22px">145.8K</div>
+          <div class="stat-label">Alcance/mes (Meta)</div>
+        </div>
+        <div class="stat-box red">
+          <div class="stat-val red">✗</div>
+          <div class="stat-label">Sin Email Marketing</div>
+        </div>
+      </div>
+      <div class="insight yellow">
+        <div class="insight-icon">⚡</div>
+        <div>
+          <div class="insight-title">Contexto actual</div>
+          <div class="insight-text">Estructura técnica CBO/ABO bien definida. Más alcance mensual gracias al +140% de presupuesto. Sin embargo: enfoque exclusivo en ventas erosiona tope de embudo. Audiencia de remarketing saturada (22.5× frecuencia). Sin email marketing ni campañas estacionales.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NARRATIVE INSIGHT -->
+  <div class="highlight-box">
+    <div class="hl-title">🔑 Lectura correcta del panorama</div>
+    <div class="hl-text">El crecimiento de inversión del +300% entre noviembre 2025 y marzo 2026 amplió el alcance mensual significativamente. Pero mayor inversión con un solo canal y un solo objetivo (ventas) no garantiza crecimiento sostenible: el tope del embudo se está agotando y no hay email marketing para recuperar audiencia sin pagar más. La ventaja estratégica de Gestión 1 fue siempre operar con múltiples canales y múltiples objetivos — construyendo marca al mismo tiempo que buscaba conversiones — con apenas el 42% del presupuesto actual.</div>
+  </div>
+
+  <!-- CLARIDAD: QUÉ HACER -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon green">🎯</div>
+      <div>
+        <div class="card-title">¿Qué debemos hacer? — 3 Prioridades</div>
+        <div class="card-sub">Acciones de mayor impacto para retomar y escalar</div>
+      </div>
+    </div>
+    <div class="insight green">
+      <div class="insight-icon">1️⃣</div>
+      <div>
+        <div class="insight-title">Retomar el email marketing inmediatamente</div>
+        <div class="insight-text">Mailchimp representa el canal de retención con mayor ROI. No tiene costo extra de pauta y permite nutrir leads, recuperar carritos y reactivar clientes — algo que actualmente no está pasando.</div>
+      </div>
+    </div>
+    <div class="insight purple">
+      <div class="insight-icon">2️⃣</div>
+      <div>
+        <div class="insight-title">Reestructurar el embudo de Meta Ads</div>
+        <div class="insight-text">Hoy solo hay campañas de fondo de embudo. Sin awareness ni consideración, el costo de adquisición subirá progresivamente. Hay que restaurar la capa superior del funnel con tráfico e interacción.</div>
+      </div>
+    </div>
+    <div class="insight blue">
+      <div class="insight-icon">3️⃣</div>
+      <div>
+        <div class="insight-title">Expandir a nuevos canales: TikTok + Google SEM</div>
+        <div class="insight-text">Con el presupuesto actual de $6M/mes, hay margen real para testear TikTok Ads (audiencia joven, costo bajo) y Google SEM (captura demanda existente que Meta no puede alcanzar). Esto diversifica el riesgo y multiplica los puntos de contacto.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SECCIÓN: INVERSIÓN ═══════════════════════ -->
+<div class="section" id="inversion">
+  <div class="section-title">💰 Evolución de Inversión Publicitaria</div>
+  <p class="section-desc">Comparativa mensual del presupuesto destinado a pauta digital. La inversión creció un 300% entre noviembre 2025 y marzo 2026.</p>
+
+  <div class="grid-4" style="margin-bottom:24px">
+    <div class="stat-box purple">
+      <div class="stat-val purple">$2.5M</div>
+      <div class="stat-label">Promedio mensual G1</div>
+      <div class="stat-delta neutral">Ene–Oct 2025</div>
+    </div>
+    <div class="stat-box blue">
+      <div class="stat-val blue">$6M</div>
+      <div class="stat-label">Promedio mensual G2</div>
+      <div class="stat-delta up">+140% vs G1</div>
+    </div>
+    <div class="stat-box yellow">
+      <div class="stat-val yellow">$25M</div>
+      <div class="stat-label">Total invertido G1</div>
+      <div class="stat-delta neutral">10 meses</div>
+    </div>
+    <div class="stat-box blue">
+      <div class="stat-val blue">$30M</div>
+      <div class="stat-label">Total invertido G2</div>
+      <div class="stat-delta neutral">5 meses</div>
+    </div>
+  </div>
+
+  <!-- CHART: INVERSIÓN MENSUAL -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">📈</div>
+      <div>
+        <div class="card-title">Inversión mensual — Ene 2025 a Mar 2026</div>
+        <div class="card-sub">COP en millones · La línea vertical marca el cambio de gestión (Nov 2025)</div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--g1)"></div>Gestión 1</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--g2)"></div>Gestión 2</div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chartInversion"></canvas>
+    </div>
+  </div>
+
+  <!-- DISTRIBUCIÓN -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">🟣</div>
+        <div>
+          <div class="card-title">Gestión 1 — Desglose de Inversión</div>
+          <div class="card-sub">Presupuesto promedio: $2–3M / mes</div>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Mes</th><th>Inversión (COP)</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Ene 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>Feb 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>Mar 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>Abr 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>May 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>Jun 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>Jul 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>Ago 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>Sep 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+          <tr><td>Oct 2025</td><td>$2.5M</td><td><span class="badge purple">G1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">🔵</div>
+        <div>
+          <div class="card-title">Gestión 2 — Desglose de Inversión</div>
+          <div class="card-sub">Inversión mínima $5M — máxima $8M / mes</div>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Mes</th><th>Inversión (COP)</th><th>Cambio vs G1</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Nov 2025</td><td>$5M</td><td><span class="badge yellow">+100%</span></td></tr>
+          <tr><td>Dic 2025</td><td>$6M</td><td><span class="badge orange">+140%</span></td></tr>
+          <tr><td>Ene 2026</td><td>$8M</td><td><span class="badge red">+220%</span></td></tr>
+          <tr><td>Feb 2026</td><td>$6M</td><td><span class="badge orange">+140%</span></td></tr>
+          <tr><td>Mar 2026</td><td>$5M</td><td><span class="badge yellow">+100%</span></td></tr>
+        </tbody>
+      </table>
+
+      <div style="margin-top:20px">
+        <div class="highlight-box yellow" style="margin:0">
+          <div class="hl-title">📊 Crecimiento de inversión: +300%</div>
+          <div class="hl-text">En noviembre 2025 la inversión mensual pasó de $2.5M a $5M — un crecimiento del 300% si se compara el pico de $8M en enero 2026 contra el promedio de G1. Esto otorgó mayor alcance, pero sin diversificación de canales ni objetivos de embudo completo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROPORCIÓN -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon teal">🥧</div>
+      <div>
+        <div class="card-title">Relación inversión vs rendimiento relativo</div>
+        <div class="card-sub">Con el 83% del presupuesto de G2, ¿qué lograba G1 en promedio?</div>
+      </div>
+    </div>
+    <div class="grid-3">
+      <div class="stat-box purple">
+        <div class="stat-val purple">42%</div>
+        <div class="stat-label">Del presupuesto mensual de G2</div>
+        <div class="stat-delta neutral">Lo que usaba G1 promedio</div>
+      </div>
+      <div class="stat-box green">
+        <div class="stat-val green">2×</div>
+        <div class="stat-label">Canales cubiertos</div>
+        <div class="stat-delta up">Meta + Email Marketing</div>
+      </div>
+      <div class="stat-box purple">
+        <div class="stat-val purple">3×</div>
+        <div class="stat-label">Objetivos de funnel cubiertos</div>
+        <div class="stat-delta up">Awareness · Consideración · Conversión</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SECCIÓN: ALCANCE ═══════════════════════ -->
+<div class="section" id="alcance">
+  <div class="section-title">📡 Alcance, Audiencia y Frecuencia</div>
+  <p class="section-desc">Mayor inversión produce más alcance, pero la frecuencia y la salud de la audiencia son los indicadores que determinan la sostenibilidad a largo plazo.</p>
+
+  <div class="grid-4" style="margin-bottom:24px">
+    <div class="stat-box purple">
+      <div class="stat-val" style="font-size:22px">41.7K</div>
+      <div class="stat-label">Alcance/mes · G1</div>
+      <div class="stat-delta neutral">Meta Ads</div>
+    </div>
+    <div class="stat-box blue">
+      <div class="stat-val blue" style="font-size:22px">145.8K</div>
+      <div class="stat-label">Alcance/mes · G2</div>
+      <div class="stat-delta up">+250% más alcance mensual</div>
+    </div>
+    <div class="stat-box yellow">
+      <div class="stat-val yellow">7.57×</div>
+      <div class="stat-label">Frecuencia promedio · G1</div>
+      <div class="stat-delta down">Alta — riesgo de fatiga</div>
+    </div>
+    <div class="stat-box green">
+      <div class="stat-val green">4.76×</div>
+      <div class="stat-label">Frecuencia promedio · G2</div>
+      <div class="stat-delta up">Más controlada</div>
+    </div>
+  </div>
+
+  <!-- CHART: ALCANCE MENSUAL -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">📡</div>
+      <div>
+        <div class="card-title">Alcance mensual estimado — 2025 a Mar 2026</div>
+        <div class="card-sub">Personas únicas impactadas por mes en Meta Ads</div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--g1)"></div>Gestión 1 (~41.7K/mes)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--g2)"></div>Gestión 2 (~145.8K/mes)</div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chartAlcance"></canvas>
+    </div>
+  </div>
+
+  <!-- FRECUENCIA DETAIL -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon yellow">🔁</div>
+        <div>
+          <div class="card-title">Salud de la Audiencia por Frecuencia</div>
+          <div class="card-sub">Referencia: 3–5× es óptimo en campañas de conversión</div>
+        </div>
+      </div>
+      <div style="margin-bottom:20px">
+        <div class="prog-row">
+          <div class="prog-label">
+            <span style="color:var(--muted)">G1 · Promedio global</span>
+            <span style="color:var(--yellow);font-weight:700">7.57×</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:75%;background:var(--yellow)"></div></div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">
+            <span style="color:var(--muted)">G2 · Promedio general</span>
+            <span style="color:var(--green);font-weight:700">4.76×</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:47%;background:var(--green)"></div></div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">
+            <span style="color:var(--muted)">G2 · Campaña FM 04/12 Remarketing</span>
+            <span style="color:var(--red);font-weight:700">22.51× ⚠️</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:100%;background:var(--red)"></div></div>
+        </div>
+        <div class="prog-row">
+          <div class="prog-label">
+            <span style="color:var(--muted)">G2 · Campaña NEWDERM (nueva)</span>
+            <span style="color:var(--green);font-weight:700">1.58×</span>
+          </div>
+          <div class="prog-bar"><div class="prog-fill" style="width:16%;background:var(--green)"></div></div>
+        </div>
+      </div>
+      <div class="insight red">
+        <div class="insight-icon">⚠️</div>
+        <div>
+          <div class="insight-title">Campaña de remarketing activa con saturación crítica</div>
+          <div class="insight-text">La campaña FM 04/12 CBO Remarketing tiene una frecuencia de 22.51×. Esto significa que la misma persona ve el mismo anuncio más de 22 veces. La audiencia está quemada y el costo por resultado subirá mientras el CTR cae.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">🎯</div>
+        <div>
+          <div class="card-title">Cobertura de Funnel — Comparativa</div>
+          <div class="card-sub">Qué etapa del embudo cubre cada gestión</div>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Etapa del Funnel</th><th>G1</th><th>G2</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>🔝 Awareness (tope)</td>
+            <td><span class="badge green">Activo</span></td>
+            <td><span class="badge red">Ausente</span></td>
+          </tr>
+          <tr>
+            <td>🎯 Consideración (medio)</td>
+            <td><span class="badge green">Activo</span></td>
+            <td><span class="badge red">Ausente</span></td>
+          </tr>
+          <tr>
+            <td>🛒 Conversión (fondo)</td>
+            <td><span class="badge green">Activo</span></td>
+            <td><span class="badge green">Activo</span></td>
+          </tr>
+          <tr>
+            <td>📧 Email (retención)</td>
+            <td><span class="badge green">Mailchimp ✓</span></td>
+            <td><span class="badge red">No aplica</span></td>
+          </tr>
+          <tr>
+            <td>📅 Campañas estacionales</td>
+            <td><span class="badge green">Sí (Black Friday, etc.)</span></td>
+            <td><span class="badge red">No registradas</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="highlight-box" style="margin-top:16px">
+        <div class="hl-title">💡 ¿Qué pasa si solo trabajas el fondo del funnel?</div>
+        <div class="hl-text">Sin nuevas personas entrando al embudo (awareness), la audiencia de remarketing se agota. Los costos suben, el ROAS baja y la cuenta pierde eficiencia con el tiempo. G2 ya está viendo esto en la frecuencia de 22.51×.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SECCIÓN: CANALES ═══════════════════════ -->
+<div class="section" id="canales">
+  <div class="section-title">🔄 Estrategia Multicanal</div>
+  <p class="section-desc">Un canal único maximiza el alcance en Meta, pero depende completamente de un algoritmo. La diversificación protege la inversión y multiplica los puntos de contacto con el cliente.</p>
+
+  <!-- ESTADO ACTUAL DE CANALES -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon teal">🌐</div>
+      <div>
+        <div class="card-title">Estado de canales digitales — Saderma</div>
+        <div class="card-sub">Qué se usó, qué se abandonó y qué está disponible</div>
+      </div>
+    </div>
+    <div class="grid-4">
+      <div class="channel-card" style="border-top:3px solid var(--g1)">
+        <div class="channel-icon">📘</div>
+        <div class="channel-name">Meta Ads</div>
+        <div class="channel-status"><span class="badge green">Activo G1 + G2</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Canal principal. G1: mix de objetivos. G2: solo ventas.</div>
+      </div>
+      <div class="channel-card" style="border-top:3px solid var(--green)">
+        <div class="channel-icon">📧</div>
+        <div class="channel-name">Email Marketing<br>(Mailchimp)</div>
+        <div class="channel-status"><span class="badge purple">Solo en G1</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Activo en G1. Desactivado en G2. Mayor ROI por peso invertido.</div>
+      </div>
+      <div class="channel-card" style="border-top:3px solid #ff0050">
+        <div class="channel-icon">🎵</div>
+        <div class="channel-name">TikTok Ads</div>
+        <div class="channel-status"><span class="badge yellow">No explorado</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Canal sin explorar. Audiencia 18–35. CPM más bajo que Meta.</div>
+      </div>
+      <div class="channel-card" style="border-top:3px solid #4285f4">
+        <div class="channel-icon">🔍</div>
+        <div class="channel-name">Google SEM</div>
+        <div class="channel-status"><span class="badge yellow">No explorado</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Captura demanda existente. Distinto a Meta — no interrumpe, responde.</div>
+      </div>
+      <div class="channel-card" style="border-top:3px solid #ff0000">
+        <div class="channel-icon">▶️</div>
+        <div class="channel-name">YouTube Ads</div>
+        <div class="channel-status"><span class="badge yellow">No explorado</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Formato video largo. Ideal para educar sobre rutinas y productos.</div>
+      </div>
+      <div class="channel-card" style="border-top:3px solid var(--muted)">
+        <div class="channel-icon">📸</div>
+        <div class="channel-name">Instagram Orgánico</div>
+        <div class="channel-status"><span class="badge blue">Activo (ambas)</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Presente pero no atribuible directamente a pauta.</div>
+      </div>
+      <div class="channel-card" style="border-top:3px solid var(--green)">
+        <div class="channel-icon">💬</div>
+        <div class="channel-name">WhatsApp</div>
+        <div class="channel-status"><span class="badge blue">Canal de venta activo</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Cierre de ventas y atención personalizada. CTA en todos los ads.</div>
+      </div>
+      <div class="channel-card" style="border-top:3px solid var(--muted)">
+        <div class="channel-icon">🌐</div>
+        <div class="channel-name">SEO / Blog</div>
+        <div class="channel-status"><span class="badge red">Sin datos</span></div>
+        <div style="font-size:11px;color:var(--muted);margin-top:8px">Oportunidad de largo plazo. No explorado activamente.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL MARKETING DEEP DIVE -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon green">📧</div>
+      <div>
+        <div class="card-title">Email Marketing — El canal que se abandonó</div>
+        <div class="card-sub">Mailchimp · Activo solo en Gestión 1</div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="insight green">
+          <div class="insight-icon">💰</div>
+          <div>
+            <div class="insight-title">Costo prácticamente cero en inversión de pauta</div>
+            <div class="insight-text">El email marketing no requiere presupuesto adicional en Meta Ads. Con Mailchimp (plan gratuito hasta 500 contactos o plan básico desde $13 USD/mes), se puede mantener comunicación constante con la base de clientes sin gastar más en pauta.</div>
+          </div>
+        </div>
+        <div class="insight purple">
+          <div class="insight-icon">🔄</div>
+          <div>
+            <div class="insight-title">Canal de retención — el más rentable</div>
+            <div class="insight-text">Retener un cliente existente cuesta 5–7× menos que adquirir uno nuevo. El email permite reactivar compradores anteriores, presentar nuevos productos y recuperar carritos abandonados sin aumentar el presupuesto de Meta.</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="insight blue">
+          <div class="insight-icon">📬</div>
+          <div>
+            <div class="insight-title">Secuencias que se pueden activar hoy</div>
+            <div class="insight-text">
+              <strong style="color:var(--white)">· Bienvenida:</strong> Para nuevos suscriptores / compradores.<br>
+              <strong style="color:var(--white)">· Carrito abandonado:</strong> Recordatorio 1h, 24h y 72h.<br>
+              <strong style="color:var(--white)">· Newsletter mensual:</strong> Educación + oferta del mes.<br>
+              <strong style="color:var(--white)">· Reactivación:</strong> Para clientes sin compra en 90 días.<br>
+              <strong style="color:var(--white)">· Post-compra:</strong> Upsell de kit / rutina complementaria.
+            </div>
+          </div>
+        </div>
+        <div class="insight teal">
+          <div class="insight-icon">📊</div>
+          <div>
+            <div class="insight-title">Complementa la pauta — no la reemplaza</div>
+            <div class="insight-text">Los emails van a quien ya conoce la marca. Meta Ads trae nuevas personas. Juntos forman un ciclo completo: Meta → Primera compra → Email → Recompra. Sin email, el ciclo se corta después de la primera transacción.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHART: COBERTURA -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">📊</div>
+      <div>
+        <div class="card-title">Cobertura de canales por gestión</div>
+        <div class="card-sub">Comparativa visual de la amplitud de canales activos</div>
+      </div>
+    </div>
+    <div class="chart-wrap short">
+      <canvas id="chartCanales"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SECCIÓN: EFICIENCIA ═══════════════════════ -->
+<div class="section" id="eficiencia">
+  <div class="section-title">⚡ Eficiencia por Peso Invertido</div>
+  <p class="section-desc">Más presupuesto no siempre significa mejor retorno. Aquí se analiza el rendimiento relativo de cada gestión en función de la inversión realizada.</p>
+
+  <div class="highlight-box purple" style="margin-bottom:24px">
+    <div class="hl-title">🔑 La pregunta correcta no es "¿quién llegó a más personas?" sino "¿quién obtuvo más valor por peso invertido?"</div>
+    <div class="hl-text">Gestión 2 alcanzó más personas por mes porque invirtió 2.4× más. La clave está en evaluar qué se logró con el presupuesto disponible, cuántos canales se cubrieron, y qué tan saludable quedó la audiencia para el siguiente mes.</div>
+  </div>
+
+  <!-- EFICIENCIA COMPARATIVA -->
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">🟣</div>
+        <div>
+          <div class="card-title">Gestión 1 — Eficiencia</div>
+          <div class="card-sub">Con $2.5M/mes promedio</div>
+        </div>
+      </div>
+      <div class="stat-box purple" style="margin-bottom:12px">
+        <div class="stat-val purple">$59.9K</div>
+        <div class="stat-label">COP por cada 1,000 personas alcanzadas</div>
+      </div>
+      <div class="stat-box green" style="margin-bottom:12px">
+        <div class="stat-val green">2</div>
+        <div class="stat-label">Canales activos por el mismo presupuesto</div>
+      </div>
+      <div class="stat-box purple" style="margin-bottom:12px">
+        <div class="stat-val purple">3</div>
+        <div class="stat-label">Etapas del funnel cubiertas</div>
+      </div>
+      <div class="stat-box green">
+        <div class="stat-val green">$0</div>
+        <div class="stat-label">Costo adicional por email marketing</div>
+        <div class="stat-delta up">Canal extra sin inversión de pauta</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">🔵</div>
+        <div>
+          <div class="card-title">Gestión 2 — Eficiencia</div>
+          <div class="card-sub">Con $6M/mes promedio</div>
+        </div>
+      </div>
+      <div class="stat-box blue" style="margin-bottom:12px">
+        <div class="stat-val blue">$41.1K</div>
+        <div class="stat-label">COP por cada 1,000 personas alcanzadas</div>
+        <div class="stat-delta up">Mejor CPM — mayor presupuesto permite mejores subastas</div>
+      </div>
+      <div class="stat-box yellow" style="margin-bottom:12px">
+        <div class="stat-val yellow">1</div>
+        <div class="stat-label">Canal activo con ese presupuesto</div>
+      </div>
+      <div class="stat-box yellow" style="margin-bottom:12px">
+        <div class="stat-val yellow">1</div>
+        <div class="stat-label">Etapa del funnel cubierta (solo conversión)</div>
+      </div>
+      <div class="stat-box red">
+        <div class="stat-val red">22.51×</div>
+        <div class="stat-label">Frecuencia campaña remarketing activa</div>
+        <div class="stat-delta down">Audiencia saturada → costo sube cada semana</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RADAR CHART -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon teal">🕸️</div>
+      <div>
+        <div class="card-title">Radar de Rendimiento Estratégico</div>
+        <div class="card-sub">Puntajes relativos por dimensión estratégica (1–10)</div>
+      </div>
+    </div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--g1)"></div>Gestión 1</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--g2)"></div>Gestión 2</div>
+    </div>
+    <div class="chart-wrap tall">
+      <canvas id="chartRadar"></canvas>
+    </div>
+  </div>
+
+  <!-- TABLA COMPARATIVA COMPLETA -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">📋</div>
+      <div>
+        <div class="card-title">Tabla comparativa completa</div>
+        <div class="card-sub">20 indicadores clave de gestión</div>
+      </div>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Indicador</th>
+          <th>Gestión 1</th>
+          <th>Gestión 2</th>
+          <th>Ventaja</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Inversión mensual promedio</td><td>$2.5M COP</td><td>$6M COP</td><td><span class="badge blue">G2 (más volumen)</span></td></tr>
+        <tr><td>Canales digitales activos</td><td>Meta + Email</td><td>Solo Meta</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Etapas del funnel cubiertas</td><td>3 (Aw/Con/Conv)</td><td>1 (solo Conv)</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Alcance mensual Meta</td><td>~41.7K</td><td>~145.8K</td><td><span class="badge blue">G2 (mayor presupuesto)</span></td></tr>
+        <tr><td>CPM relativo (COP/1K alcance)</td><td>~$59.9K</td><td>~$41.1K</td><td><span class="badge blue">G2</span></td></tr>
+        <tr><td>Frecuencia promedio</td><td>7.57×</td><td>4.76× (22.51× en 1 campaña)</td><td><span class="badge yellow">Mixto</span></td></tr>
+        <tr><td>Email marketing activo</td><td>✅ Mailchimp</td><td>❌ No</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Campañas estacionales</td><td>✅ Black Friday +</td><td>❌ No registradas</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Estructura CBO/ABO</td><td>Sin definir</td><td>✅ Definida</td><td><span class="badge blue">G2</span></td></tr>
+        <tr><td>Nomenclatura sistemática</td><td>Numérica</td><td>✅ FM + estructura</td><td><span class="badge blue">G2</span></td></tr>
+        <tr><td>Diversidad de objetivos de campaña</td><td>✅ Mixtos</td><td>Solo ventas</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Conocimiento del catálogo Saderma</td><td>✅ Profundo</td><td>Desconocido</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Campañas por producto específico</td><td>✅ Sí</td><td>Parcialmente</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Salud audiencia remarketing</td><td>Alta frecuencia global</td><td>1 campaña con 22.51× frec.</td><td><span class="badge yellow">Ambas con áreas de mejora</span></td></tr>
+        <tr><td>Compras web registradas</td><td>Sin datos visibles</td><td>234+ compras</td><td><span class="badge blue">G2 (mejor tracking)</span></td></tr>
+        <tr><td>Contenido educativo / branding</td><td>✅ Presente</td><td>❌ No</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Coste vs volumen de canales</td><td>2 canales / $2.5M</td><td>1 canal / $6M</td><td><span class="badge purple">G1 (eficiencia multicanal)</span></td></tr>
+        <tr><td>Riesgo de saturación de audiencia</td><td>Medio</td><td>Alto (campaña activa)</td><td><span class="badge purple">G1</span></td></tr>
+        <tr><td>Sostenibilidad del modelo a 6 meses</td><td>Requería más presupuesto</td><td>Requiere funnel completo</td><td><span class="badge yellow">Ambas necesitan ajuste</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ SECCIÓN: PROPUESTAS ═══════════════════════ -->
+<div class="section" id="propuestas">
+  <div class="section-title">🚀 Propuestas de Expansión de Canales</div>
+  <p class="section-desc">Con el presupuesto actual de ~$6M/mes, hay espacio real para diversificar. Aquí están las cuatro propuestas prioritarias ordenadas por impacto potencial y facilidad de implementación.</p>
+
+  <!-- TIKTOK -->
+  <div class="prop-card tiktok">
+    <div class="prop-header">
+      <div class="prop-logo">🎵</div>
+      <div>
+        <div class="prop-title">TikTok Ads — Tráfico & Awareness</div>
+        <div class="prop-subtitle">Audiencia 18–38 · CPM más bajo que Meta · Ideal para Sofía y Daniela</div>
+      </div>
+      <span class="badge green" style="margin-left:auto">Prioridad Alta</span>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="insight teal" style="margin-bottom:12px">
+          <div class="insight-icon">🎯</div>
+          <div>
+            <div class="insight-title">Por qué TikTok para Saderma</div>
+            <div class="insight-text">TikTok tiene el CPM más bajo del mercado (hasta 3× más barato que Meta). La audiencia de skincare es altamente activa: #skincare, #rutinacuidadopiel y #dermatología tienen millones de visualizaciones en español. Formato ideal para demostrar productos y educar.</div>
+          </div>
+        </div>
+        <div class="insight green">
+          <div class="insight-icon">🎬</div>
+          <div>
+            <div class="insight-title">Formatos recomendados</div>
+            <div class="insight-text">
+              <strong style="color:var(--white)">· In-feed Ads:</strong> Video 15–30s educativo / antes-después.<br>
+              <strong style="color:var(--white)">· Spark Ads:</strong> Impulsar contenido orgánico que ya funciona.<br>
+              <strong style="color:var(--white)">· TopView:</strong> Para lanzamientos de temporada (Black Friday).
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="prop-kpi-row">
+          <div class="prop-kpi">
+            <div class="k-val" style="color:#ff0050">$1–1.5M</div>
+            <div class="k-lbl">Presupuesto/mes piloto</div>
+          </div>
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--green)">18–38</div>
+            <div class="k-lbl">Edad objetivo</div>
+          </div>
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--yellow)">30 días</div>
+            <div class="k-lbl">Tiempo para primeros datos</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="margin-top:12px">
+          <div class="hl-title">💡 Contenido sugerido para Saderma</div>
+          <div class="hl-text">
+            "5 errores que cometes con tu piel sin saberlo" · "¿Por qué salen manchas en Cali?" · Tutorial rutina AM/PM · Antes y después con Newderm · "Lo que hace diferente un laboratorio dermatológico"
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop-tags">
+      <span class="prop-tag">Awareness</span>
+      <span class="prop-tag">Video corto</span>
+      <span class="prop-tag">Sofía + Daniela</span>
+      <span class="prop-tag">CPM bajo</span>
+      <span class="prop-tag">Tráfico a saderma.co</span>
+    </div>
+  </div>
+
+  <!-- GOOGLE SEM -->
+  <div class="prop-card google">
+    <div class="prop-header">
+      <div class="prop-logo">🔍</div>
+      <div>
+        <div class="prop-title">Google Search (SEM) — Captura de Demanda</div>
+        <div class="prop-subtitle">Keywords de alta intención · Complemento perfecto de Meta</div>
+      </div>
+      <span class="badge yellow" style="margin-left:auto">Prioridad Alta</span>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="insight blue" style="margin-bottom:12px">
+          <div class="insight-icon">🔍</div>
+          <div>
+            <div class="insight-title">Meta interrumpe — Google responde</div>
+            <div class="insight-text">Meta Ads muestra anuncios a personas que no estaban buscando nada. Google SEM captura a personas que YA están buscando activamente: "crema antiedad Cali", "sérum vitamina C Colombia", "productos para manchas cara". Esta intención de compra es mucho más alta.</div>
+          </div>
+        </div>
+        <div class="insight green">
+          <div class="insight-icon">🔑</div>
+          <div>
+            <div class="insight-title">Keywords prioritarias para Saderma</div>
+            <div class="insight-text">
+              · "productos dermatológicos Colombia"<br>
+              · "sérum vitamina C precio Colombia"<br>
+              · "crema antiedad Cali"<br>
+              · "tratamiento manchas cara Colombia"<br>
+              · "champú anticaspa dermatológico"
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="prop-kpi-row">
+          <div class="prop-kpi">
+            <div class="k-val" style="color:#4285f4">$1–2M</div>
+            <div class="k-lbl">Presupuesto/mes</div>
+          </div>
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--green)">Alta</div>
+            <div class="k-lbl">Intención de compra</div>
+          </div>
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--yellow)">45 días</div>
+            <div class="k-lbl">Para optimizar</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="margin-top:12px">
+          <div class="hl-title">🎯 Estructura de campaña recomendada</div>
+          <div class="hl-text">
+            <strong style="color:var(--white)">Campaña 1:</strong> Brand keywords (Saderma + variaciones).<br>
+            <strong style="color:var(--white)">Campaña 2:</strong> Por problema (manchas, acné, arrugas, caspa).<br>
+            <strong style="color:var(--white)">Campaña 3:</strong> Por ingrediente (vitamina C, ácido hialurónico, retinol).<br>
+            <strong style="color:var(--white)">Campaña 4:</strong> Shopping (catálogo de productos con precio).
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop-tags">
+      <span class="prop-tag">Alta intención</span>
+      <span class="prop-tag">Search + Shopping</span>
+      <span class="prop-tag">Todos los buyers personas</span>
+      <span class="prop-tag">Complemento a Meta</span>
+    </div>
+  </div>
+
+  <!-- YOUTUBE -->
+  <div class="prop-card youtube">
+    <div class="prop-header">
+      <div class="prop-logo">▶️</div>
+      <div>
+        <div class="prop-title">YouTube Ads — Consideración & Educación</div>
+        <div class="prop-subtitle">Video de 30–60s · Audiencia 25–50 · Patricia y Daniela</div>
+      </div>
+      <span class="badge blue" style="margin-left:auto">Prioridad Media</span>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="insight yellow" style="margin-bottom:12px">
+          <div class="insight-icon">🎬</div>
+          <div>
+            <div class="insight-title">YouTube como canal de consideración</div>
+            <div class="insight-text">YouTube llega a personas mientras ven contenido de belleza, skincare y dermatología. Un anuncio bien hecho puede educar sobre los ingredientes de Saderma antes de que lleguen a Meta o a Google. Es la capa de "consideración" que hoy le falta a la estrategia.</div>
+          </div>
+        </div>
+        <div class="insight teal">
+          <div class="insight-icon">📹</div>
+          <div>
+            <div class="insight-title">Formatos sugeridos</div>
+            <div class="insight-text">
+              <strong style="color:var(--white)">· Skippable in-stream:</strong> 30–60s antes de videos de belleza.<br>
+              <strong style="color:var(--white)">· Bumper ads:</strong> 6s no saltables — refuerzo de marca.<br>
+              <strong style="color:var(--white)">· Video discovery:</strong> Aparece en búsquedas de YouTube.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="prop-kpi-row">
+          <div class="prop-kpi">
+            <div class="k-val" style="color:#ff0000">$500K–1M</div>
+            <div class="k-lbl">Presupuesto/mes</div>
+          </div>
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--green)">25–52</div>
+            <div class="k-lbl">Edad objetivo</div>
+          </div>
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--yellow)">60 días</div>
+            <div class="k-lbl">Para resultados</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="margin-top:12px">
+          <div class="hl-title">💡 Contenido sugerido</div>
+          <div class="hl-text">
+            "¿Qué hace un laboratorio dermatológico?" · "Rutina antiedad probada: Lign-D + Tensoderm" · "Por qué el Hylum-C es diferente a cualquier vitamina C" · Testimonio de dermatóloga aliada.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop-tags">
+      <span class="prop-tag">Consideración</span>
+      <span class="prop-tag">Video educativo</span>
+      <span class="prop-tag">Patricia + Daniela</span>
+      <span class="prop-tag">Respaldo científico</span>
+    </div>
+  </div>
+
+  <!-- EMAIL MARKETING -->
+  <div class="prop-card email">
+    <div class="prop-header">
+      <div class="prop-logo">📧</div>
+      <div>
+        <div class="prop-title">Email Marketing — Retomar Mailchimp Ahora</div>
+        <div class="prop-subtitle">Canal de retención · Mayor ROI · Costo mínimo</div>
+      </div>
+      <span class="badge green" style="margin-left:auto">🔴 Activar ya</span>
+    </div>
+    <div class="grid-2">
+      <div>
+        <div class="insight green" style="margin-bottom:12px">
+          <div class="insight-icon">⚡</div>
+          <div>
+            <div class="insight-title">El canal con mejor ROI — se puede activar esta semana</div>
+            <div class="insight-text">A diferencia de TikTok o SEM que requieren configuración, Mailchimp ya se usó en Gestión 1. La base de contactos existe. Las secuencias pueden retomarse en días. Y el impacto en retención es inmediato.</div>
+          </div>
+        </div>
+        <div class="insight purple">
+          <div class="insight-icon">📊</div>
+          <div>
+            <div class="insight-title">Secuencias prioritarias</div>
+            <div class="insight-text">
+              <strong style="color:var(--white)">1. Bienvenida (3 emails):</strong> Marca, laboratorio, primer producto.<br>
+              <strong style="color:var(--white)">2. Carrito abandonado (3 emails):</strong> 1h – 24h – 72h.<br>
+              <strong style="color:var(--white)">3. Newsletter mensual:</strong> Tip de piel + oferta del mes + nuevo producto.<br>
+              <strong style="color:var(--white)">4. Reactivación (90 días sin compra):</strong> Descuento especial.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="prop-kpi-row">
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--green)">~$50K</div>
+            <div class="k-lbl">COP/mes Mailchimp básico</div>
+          </div>
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--green)">5–7 días</div>
+            <div class="k-lbl">Para activar</div>
+          </div>
+          <div class="prop-kpi">
+            <div class="k-val" style="color:var(--green)">Alto</div>
+            <div class="k-lbl">ROI estimado</div>
+          </div>
+        </div>
+        <div class="highlight-box" style="margin-top:12px">
+          <div class="hl-title">📬 Ciclo completo Meta + Email</div>
+          <div class="hl-text">
+            Meta Ads atrae a un nuevo cliente → hace su primera compra → entra a la lista de Mailchimp → recibe secuencia de bienvenida → newsletter mensual → oferta → segunda compra. Sin email, ese cliente se pierde para siempre si no vuelve solo.
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="prop-tags">
+      <span class="prop-tag">Retención</span>
+      <span class="prop-tag">Carrito abandonado</span>
+      <span class="prop-tag">Upsell</span>
+      <span class="prop-tag">Bajo costo</span>
+      <span class="prop-tag">Activar esta semana</span>
+    </div>
+  </div>
+
+  <!-- PLAN DE ACCIÓN -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon green">📋</div>
+      <div>
+        <div class="card-title">Plan de Acción — Priorizado</div>
+        <div class="card-sub">Ordenado por urgencia e impacto estratégico</div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num red">1</div>
+      <div>
+        <div class="action-title">🔴 Urgente: Resolver saturación de audiencia en Meta Ads</div>
+        <div class="action-text">La campaña FM 04/12 CBO Remarketing tiene frecuencia de 22.51×. La audiencia está quemada. Se debe ampliar la ventana de remarketing de 30 a 60–90 días, refrescar creatividades y pausar los conjuntos de anuncios con mayor frecuencia.</div>
+        <div class="action-meta">
+          <span class="badge red">Esta semana</span>
+          <span class="badge yellow">Meta Ads</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num red">2</div>
+      <div>
+        <div class="action-title">🔴 Urgente: Reactivar Mailchimp</div>
+        <div class="action-text">Retomar las secuencias de email. Primero: actualizar la secuencia de bienvenida y activar el flujo de carrito abandonado. Segundo: enviar newsletter del mes con la oferta actual de Saderma.</div>
+        <div class="action-meta">
+          <span class="badge red">Esta semana</span>
+          <span class="badge green">Email</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num yellow">3</div>
+      <div>
+        <div class="action-title">🟡 Importante: Restaurar capa de awareness en Meta</div>
+        <div class="action-text">Crear una campaña de tráfico o interacción orientada al tope del funnel. Objetivo: traer nuevas personas a la base de audiencia antes de que el remarketing se agote. Presupuesto sugerido: $800K–1M/mes del total de Meta.</div>
+        <div class="action-meta">
+          <span class="badge yellow">Semana 2–3</span>
+          <span class="badge purple">Meta Ads</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num yellow">4</div>
+      <div>
+        <div class="action-title">🟡 Importante: Piloto TikTok Ads</div>
+        <div class="action-text">Lanzar una campaña piloto de tráfico en TikTok con $1M–1.5M/mes. Formato: video educativo 15–30 segundos. Target: mujeres 18–38, Colombia. Medir CPM, CPC y tráfico a saderma.co durante 30 días antes de escalar.</div>
+        <div class="action-meta">
+          <span class="badge yellow">Mes 1</span>
+          <span class="badge orange">TikTok</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num green">5</div>
+      <div>
+        <div class="action-title">🟢 Estratégico: Explorar Google SEM</div>
+        <div class="action-text">Configurar campaña Search con keywords de alta intención ($1M/mes). Empezar con las 3 campañas: brand, por problema y por ingrediente. Medir ROAS y comparar con Meta. Si supera $2 de ROAS en 45 días, escalar.</div>
+        <div class="action-meta">
+          <span class="badge green">Mes 2</span>
+          <span class="badge blue">Google</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num blue">6</div>
+      <div>
+        <div class="action-title">📹 Estratégico: Evaluar YouTube Ads</div>
+        <div class="action-text">Con presupuesto mínimo de $500K/mes, lanzar skippable in-stream orientados a canal de consideración. Especialmente útil si TikTok funciona bien — los formatos de video pueden adaptarse entre plataformas.</div>
+        <div class="action-meta">
+          <span class="badge blue">Mes 3</span>
+          <span class="badge red">YouTube</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-row">
+      <div class="action-num purple">7</div>
+      <div>
+        <div class="action-title">📅 Recuperar calendario de campañas estacionales</div>
+        <div class="action-text">Marzo: Día de la Mujer. Mayo: Día de la Madre. Junio: mitad de año. Agosto: amor y amistad. Noviembre: Black Friday. Dic: Navidad. Cada fecha requiere creatividades específicas con al menos 2 semanas de anticipación.</div>
+        <div class="action-meta">
+          <span class="badge purple">Trimestral</span>
+          <span class="badge purple">Meta + Email</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRESUPUESTO SUGERIDO -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">💰</div>
+      <div>
+        <div class="card-title">Distribución sugerida del presupuesto mensual</div>
+        <div class="card-sub">Basado en $6M COP/mes disponible · Mes 1 (piloto)</div>
+      </div>
+    </div>
+    <div class="chart-wrap short">
+      <canvas id="chartBudget"></canvas>
+    </div>
+    <table class="data-table" style="margin-top:20px">
+      <thead>
+        <tr><th>Canal</th><th>Presupuesto sugerido</th><th>% del total</th><th>Objetivo</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>📘 Meta Ads (conversión)</td>
+          <td>$3.5M</td>
+          <td>58%</td>
+          <td><span class="badge purple">Ventas + Remarketing</span></td>
+        </tr>
+        <tr>
+          <td>📘 Meta Ads (awareness)</td>
+          <td>$800K</td>
+          <td>13%</td>
+          <td><span class="badge blue">Tope de funnel</span></td>
+        </tr>
+        <tr>
+          <td>🎵 TikTok Ads (piloto)</td>
+          <td>$1M</td>
+          <td>17%</td>
+          <td><span class="badge orange">Tráfico + Awareness</span></td>
+        </tr>
+        <tr>
+          <td>📧 Email Marketing</td>
+          <td>$50K–100K</td>
+          <td>~1%</td>
+          <td><span class="badge green">Retención + Recompra</span></td>
+        </tr>
+        <tr>
+          <td>🔍 Google SEM (mes 2+)</td>
+          <td>$600K (futuro)</td>
+          <td>10%</td>
+          <td><span class="badge yellow">Captura de demanda</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════ CHARTS JS ═══════════════════════ -->
+<script>
+const months = ['Ene 25','Feb 25','Mar 25','Abr 25','May 25','Jun 25','Jul 25','Ago 25','Sep 25','Oct 25','Nov 25','Dic 25','Ene 26','Feb 26','Mar 26'];
+const invG1 = [2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,null,null,null,null,null];
+const invG2 = [null,null,null,null,null,null,null,null,null,null,5,6,8,6,5];
+
+// Chart: Inversión
+new Chart(document.getElementById('chartInversion'), {
+  type: 'bar',
+  data: {
+    labels: months,
+    datasets: [
+      { label: 'Gestión 1', data: invG1, backgroundColor: 'rgba(124,111,247,0.7)', borderColor: 'rgba(124,111,247,1)', borderWidth: 1, borderRadius: 6 },
+      { label: 'Gestión 2', data: invG2, backgroundColor: 'rgba(94,159,255,0.7)', borderColor: 'rgba(94,159,255,1)', borderWidth: 1, borderRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` $${ctx.raw}M COP` } } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4', font: { size: 11 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#8892a4', callback: v => `$${v}M` }, beginAtZero: true, max: 10 }
+    }
+  }
+});
+
+// Chart: Alcance
+const alcG1 = [41700,41700,41700,41700,41700,41700,41700,41700,41700,41700,null,null,null,null,null];
+const alcG2 = [null,null,null,null,null,null,null,null,null,null,145800,145800,145800,145800,145800];
+new Chart(document.getElementById('chartAlcance'), {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [
+      { label: 'Gestión 1', data: alcG1, borderColor: 'rgba(124,111,247,1)', backgroundColor: 'rgba(124,111,247,0.1)', tension: 0.3, pointRadius: 4, fill: true },
+      { label: 'Gestión 2', data: alcG2, borderColor: 'rgba(94,159,255,1)', backgroundColor: 'rgba(94,159,255,0.1)', tension: 0.3, pointRadius: 4, fill: true }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw?.toLocaleString()} personas` } } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4', font: { size: 11 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.06)' }, ticks: { color: '#8892a4', callback: v => `${(v/1000).toFixed(0)}K` }, beginAtZero: true }
+    }
+  }
+});
+
+// Chart: Canales
+new Chart(document.getElementById('chartCanales'), {
+  type: 'bar',
+  data: {
+    labels: ['Meta Ads', 'Email Marketing', 'TikTok', 'Google SEM', 'YouTube', 'WhatsApp'],
+    datasets: [
+      { label: 'Gestión 1', data: [1,1,0,0,0,1], backgroundColor: 'rgba(124,111,247,0.7)', borderRadius: 6 },
+      { label: 'Gestión 2', data: [1,0,0,0,0,1], backgroundColor: 'rgba(94,159,255,0.5)', borderRadius: 6 },
+      { label: 'Propuesta', data: [1,1,1,1,1,1], backgroundColor: 'rgba(62,207,142,0.4)', borderRadius: 6 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { labels: { color: '#8892a4', font: { size: 11 } } },
+      tooltip: { callbacks: { label: ctx => ctx.raw === 1 ? ' Activo' : ' Inactivo' } }
+    },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4' } },
+      y: { grid: { display: false }, ticks: { display: false }, max: 1.5 }
+    }
+  }
+});
+
+// Chart: Radar
+new Chart(document.getElementById('chartRadar'), {
+  type: 'radar',
+  data: {
+    labels: ['Diversidad\nde canales','Cobertura\ndel funnel','Conocimiento\ndel producto','Estructura\ntécnica','Eficiencia\npor peso','Email\nMarketing','Campañas\nestacionales','Salud de\naudiencia','Tracking\nconversiones'],
+    datasets: [
+      { label: 'Gestión 1', data: [9,9,9,5,7,10,9,6,4], borderColor: 'rgba(124,111,247,1)', backgroundColor: 'rgba(124,111,247,0.15)', pointBackgroundColor: 'rgba(124,111,247,1)', pointRadius: 5 },
+      { label: 'Gestión 2', data: [4,4,6,9,8,0,3,5,9], borderColor: 'rgba(94,159,255,1)', backgroundColor: 'rgba(94,159,255,0.12)', pointBackgroundColor: 'rgba(94,159,255,1)', pointRadius: 5 }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { labels: { color: '#8892a4', font: { size: 12 } } } },
+    scales: {
+      r: {
+        min: 0, max: 10,
+        grid: { color: 'rgba(255,255,255,0.08)' },
+        angleLines: { color: 'rgba(255,255,255,0.08)' },
+        ticks: { color: '#8892a4', backdropColor: 'transparent', font: { size: 10 } },
+        pointLabels: { color: '#8892a4', font: { size: 11 } }
+      }
+    }
+  }
+});
+
+// Chart: Budget Donut
+new Chart(document.getElementById('chartBudget'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Meta Ads Conversión', 'Meta Ads Awareness', 'TikTok (piloto)', 'Google SEM (futuro)', 'Email Marketing'],
+    datasets: [{
+      data: [3500, 800, 1000, 600, 100],
+      backgroundColor: ['rgba(124,111,247,0.8)','rgba(94,159,255,0.7)','rgba(255,0,80,0.7)','rgba(66,133,244,0.7)','rgba(62,207,142,0.7)'],
+      borderColor: '#141726',
+      borderWidth: 3
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { color: '#8892a4', font: { size: 11 }, padding: 14 } },
+      tooltip: { callbacks: { label: ctx => ` $${ctx.raw.toLocaleString()}K COP` } }
+    }
+  }
+});
+
+// NAV
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

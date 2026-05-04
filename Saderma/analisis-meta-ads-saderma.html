@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<!-- saved from url=(0084)file:///C:/Users/Usuario/CLOUDE/CLIENTE%20-%20SADERMA/analisis-meta-ads-saderma.html -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Análisis Meta Ads — Saderma</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --primary: #1a1a2e;
+    --accent: #0f3460;
+    --juanda: #16213e;
+    --juanda-light: #3a86ff;
+    --ext: #0f3460;
+    --ext-light: #e94560;
+    --green: #2ecc71;
+    --yellow: #f39c12;
+    --red: #e74c3c;
+    --gray: #f8f9fc;
+    --border: #e2e8f0;
+    --text: #1e293b;
+    --muted: #64748b;
+    --white: #ffffff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--gray);
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: white;
+    padding: 48px 40px 40px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    color: #a5b4fc;
+  }
+  .header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #60a5fa; }
+  .header-meta {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    margin-top: 12px;
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .header-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  /* ── PERIODS BANNER ── */
+  .periods-banner {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0;
+    background: white;
+    border-bottom: 2px solid var(--border);
+  }
+  .period-block {
+    padding: 20px 32px;
+    display: flex;
+    flex-direction: column;
+  }
+  .period-block.juanda { border-right: 1px solid var(--border); }
+  .period-block.ext { }
+  .period-vs {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 16px;
+    font-weight: 800;
+    font-size: 18px;
+    color: var(--muted);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    background: var(--gray);
+  }
+  .period-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+  .period-name {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .period-date {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .period-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+  .dot-juanda { background: var(--juanda-light); }
+  .dot-ext { background: var(--ext-light); }
+
+  /* ── MAIN LAYOUT ── */
+  .main { padding: 32px 40px; max-width: 1400px; margin: 0 auto; }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--muted);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::before {
+    content: '';
+    width: 4px;
+    height: 16px;
+    background: var(--juanda-light);
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  /* ── KPI CARDS ── */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .kpi-card .indicator {
+    width: 4px;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    border-radius: 12px 0 0 12px;
+  }
+  .kpi-card .ind-juanda { background: var(--juanda-light); }
+  .kpi-card .ind-ext { background: var(--ext-light); }
+  .kpi-card .ind-neutral { background: #94a3b8; }
+  .kpi-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .kpi-comparison {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  .kpi-val {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .kpi-val.juanda-color { color: var(--juanda-light); }
+  .kpi-val.ext-color { color: var(--ext-light); }
+  .kpi-small {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.4;
+    margin-bottom: 2px;
+  }
+  .kpi-bar-wrap {
+    margin-top: 10px;
+  }
+  .kpi-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+  }
+  .kpi-bar-label { font-size: 11px; color: var(--muted); width: 80px; flex-shrink: 0; }
+  .kpi-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .kpi-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 1s ease;
+  }
+  .fill-juanda { background: var(--juanda-light); }
+  .fill-ext { background: var(--ext-light); }
+  .kpi-bar-num { font-size: 11px; font-weight: 600; width: 50px; text-align: right; flex-shrink: 0; }
+
+  /* ── CHARTS GRID ── */
+  .charts-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .chart-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    position: relative;
+  }
+  .chart-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+  .chart-subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .chart-wrap { position: relative; height: 220px; }
+
+  /* ── COMPARISON TABLE ── */
+  .comparison-section {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+  .comparison-header {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    background: var(--primary);
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .comparison-header div {
+    padding: 12px 20px;
+    border-right: 1px solid rgba(255,255,255,0.1);
+  }
+  .comparison-header div:last-child { border-right: none; }
+  .comparison-header .col-juanda { display: flex; align-items: center; gap: 8px; }
+  .comparison-header .col-ext { display: flex; align-items: center; gap: 8px; }
+  .comp-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 1fr;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+  .comp-row:hover { background: #f8faff; }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-row div {
+    padding: 14px 20px;
+    font-size: 13px;
+    border-right: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .comp-row div:last-child { border-right: none; }
+  .comp-row .row-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .comp-cell-main { font-size: 14px; font-weight: 700; color: var(--text); }
+  .comp-cell-sub { font-size: 11px; color: var(--muted); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge-green { background: #dcfce7; color: #16a34a; }
+  .badge-yellow { background: #fef9c3; color: #a16207; }
+  .badge-red { background: #fee2e2; color: #dc2626; }
+  .badge-blue { background: #dbeafe; color: #1d4ed8; }
+  .badge-purple { background: #f3e8ff; color: #7c3aed; }
+
+  /* ── CAMPAIGN LIST ── */
+  .campaigns-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .campaign-panel {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .campaign-panel-header {
+    padding: 16px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .panel-header-juanda { background: #eff6ff; color: #1d4ed8; border-bottom: 2px solid var(--juanda-light); }
+  .panel-header-ext { background: #fff1f2; color: #be185d; border-bottom: 2px solid var(--ext-light); }
+  .campaign-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .campaign-item:last-child { border-bottom: none; }
+  .campaign-name { font-size: 12px; font-weight: 600; color: var(--text); }
+  .campaign-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tag {
+    display: inline-block;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  .tag-traffic { background: #dbeafe; color: #1e40af; }
+  .tag-conv { background: #dcfce7; color: #166534; }
+  .tag-engage { background: #f3e8ff; color: #6d28d9; }
+  .tag-promo { background: #fef3c7; color: #92400e; }
+  .tag-remark { background: #fee2e2; color: #991b1b; }
+  .tag-prosp { background: #e0f2fe; color: #0369a1; }
+  .tag-geo { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+  .tag-product { background: #fdf4ff; color: #86198f; }
+  .tag-cbo { background: #fff7ed; color: #c2410c; }
+  .tag-abo { background: #f0fdf4; color: #15803d; }
+  .campaign-stats {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+  }
+  .c-stat { font-size: 11px; color: var(--muted); }
+  .c-stat strong { color: var(--text); font-weight: 700; }
+
+  /* ── INSIGHTS ── */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .insight-panel {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+  .insight-header {
+    padding: 16px 20px;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .insight-header.good { background: #f0fdf4; color: #15803d; border-bottom: 2px solid #22c55e; }
+  .insight-header.bad { background: #fef2f2; color: #b91c1c; border-bottom: 2px solid #ef4444; }
+  .insight-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+    color: var(--text);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.5;
+  }
+  .insight-item:last-child { border-bottom: none; }
+  .insight-icon { flex-shrink: 0; margin-top: 1px; }
+
+  /* ── RECOS ── */
+  .reco-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .reco-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 20px;
+    position: relative;
+    border-top: 4px solid;
+  }
+  .reco-card.priority-high { border-top-color: var(--ext-light); }
+  .reco-card.priority-med { border-top-color: var(--yellow); }
+  .reco-card.priority-low { border-top-color: var(--green); }
+  .reco-priority {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .reco-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+  .reco-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .reco-icon { font-size: 24px; margin-bottom: 10px; }
+
+  /* ── VERDICT ── */
+  .verdict-section {
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 32px;
+    color: white;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: center;
+  }
+  .verdict-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #a5b4fc;
+    margin-bottom: 8px;
+  }
+  .verdict-text {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+  .verdict-text em { color: #60a5fa; font-style: normal; }
+  .verdict-scores {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .score-card {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .score-val {
+    font-size: 36px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .score-val.juanda-score { color: #60a5fa; }
+  .score-val.ext-score { color: #f87171; }
+  .score-label {
+    font-size: 11px;
+    color: rgba(255,255,255,0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+  .score-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 6px;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--border);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 24px;
+    width: fit-content;
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: white;
+    color: var(--text);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ── TOOLTIP / INFO BOXES ── */
+  .info-box {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-left: 4px solid var(--juanda-light);
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #1d4ed8;
+    line-height: 1.5;
+  }
+  .warning-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: #92400e;
+    line-height: 1.5;
+  }
+
+  /* ── MONTHLY REACH CHART ── */
+  .wide-chart {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 32px;
+  }
+  .wide-chart-wrap { height: 260px; position: relative; }
+
+  /* ── FUNNEL ── */
+  .funnel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+  .funnel-card {
+    background: white;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    padding: 24px;
+  }
+  .funnel-step {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    gap: 12px;
+  }
+  .funnel-bar-wrap { flex: 1; }
+  .funnel-bar {
+    height: 28px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    transition: width 1.2s ease;
+  }
+  .funnel-label { font-size: 11px; font-weight: 600; width: 80px; text-align: right; color: var(--muted); }
+  .funnel-num { font-size: 12px; font-weight: 700; width: 80px; color: var(--text); }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    background: white;
+  }
+
+  @media (max-width: 900px) {
+    .main { padding: 16px; }
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+    .charts-grid { grid-template-columns: 1fr; }
+    .campaigns-grid { grid-template-columns: 1fr; }
+    .insights-grid { grid-template-columns: 1fr; }
+    .reco-grid { grid-template-columns: 1fr; }
+    .verdict-section { grid-template-columns: 1fr; }
+    .funnel-grid { grid-template-columns: 1fr; }
+    .periods-banner { grid-template-columns: 1fr; }
+    .period-vs { display: none; }
+    .comparison-header, .comp-row { grid-template-columns: 130px 1fr 1fr; }
+    .header { padding: 24px 16px; }
+    .header h1 { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<div class="header">
+  <div class="header-badge">📊 Análisis Comparativo Meta Ads</div>
+  <h1>Saderma — <span>Diagnóstico de Campañas</span></h1>
+  <p style="color:rgba(255,255,255,0.7); font-size:15px; margin-top:8px; max-width:600px;">
+    Comparación de desempeño publicitario entre dos períodos de gestión distintos sobre la misma cuenta.
+  </p>
+  <div class="header-meta">
+    <span>📅 Datos extraídos: 6 abril 2026</span>
+    <span>🎯 Cuenta: Saderma Marketing (act=459839867927034)</span>
+    <span>📋 Total campañas en cuenta: 152</span>
+  </div>
+</div>
+
+<!-- ─── PERIODS BANNER ─── -->
+<div class="periods-banner">
+  <div class="period-block juanda">
+    <div class="period-label"><span class="period-dot dot-juanda"></span>Período 1</div>
+    <div class="period-name">Juanda (tú)</div>
+    <div class="period-date">Ene 2024 — Oct 2025 · <strong>~22 meses</strong></div>
+  </div>
+  <div class="period-vs">VS</div>
+  <div class="period-block ext">
+    <div class="period-label"><span class="period-dot dot-ext"></span>Período 2</div>
+    <div class="period-name">Gestor Externo</div>
+    <div class="period-date">Nov 2025 — Mar 2026 · <strong>5 meses</strong></div>
+  </div>
+</div>
+
+<!-- ─── MAIN ─── -->
+<div class="main">
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn" onclick="switchTab(&#39;overview&#39;)">🏠 Resumen</button>
+    <button class="tab-btn" onclick="switchTab(&#39;metrics&#39;)">📊 Métricas</button>
+    <button class="tab-btn active" onclick="switchTab(&#39;campaigns&#39;)">📁 Campañas</button>
+    <button class="tab-btn" onclick="switchTab(&#39;insights&#39;)">💡 Análisis</button>
+    <button class="tab-btn" onclick="switchTab(&#39;recos&#39;)">🚀 Recomendaciones</button>
+  </div>
+
+  <!-- ═══════════ TAB: OVERVIEW ═══════════ -->
+  <div id="tab-overview" class="tab-content">
+
+    <div class="section-title">Métricas Clave de Cuenta (datos directos del Ads Manager)</div>
+
+    <div class="warning-box">
+      ⚠️ <strong>Comparación asimétrica:</strong> Período 1 duró 22 meses y Período 2 solo 5 meses. Los totales absolutos no son directamente comparables — el análisis por mes es el indicador más justo.
+    </div>
+
+    <div class="kpi-grid">
+
+      <!-- ALCANCE TOTAL -->
+      <div class="kpi-card">
+        <div class="indicator ind-juanda"></div>
+        <div class="kpi-label">Alcance Total</div>
+        <div class="kpi-bar-wrap">
+          <div class="kpi-bar-row">
+            <div class="kpi-bar-label" style="color:#3a86ff; font-weight:700;">Juanda</div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill fill-juanda" style="width:100%"></div></div>
+            <div class="kpi-bar-num">917,436</div>
+          </div>
+          <div class="kpi-bar-row">
+            <div class="kpi-bar-label" style="color:#e94560; font-weight:700;">Externo</div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill fill-ext" style="width:79%"></div></div>
+            <div class="kpi-bar-num">729,072</div>
+          </div>
+        </div>
+        <div class="kpi-small" style="margin-top:8px; color:#16a34a; font-weight:600;">↑ Juanda +26% en totales</div>
+      </div>
+
+      <!-- ALCANCE / MES -->
+      <div class="kpi-card">
+        <div class="indicator ind-ext"></div>
+        <div class="kpi-label">Alcance Mensual Estimado</div>
+        <div class="kpi-bar-wrap">
+          <div class="kpi-bar-row">
+            <div class="kpi-bar-label" style="color:#3a86ff; font-weight:700;">Juanda</div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill fill-juanda" style="width:29%"></div></div>
+            <div class="kpi-bar-num">~41,700</div>
+          </div>
+          <div class="kpi-bar-row">
+            <div class="kpi-bar-label" style="color:#e94560; font-weight:700;">Externo</div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill fill-ext" style="width:100%"></div></div>
+            <div class="kpi-bar-num">~145,800</div>
+          </div>
+        </div>
+        <div class="kpi-small" style="margin-top:8px; color:#e94560; font-weight:600;">↑ Externo +250% por mes</div>
+      </div>
+
+      <!-- FRECUENCIA -->
+      <div class="kpi-card">
+        <div class="indicator ind-neutral"></div>
+        <div class="kpi-label">Frecuencia Promedio</div>
+        <div class="kpi-bar-wrap">
+          <div class="kpi-bar-row">
+            <div class="kpi-bar-label" style="color:#3a86ff; font-weight:700;">Juanda</div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill fill-juanda" style="width:100%"></div></div>
+            <div class="kpi-bar-num">7.57×</div>
+          </div>
+          <div class="kpi-bar-row">
+            <div class="kpi-bar-label" style="color:#e94560; font-weight:700;">Externo</div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill fill-ext" style="width:63%"></div></div>
+            <div class="kpi-bar-num">4.76×</div>
+          </div>
+        </div>
+        <div class="kpi-small" style="margin-top:8px; color:#16a34a; font-weight:600;">↓ Externo –37% (audiencia más fresca)</div>
+      </div>
+
+      <!-- RESULTADOS COMPRAS -->
+      <div class="kpi-card">
+        <div class="indicator ind-ext"></div>
+        <div class="kpi-label">Compras Web Registradas</div>
+        <div class="kpi-bar-wrap">
+          <div class="kpi-bar-row">
+            <div class="kpi-bar-label" style="color:#3a86ff; font-weight:700;">Juanda</div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill fill-juanda" style="width:30%"></div></div>
+            <div class="kpi-bar-num" style="color:#64748b">N/D*</div>
+          </div>
+          <div class="kpi-bar-row">
+            <div class="kpi-bar-label" style="color:#e94560; font-weight:700;">Externo</div>
+            <div class="kpi-bar-bg"><div class="kpi-bar-fill fill-ext" style="width:100%"></div></div>
+            <div class="kpi-bar-num">234+</div>
+          </div>
+        </div>
+        <div class="kpi-small" style="margin-top:8px; color:#64748b;">*Datos visibles en campañas del externo</div>
+      </div>
+
+    </div><!-- /kpi-grid -->
+
+    <!-- CHART ALCANCE MENSUAL -->
+    <div class="wide-chart">
+      <div class="chart-title">Alcance Mensual Estimado — Comparación Normalizada</div>
+      <div class="chart-subtitle">Alcance total dividido entre meses de gestión activa</div>
+      <div class="wide-chart-wrap">
+        <canvas id="chartMonthly" width="1221" height="260" style="display: block; box-sizing: border-box; height: 260px; width: 1221px;"></canvas>
+      </div>
+    </div>
+
+    <!-- COMPARISON TABLE -->
+    <div class="section-title">Comparación Directa por Dimensión</div>
+    <div class="comparison-section">
+      <div class="comparison-header">
+        <div>Dimensión</div>
+        <div class="col-juanda"><span style="width:8px;height:8px;background:#3a86ff;border-radius:50%;display:inline-block"></span> Juanda (P1)</div>
+        <div class="col-ext"><span style="width:8px;height:8px;background:#e94560;border-radius:50%;display:inline-block"></span> Gestor Externo (P2)</div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Período</span></div>
+        <div><span class="comp-cell-main">Ene 2024 – Oct 2025</span><span class="comp-cell-sub">22 meses</span></div>
+        <div><span class="comp-cell-main">Nov 2025 – Mar 2026</span><span class="comp-cell-sub">5 meses</span></div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Alcance total</span></div>
+        <div><span class="comp-cell-main">917,436</span><span class="comp-cell-sub">Cuentas del Centro</span></div>
+        <div><span class="comp-cell-main">729,072</span><span class="comp-cell-sub">Cuentas del Centro</span></div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Alcance/mes</span></div>
+        <div><span class="comp-cell-main">~41,700</span><span class="badge badge-yellow">Bajo</span></div>
+        <div><span class="comp-cell-main">~145,800</span><span class="badge badge-green">Alto ↑3.5x</span></div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Frecuencia prom.</span></div>
+        <div><span class="comp-cell-main">7.57×</span><span class="badge badge-red">Alta — riesgo fatiga</span></div>
+        <div><span class="comp-cell-main">4.76×</span><span class="badge badge-green">Aceptable</span></div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Objetivos usados</span></div>
+        <div>
+          <span class="badge badge-blue">Tráfico</span>&nbsp;
+          <span class="badge badge-green">Conversiones</span>&nbsp;
+          <span class="badge badge-purple">Interacción</span>
+          <span class="comp-cell-sub" style="margin-top:4px">Mixto — múltiples objetivos</span>
+        </div>
+        <div>
+          <span class="badge badge-green">Ventas Web</span>
+          <span class="comp-cell-sub" style="margin-top:4px">Único objetivo — enfoque total en conversión</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Estructura</span></div>
+        <div>
+          <span class="comp-cell-main">Sin estructura clara</span>
+          <span class="comp-cell-sub">Nomenclatura numérica, sin separación Prospecting/Remarketing visible</span>
+        </div>
+        <div>
+          <span class="comp-cell-main">CBO + ABO definidos</span>
+          <span class="comp-cell-sub">Prospecting (Presentación) + Remarketing separados</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Nomenclatura</span></div>
+        <div>
+          <span class="comp-cell-main">"1. Nombre Campaña"</span>
+          <span class="badge badge-yellow">No estandarizada</span>
+        </div>
+        <div>
+          <span class="comp-cell-main">"FM DD/MM | Tipo | Canal | Formato"</span>
+          <span class="badge badge-green">Estandarizada ✓</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Segmentación geo</span></div>
+        <div>
+          <span class="comp-cell-main">Nacional</span>
+          <span class="comp-cell-sub">Campañas con sufijo "Nacional"</span>
+        </div>
+        <div>
+          <span class="comp-cell-main">Nacional + Cali específico</span>
+          <span class="badge badge-blue">Prueba geo activa</span>
+        </div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Campañas activas hoy</span></div>
+        <div><span class="comp-cell-main">0</span><span class="badge badge-red">Todas desactivadas</span></div>
+        <div><span class="comp-cell-main">4</span><span class="badge badge-green">Activas ✓</span></div>
+      </div>
+
+      <div class="comp-row">
+        <div><span class="row-label">Resultados visibles</span></div>
+        <div><span class="comp-cell-main">No disponible</span><span class="comp-cell-sub">Columnas sin datos de conversión en vista actual</span></div>
+        <div><span class="comp-cell-main">234+ compras</span><span class="comp-cell-sub">FM 04/12 CBO: 88 · ABO 2.0: 67 · Cali: 41 · otros</span></div>
+      </div>
+
+    </div><!-- /comparison-section -->
+
+  </div><!-- /tab-overview -->
+
+
+  <!-- ═══════════ TAB: MÉTRICAS ═══════════ -->
+  <div id="tab-metrics" class="tab-content">
+
+    <div class="section-title">Análisis Gráfico de Métricas</div>
+
+    <div class="charts-grid">
+
+      <!-- CHART 1: ALCANCE vs FRECUENCIA -->
+      <div class="chart-card">
+        <div class="chart-title">Alcance vs Frecuencia</div>
+        <div class="chart-subtitle">Mayor alcance con menor frecuencia = mejor. Punto óptimo: frecuencia 3–5x</div>
+        <div class="chart-wrap">
+          <canvas id="chartAlcanceFreq" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas>
+        </div>
+      </div>
+
+      <!-- CHART 2: FRECUENCIA SEMÁFORO -->
+      <div class="chart-card">
+        <div class="chart-title">Distribución de Frecuencia por Campaña Visible</div>
+        <div class="chart-subtitle">Período 2 (gestor externo) — frecuencias individuales capturadas</div>
+        <div class="chart-wrap">
+          <canvas id="chartFreqCamp" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas>
+        </div>
+      </div>
+
+      <!-- CHART 3: OBJETIVOS -->
+      <div class="chart-card">
+        <div class="chart-title">Mix de Objetivos de Campaña</div>
+        <div class="chart-subtitle">Distribución de objetivos usados en cada período</div>
+        <div class="chart-wrap">
+          <canvas id="chartObjetivos" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas>
+        </div>
+      </div>
+
+      <!-- CHART 4: RESULTADOS PERÍODO 2 -->
+      <div class="chart-card">
+        <div class="chart-title">Compras por Campaña (Período 2 — Externo)</div>
+        <div class="chart-subtitle">Resultados de compras web por campaña identificada</div>
+        <div class="chart-wrap">
+          <canvas id="chartResultados" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FUNNELS -->
+    <div class="section-title">Estructura de Embudo por Período</div>
+    <div class="funnel-grid">
+      <div class="funnel-card">
+        <div class="chart-title" style="margin-bottom:16px">Período 1 — Juanda</div>
+        <div class="funnel-step">
+          <div class="funnel-label">Impresiones</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#3a86ff; width:100%">Alta exposición</div>
+          </div>
+          <div class="funnel-num">Alta</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Alcance</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#4a9eff; width:85%">917,436</div>
+          </div>
+          <div class="funnel-num">917,436</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Frecuencia</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#dc2626; width:90%">⚠ 7.57×</div>
+          </div>
+          <div class="funnel-num">7.57×</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Clics</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#6366f1; width:50%">Múltiples objetivos</div>
+          </div>
+          <div class="funnel-num">Mixto</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Conversiones</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#94a3b8; width:30%">No medido</div>
+          </div>
+          <div class="funnel-num">N/D</div>
+        </div>
+      </div>
+
+      <div class="funnel-card">
+        <div class="chart-title" style="margin-bottom:16px">Período 2 — Gestor Externo</div>
+        <div class="funnel-step">
+          <div class="funnel-label">Impresiones</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#e94560; width:100%">Mayor volumen mensual</div>
+          </div>
+          <div class="funnel-num">Alta</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Alcance</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#f1657a; width:80%">729,072</div>
+          </div>
+          <div class="funnel-num">729,072</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Frecuencia</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#16a34a; width:60%">✓ 4.76×</div>
+          </div>
+          <div class="funnel-num">4.76×</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Clics/Visitas</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#0ea5e9; width:45%">Ventas Web</div>
+          </div>
+          <div class="funnel-num">Web</div>
+        </div>
+        <div class="funnel-step">
+          <div class="funnel-label">Compras</div>
+          <div class="funnel-bar-wrap">
+            <div class="funnel-bar" style="background:#16a34a; width:35%">234+ compras</div>
+          </div>
+          <div class="funnel-num">234+</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-metrics -->
+
+
+  <!-- ═══════════ TAB: CAMPAÑAS ═══════════ -->
+  <div id="tab-campaigns" class="tab-content active">
+
+    <div class="section-title">Campañas Identificadas por Período</div>
+
+    <div class="info-box">
+      💡 Las campañas del Período 1 (Juanda) aparecen con nomenclatura numérica. Las del Período 2 (Externo) usan el formato sistemático "FM DD/MM | Tipo | Canal | Estructura | Detalle".
+    </div>
+
+    <div class="campaigns-grid">
+
+      <!-- PERÍODO 1 -->
+      <div class="campaign-panel">
+        <div class="campaign-panel-header panel-header-juanda">
+          🔵 Período 1 — Campañas de Juanda (muestra)
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">1. Tráfico Ecommerce FBK</div>
+          <div class="campaign-tags">
+            <span class="tag tag-traffic">Tráfico</span>
+            <span class="tag tag-abo">Manual</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Objetivo: <strong>Clics a sitio web</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">1. Black Friday Saderma</div>
+          <div class="campaign-tags">
+            <span class="tag tag-promo">Promoción</span>
+            <span class="tag tag-conv">Conversiones</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Campaña estacional</span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">1. PRODUCTO FANTASMA CONVERSIONES</div>
+          <div class="campaign-tags">
+            <span class="tag tag-conv">Conversiones</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Objetivo: <strong>Artículo agregado al carrito</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">1. Tensoderm Nacional</div>
+          <div class="campaign-tags">
+            <span class="tag tag-engage">Interacción</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Segmento: <strong>Nacional</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">11. Sandet Te Verde 20%OFF Noviembre Nacional</div>
+          <div class="campaign-tags">
+            <span class="tag tag-promo">Promo 20%OFF</span>
+            <span class="tag tag-traffic">Tráfico/Ventas</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Objetivo: <strong>Visita a la página de destino</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item" style="background:#f8faff;">
+          <div class="campaign-name" style="color:#64748b; font-style:italic;">+ 147 campañas adicionales en la cuenta</div>
+          <div class="campaign-tags">
+            <span class="tag tag-traffic">Varios formatos</span>
+            <span class="tag tag-conv">Varios productos</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PERÍODO 2 -->
+      <div class="campaign-panel">
+        <div class="campaign-panel-header panel-header-ext">
+          🔴 Período 2 — Campañas Gestor Externo (todas identificadas)
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">FM 30/03 | Ventas | Web | Presentacion | ABO | NEWDERM 🟢</div>
+          <div class="campaign-tags">
+            <span class="tag tag-prosp">Prospecting</span>
+            <span class="tag tag-abo">ABO</span>
+            <span class="tag tag-product">NEWDERM</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Alcance: <strong>1,531</strong></span>
+            <span class="c-stat">Frec: <strong>1.58×</strong></span>
+            <span class="c-stat">Estado: <strong style="color:#16a34a">Activa</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">FM 30/03 | Ventas | Web | CBO | Remarketing | Promocion 🟢</div>
+          <div class="campaign-tags">
+            <span class="tag tag-remark">Remarketing</span>
+            <span class="tag tag-cbo">CBO</span>
+            <span class="tag tag-promo">Promoción</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Alcance: <strong>2,251</strong></span>
+            <span class="c-stat">Frec: <strong>1.89×</strong></span>
+            <span class="c-stat">Estado: <strong style="color:#16a34a">Activa</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">FM 04/12 | Ventas | Web | CBO | Remarketing 🟢</div>
+          <div class="campaign-tags">
+            <span class="tag tag-remark">Remarketing</span>
+            <span class="tag tag-cbo">CBO</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Resultados: <strong>88 compras</strong></span>
+            <span class="c-stat">Alcance: <strong>27,575</strong></span>
+            <span class="c-stat">Frec: <strong style="color:#dc2626">22.51×⚠</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">FM 04/12 | Ventas | Web | Presentacion | ABO | 2.0 🟢</div>
+          <div class="campaign-tags">
+            <span class="tag tag-prosp">Prospecting</span>
+            <span class="tag tag-abo">ABO</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Resultados: <strong>67 compras</strong></span>
+            <span class="c-stat">Alcance: <strong>342,822</strong></span>
+            <span class="c-stat">Frec: <strong style="color:#16a34a">3.15×✓</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">FM 04/12 | Ventas | Web | CBO | Remarketing | Promocion ⬛</div>
+          <div class="campaign-tags">
+            <span class="tag tag-remark">Remarketing</span>
+            <span class="tag tag-cbo">CBO</span>
+            <span class="tag tag-promo">Promo</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Resultados: <strong>37 compras</strong></span>
+            <span class="c-stat">Alcance: <strong>12,940</strong></span>
+            <span class="c-stat">Frec: <strong>6.86×</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">FM 11/02 | Ventas | Web | CBO | Remarketing | Cali ⬛</div>
+          <div class="campaign-tags">
+            <span class="tag tag-remark">Remarketing</span>
+            <span class="tag tag-cbo">CBO</span>
+            <span class="tag tag-geo">Cali</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Resultados: <strong>39 compras</strong></span>
+            <span class="c-stat">Alcance: <strong>7,123</strong></span>
+            <span class="c-stat">Frec: <strong style="color:#dc2626">16.93×⚠</strong></span>
+          </div>
+        </div>
+        <div class="campaign-item">
+          <div class="campaign-name">FM 26/02 | Ventas | Web | CBO | Remarketing | Cali | Escala x1 ⬛</div>
+          <div class="campaign-tags">
+            <span class="tag tag-remark">Remarketing</span>
+            <span class="tag tag-cbo">CBO</span>
+            <span class="tag tag-geo">Cali</span>
+          </div>
+          <div class="campaign-stats">
+            <span class="c-stat">Resultados: <strong style="color:#dc2626">2 compras</strong></span>
+            <span class="c-stat">Alcance: <strong>4,112</strong></span>
+            <span class="c-stat">Frec: <strong>2.26×</strong></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /tab-campaigns -->
+
+
+  <!-- ═══════════ TAB: INSIGHTS ═══════════ -->
+  <div id="tab-insights" class="tab-content">
+
+    <div class="section-title">Análisis Profundo — Lo Bueno y Lo Malo de Cada Período</div>
+
+    <div class="insights-grid">
+
+      <!-- JUANDA BUENO -->
+      <div class="insight-panel">
+        <div class="insight-header good">✅ Lo Bueno — Período Juanda</div>
+        <div class="insight-item">
+          <span class="insight-icon">🎯</span>
+          <span><strong>Diversidad de objetivos:</strong> Usaste Tráfico, Conversiones e Interacción — una estrategia de embudo completo. No solo perseguiste ventas sino también construiste audiencia y engagement.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🛍️</span>
+          <span><strong>Campañas de producto específico:</strong> Campañas para Tensoderm y Sandet Té Verde por nombre propio demuestra conocimiento profundo del catálogo y mensajes relevantes por producto.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📅</span>
+          <span><strong>Estrategia estacional:</strong> "Black Friday Saderma" muestra aprovechamiento de fechas clave del calendario de consumo — algo que el gestor externo no evidenció en su período.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🧩</span>
+          <span><strong>Volumen total de alcance:</strong> 917,436 cuentas impactadas en el período — mayor número total que el período 2 en valores absolutos.</span>
+        </div>
+      </div>
+
+      <!-- JUANDA MALO -->
+      <div class="insight-panel">
+        <div class="insight-header bad">❌ Áreas de Mejora — Período Juanda</div>
+        <div class="insight-item">
+          <span class="insight-icon">🔁</span>
+          <span><strong>Frecuencia excesiva (7.57×):</strong> Una frecuencia promedio de 7.57 está por encima del umbral óptimo (3–5×). Esto indica que los mismos usuarios veían el anuncio demasiadas veces, generando fatiga de audiencia y posible aumento en CPC/CPM.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📋</span>
+          <span><strong>Nomenclatura no estandarizada:</strong> Nombres como "1. Tráfico Ecommerce FBK" o "1.Tensoderm Nacional" no siguen una convención clara de fecha, objetivo y estructura — dificulta el análisis histórico y la escalabilidad.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📊</span>
+          <span><strong>Alcance mensual bajo (~41,700/mes):</strong> Comparado con los ~145,800/mes del gestor externo, la expansión de audiencia mensual era significativamente menor. Indica presupuesto o configuración de targeting más limitado.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🔄</span>
+          <span><strong>Sin separación clara Prospecting/Remarketing:</strong> No se identifica una estructura de funnel clara con campañas separadas para audiencias frías (Prospecting) vs. audiencias calientes (Remarketing).</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📏</span>
+          <span><strong>Sin medición de conversiones visible:</strong> En el período analizado, las campañas no muestran datos claros de compras o eventos de conversión rastreados, lo que dificulta evaluar el ROI real.</span>
+        </div>
+      </div>
+
+      <!-- EXTERNO BUENO -->
+      <div class="insight-panel">
+        <div class="insight-header good">✅ Lo Bueno — Período Gestor Externo</div>
+        <div class="insight-item">
+          <span class="insight-icon">🏗️</span>
+          <span><strong>Estructura CBO + ABO clara:</strong> Usa correctamente Campaign Budget Optimization (CBO) para remarketing y Ad Set Budget Optimization (ABO) para prospecting — estructura recomendada por Meta para maximizar conversiones.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📝</span>
+          <span><strong>Nomenclatura sistemática "FM DD/MM | ...":</strong> Cada campaña incluye fecha de lanzamiento, objetivo, canal y estructura en el nombre. Permite análisis rápido, comparación histórica y escalabilidad del equipo.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🎪</span>
+          <span><strong>Embudo completo Prospecting + Remarketing:</strong> Separa claramente campañas de presentación (audiencias frías) y remarketing (audiencias calientes) — estructura fundamental para e-commerce.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📍</span>
+          <span><strong>Prueba de segmentación geográfica (Cali):</strong> Probó campañas específicas para Cali — sede de Saderma — permitiendo medir el impacto local vs. nacional.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🛒</span>
+          <span><strong>Conversiones medibles (234+ compras):</strong> Las campañas rastrean y reportan compras web directamente en el Ads Manager. Eso demuestra que el Pixel está bien configurado para atribuir conversiones.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📈</span>
+          <span><strong>Mayor alcance mensual (~145,800/mes):</strong> Expansión 3.5× mayor por mes que el período anterior — mayor inversión y/o eficiencia en la distribución del presupuesto.</span>
+        </div>
+      </div>
+
+      <!-- EXTERNO MALO -->
+      <div class="insight-panel">
+        <div class="insight-header bad">❌ Áreas de Mejora — Gestor Externo</div>
+        <div class="insight-item">
+          <span class="insight-icon">🔥</span>
+          <span><strong>Frecuencia crítica en remarketing (FM 04/12 CBO: 22.5×):</strong> La campaña de remarketing principal alcanzó una frecuencia de 22.51×. Esto es extremadamente alto y señala saturación total de la audiencia de remarketing — necesita expansión urgente de audiencia.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📍</span>
+          <span><strong>Prueba Cali poco rentable (FM 26/02: 2 compras):</strong> La campaña "Escala x1" para Cali generó solo 2 compras con un alcance de 4,112 — tasa de conversión muy baja. Indica audience mismatch o copy inadecuado para ese segmento geográfico.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🎯</span>
+          <span><strong>Foco exclusivo en Ventas/Web:</strong> No hay campañas de awareness, engagement o construcción de audiencia. A largo plazo, esto erosiona el tope del embudo y encarece el remarketing al no refrescar audiencias.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">🌱</span>
+          <span><strong>Campañas nuevas (FM 30/03) aún sin resultados claros:</strong> Las campañas lanzadas el 30 de marzo apenas tienen 1–2 días de datos. No es posible evaluarlas, pero representan la apuesta actual del gestor.</span>
+        </div>
+        <div class="insight-item">
+          <span class="insight-icon">📦</span>
+          <span><strong>Sin campañas de catálogo o dynamic ads visibles:</strong> Para un e-commerce dermatológico con múltiples productos, los Dynamic Product Ads son un canal de alta conversión que no aparece en las campañas visibles.</span>
+        </div>
+      </div>
+
+    </div><!-- /insights-grid -->
+
+  </div><!-- /tab-insights -->
+
+
+  <!-- ═══════════ TAB: RECOMENDACIONES ═══════════ -->
+  <div id="tab-recos" class="tab-content">
+
+    <div class="section-title">Recomendaciones Accionables</div>
+
+    <div class="reco-grid">
+
+      <div class="reco-card priority-high">
+        <div class="reco-priority" style="color:#e94560">🔴 Prioridad Alta</div>
+        <div class="reco-icon">🔥</div>
+        <div class="reco-title">Urgente: Reducir Frecuencia de Remarketing</div>
+        <div class="reco-desc">La campaña FM 04/12 CBO Remarketing tiene 22.51× de frecuencia — saturación crítica. Ampliar la audiencia de remarketing (incluir visitantes de 60–90 días, clientes anteriores), o pausar temporalmente para refrescar la audiencia. Frecuencia objetivo: máx 5–7× en remarketing.</div>
+      </div>
+
+      <div class="reco-card priority-high">
+        <div class="reco-priority" style="color:#e94560">🔴 Prioridad Alta</div>
+        <div class="reco-icon">🌡️</div>
+        <div class="reco-title">Agregar Capa de Awareness al Embudo</div>
+        <div class="reco-desc">El gestor externo solo trabaja Ventas Web — sin alimentar el tope del embudo. Incorporar campañas de alcance/interacción para construir audiencias calientes que nutran los remarketing a costos menores. Una campaña de "Alcance" mensual con el contenido educativo de Saderma (ingredientes, rutinas) es esencial a largo plazo.</div>
+      </div>
+
+      <div class="reco-card priority-high">
+        <div class="reco-priority" style="color:#e94560">🔴 Prioridad Alta</div>
+        <div class="reco-icon">🎯</div>
+        <div class="reco-title">Adoptar Nomenclatura Sistemática (para Juanda)</div>
+        <div class="reco-desc">Implementar el formato "FM/JD DD/MM | Objetivo | Canal | Estructura | Detalle" en todas las futuras campañas. La nomenclatura del gestor externo es superior para análisis y escalabilidad. Migrar también el historial de campañas con notas en la descripción para mantener trazabilidad.</div>
+      </div>
+
+      <div class="reco-card priority-med">
+        <div class="reco-priority" style="color:#f59e0b">🟡 Prioridad Media</div>
+        <div class="reco-icon">🛍️</div>
+        <div class="reco-title">Activar Dynamic Product Ads (Catálogo)</div>
+        <div class="reco-desc">Saderma tiene múltiples productos. Los anuncios de catálogo dinámico muestran automáticamente el producto que cada usuario vio en la web — tasa de conversión típicamente 2–4× mayor que los anuncios estáticos en e-commerce. Requiere catalog feed actualizado en Business Manager.</div>
+      </div>
+
+      <div class="reco-card priority-med">
+        <div class="reco-priority" style="color:#f59e0b">🟡 Prioridad Media</div>
+        <div class="reco-icon">📊</div>
+        <div class="reco-title">Separar Métricas por Tipo de Objetivo</div>
+        <div class="reco-desc">Combinar en el reporte mensual: (1) campañas de reconocimiento con CPM/Frecuencia como KPI, y (2) campañas de conversión con CPA y ROAS como KPI. El análisis actual mezcla ambos, lo que distorsiona la evaluación del rendimiento real de las campañas de ventas.</div>
+      </div>
+
+      <div class="reco-card priority-med">
+        <div class="reco-priority" style="color:#f59e0b">🟡 Prioridad Media</div>
+        <div class="reco-icon">📅</div>
+        <div class="reco-title">Recuperar Campañas Estacionales (Juanda)</div>
+        <div class="reco-desc">El gestor externo no evidenció campañas para Black Friday, temporada de amor y amistad, o descuentos por fechas especiales — algo que Juanda sí tenía. Integrar el calendario de descuentos mensual de Saderma (que ya tiene) en la planificación de campañas pagadas.</div>
+      </div>
+
+      <div class="reco-card priority-low">
+        <div class="reco-priority" style="color:#16a34a">🟢 Prioridad Normal</div>
+        <div class="reco-icon">🧪</div>
+        <div class="reco-title">Evaluar y Optimizar Segmentación Cali</div>
+        <div class="reco-desc">Las campañas de Cali mostraron resultados mixtos (FM 11/02: 39 compras bien; FM 26/02: 2 compras mal). Antes de escalar o pausar, analizar diferencias en copy, creatividad y producto entre ambas campañas. Cali puede ser un mercado clave dado que es la sede de Saderma.</div>
+      </div>
+
+      <div class="reco-card priority-low">
+        <div class="reco-priority" style="color:#16a34a">🟢 Prioridad Normal</div>
+        <div class="reco-icon">🤝</div>
+        <div class="reco-title">Consolidar lo Mejor de Cada Período</div>
+        <div class="reco-desc">La estrategia ideal combina: la diversidad de objetivos y conocimiento de producto de Juanda + la estructura CBO/ABO, nomenclatura sistemática y enfoque en conversión del gestor externo. No es uno u otro — es integrar las fortalezas de ambos períodos.</div>
+      </div>
+
+      <div class="reco-card priority-low">
+        <div class="reco-priority" style="color:#16a34a">🟢 Prioridad Normal</div>
+        <div class="reco-icon">🔬</div>
+        <div class="reco-title">Implementar Test A/B Sistemático</div>
+        <div class="reco-desc">Ninguno de los dos períodos muestra evidencia de testing A/B estructurado. Con el volumen de tráfico de Saderma, un test A/B mensual de creatividades (imagen vs. video, hook racional vs. emocional) puede mejorar el CTR significativamente. Meta tiene la funcionalidad nativa "Prueba A/B" disponible.</div>
+      </div>
+
+    </div><!-- /reco-grid -->
+
+    <!-- VERDICT -->
+    <div class="verdict-section">
+      <div>
+        <div class="verdict-title">Veredicto General</div>
+        <div class="verdict-text">
+          Ambos períodos tienen <em>fortalezas reales y debilidades claras</em>. El gestor externo demuestra mayor volumen mensual y mejor estructura técnica; Juanda muestra mayor conocimiento del producto y visión de embudo completo. <em>La cuenta de Saderma necesita ambos enfoques integrados</em> para maximizar resultados.
+        </div>
+      </div>
+      <div class="verdict-scores">
+        <div class="score-card">
+          <div class="score-name">Juanda</div>
+          <div class="score-val juanda-score">7.2</div>
+          <div class="score-label">/ 10 global</div>
+        </div>
+        <div class="score-card">
+          <div class="score-name">Gestor Externo</div>
+          <div class="score-val ext-score">7.8</div>
+          <div class="score-label">/ 10 global</div>
+        </div>
+        <div class="score-card" style="grid-column: span 2; background: rgba(255,255,255,0.05);">
+          <div style="font-size:12px; color:rgba(255,255,255,0.7); line-height:1.6;">
+            La diferencia es mínima. El gestor externo tiene ventaja técnica y de volumen; Juanda tiene ventaja en conocimiento del cliente y estrategia diversificada. Con la estructura del externo + la visión de Juanda = cuenta de 9+.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-recos -->
+
+</div><!-- /main -->
+
+<div class="footer">
+  Análisis generado el 6 de abril de 2026 · Datos extraídos directamente de Meta Ads Manager (cuenta Saderma Marketing act=459839867927034) · Elaborado con datos de alcance, frecuencia y estructura de campañas visibles en el período Máximo (6 mar 2023 – 6 abr 2026)
+</div>
+
+<!-- ─── CHARTS ─── -->
+<script>
+// Helper
+function getCtx(id) { return document.getElementById(id).getContext('2d'); }
+
+const JUANDA_COLOR = '#3a86ff';
+const EXT_COLOR = '#e94560';
+const JUANDA_LIGHT = 'rgba(58,134,255,0.15)';
+const EXT_LIGHT = 'rgba(233,69,96,0.15)';
+
+Chart.defaults.font.family = "'Inter', -apple-system, sans-serif";
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+Chart.defaults.plugins.legend.labels.padding = 16;
+
+// ─ MONTHLY REACH ─
+new Chart(getCtx('chartMonthly'), {
+  type: 'bar',
+  data: {
+    labels: ['Alcance Total Período', 'Alcance Mensual Estimado', 'Frecuencia Promedio'],
+    datasets: [
+      {
+        label: 'Juanda (P1)',
+        data: [917436, 41700, 7.57],
+        backgroundColor: JUANDA_COLOR,
+        borderRadius: 6,
+      },
+      {
+        label: 'Gestor Externo (P2)',
+        data: [729072, 145814, 4.76],
+        backgroundColor: EXT_COLOR,
+        borderRadius: 6,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top' },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            const v = ctx.raw;
+            if (ctx.dataIndex === 2) return `${ctx.dataset.label}: ${v}×`;
+            return `${ctx.dataset.label}: ${v.toLocaleString('es-CO')}`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: {
+        grid: { color: '#f1f5f9' },
+        ticks: { callback: v => v >= 1000 ? (v/1000)+'K' : v }
+      },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ─ ALCANCE vs FRECUENCIA SCATTER ─
+new Chart(getCtx('chartAlcanceFreq'), {
+  type: 'bar',
+  data: {
+    labels: ['Alcance Total', 'Alcance/Mes', 'Frecuencia (×)'],
+    datasets: [
+      {
+        label: 'Juanda',
+        data: [9.17, 0.42, 7.57],
+        backgroundColor: JUANDA_COLOR,
+        borderRadius: 4,
+      },
+      {
+        label: 'Externo',
+        data: [7.29, 1.46, 4.76],
+        backgroundColor: EXT_COLOR,
+        borderRadius: 4,
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'top' },
+      tooltip: {
+        callbacks: {
+          label: function(ctx) {
+            const labels2 = ['Alcance Total', 'Alcance/Mes', 'Frecuencia'];
+            const vals = [
+              ['917,436', '729,072'],
+              ['~41,700/mes', '~145,800/mes'],
+              ['7.57×', '4.76×']
+            ];
+            return `${ctx.dataset.label}: ${vals[ctx.dataIndex][ctx.datasetIndex]}`;
+          }
+        }
+      }
+    },
+    scales: {
+      y: { grid: { color: '#f1f5f9' }, display: false },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+// ─ FRECUENCIA POR CAMPAÑA (P2) ─
+new Chart(getCtx('chartFreqCamp'), {
+  type: 'bar',
+  data: {
+    labels: ['FM04/12 CBO\nRemark.','FM11/02\nCali','FM04/12\nPromo','FM30/03\nRemark.','FM04/12\nABO 2.0','FM30/03\nNewderm','FM26/02\nCali'],
+    datasets: [{
+      label: 'Frecuencia',
+      data: [22.51, 16.93, 6.86, 1.89, 3.15, 1.58, 2.26],
+      backgroundColor: (ctx) => {
+        const v = ctx.raw;
+        if (v > 10) return '#ef4444';
+        if (v > 5) return '#f59e0b';
+        return '#22c55e';
+      },
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      annotation: {},
+      tooltip: {
+        callbacks: {
+          label: ctx => `Frecuencia: ${ctx.raw}× ${ctx.raw > 10 ? '⚠ Muy alta' : ctx.raw > 5 ? '⚡ Alta' : '✓ OK'}`
+        }
+      }
+    },
+    scales: {
+      y: {
+        grid: { color: '#f1f5f9' },
+        title: { display: true, text: 'Frecuencia (×)', color: '#64748b', font: { size: 11 } }
+      },
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// ─ OBJETIVOS PIE ─
+const objetivosCtx = getCtx('chartObjetivos');
+new Chart(objetivosCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Tráfico (J)', 'Conversiones (J)', 'Interacción (J)', 'Ventas Web (E)'],
+    datasets: [{
+      data: [35, 40, 25, 100],
+      backgroundColor: ['#60a5fa','#34d399','#a78bfa','#fb7185'],
+      borderWidth: 0,
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'right', labels: { font: { size: 11 } } },
+      tooltip: {
+        callbacks: {
+          label: ctx => {
+            const labels = ['Juanda ~35%','Juanda ~40%','Juanda ~25%','Externo 100%'];
+            return labels[ctx.dataIndex];
+          }
+        }
+      }
+    }
+  }
+});
+
+// ─ RESULTADOS P2 ─
+new Chart(getCtx('chartResultados'), {
+  type: 'bar',
+  data: {
+    labels: ['FM 04/12\nCBO Remark.', 'FM 04/12\nABO 2.0', 'FM 11/02\nCali', 'FM 04/12\nPromo', 'FM 26/02\nCali Esc.', 'FM 30/03\nRemark.'],
+    datasets: [{
+      label: 'Compras Web',
+      data: [88, 67, 39, 37, 2, 1],
+      backgroundColor: ['#e94560','#f472b6','#fb7185','#fca5a5','#fecdd3','#fef2f4'],
+      borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => `${ctx.raw} compras web`
+        }
+      }
+    },
+    scales: {
+      x: { grid: { color: '#f1f5f9' }, title: { display: true, text: 'Compras registradas', color: '#64748b', font: { size: 11 } } },
+      y: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+
+// ─ TABS ─
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+
+
+
+</body></html>

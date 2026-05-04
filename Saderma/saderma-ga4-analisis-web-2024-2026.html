@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saderma · Análisis Web GA4 | 2024–2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --primary:#1A5276;--secondary:#2E86AB;--accent:#1ABC9C;
+  --success:#27AE60;--warning:#E67E22;--danger:#E74C3C;
+  --bg:#EBF5FB;--card:#fff;--text:#2C3E50;--muted:#7F8C8D;--border:#D5E8F0;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;font-size:15px;}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#1A5276 0%,#2980B9 100%);color:#fff;padding:22px 40px;position:sticky;top:0;z-index:200;box-shadow:0 3px 12px rgba(0,0,0,.25);}
+.hdr-inner{max-width:1360px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;}
+.hdr h1{font-size:1.5rem;font-weight:700;letter-spacing:-.4px;}
+.hdr .sub{font-size:.8rem;opacity:.75;margin-top:2px;}
+.date-pill{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.35);padding:5px 14px;border-radius:20px;font-size:.82rem;white-space:nowrap;}
+
+/* NAV */
+.nav-bar{background:#fff;border-bottom:2px solid var(--border);position:sticky;top:76px;z-index:150;overflow-x:auto;}
+.nav-bar ul{list-style:none;display:flex;max-width:1360px;margin:0 auto;min-width:700px;}
+.nav-bar a{display:block;padding:13px 18px;text-decoration:none;color:var(--muted);font-size:.88rem;font-weight:600;white-space:nowrap;border-bottom:3px solid transparent;transition:all .2s;}
+.nav-bar a:hover,.nav-bar a.active{color:var(--primary);border-bottom-color:var(--primary);}
+
+/* MAIN */
+.wrap{max-width:1360px;margin:0 auto;padding:32px 24px 60px;}
+
+/* SECTIONS */
+.sec{margin-bottom:52px;scroll-margin-top:148px;}
+.sec-head{display:flex;align-items:center;gap:12px;margin-bottom:22px;}
+.sec-head h2{font-size:1.25rem;font-weight:700;color:var(--primary);white-space:nowrap;}
+.sec-head::after{content:'';flex:1;height:2px;background:var(--border);}
+
+/* KPI GRID */
+.kpi-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:24px;}
+.kpi{background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,.07);border-left:4px solid var(--primary);transition:transform .2s;}
+.kpi:hover{transform:translateY(-2px);}
+.kpi.ok{border-left-color:var(--success);}
+.kpi.warn{border-left-color:var(--warning);}
+.kpi.bad{border-left-color:var(--danger);}
+.kpi .lbl{font-size:.72rem;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);margin-bottom:5px;font-weight:600;}
+.kpi .val{font-size:1.9rem;font-weight:800;line-height:1;color:var(--text);}
+.kpi .sub{font-size:.72rem;color:var(--muted);margin-top:4px;}
+
+/* GRIDS */
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px;}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:18px;}
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;}
+
+/* CARDS */
+.card{background:#fff;border-radius:12px;padding:22px;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.card-title{font-size:.92rem;font-weight:700;color:var(--text);margin-bottom:14px;}
+.chart-wrap{position:relative;}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;font-size:.84rem;}
+.tbl th{background:var(--bg);padding:9px 13px;text-align:left;font-size:.72rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);font-weight:700;}
+.tbl td{padding:9px 13px;border-bottom:1px solid #F0F7FC;vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:#F8FBFD;}
+
+/* BADGES */
+.badge{display:inline-block;padding:2px 9px;border-radius:12px;font-size:.72rem;font-weight:700;}
+.b-ok{background:#D5F5E3;color:#1E8449;}
+.b-warn{background:#FDEBD0;color:#B7770D;}
+.b-bad{background:#FADBD8;color:#C0392B;}
+.b-info{background:#D6EAF8;color:#1A5276;}
+.b-grey{background:#F2F3F4;color:#555;}
+
+/* PROGRESS */
+.prow{display:flex;align-items:center;gap:8px;font-size:.8rem;}
+.pbar{flex:1;height:5px;background:#EBF5FB;border-radius:3px;overflow:hidden;}
+.pfill{height:100%;border-radius:3px;}
+
+/* ALERTS */
+.alert{border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;align-items:flex-start;gap:12px;font-size:.87rem;line-height:1.5;}
+.alert-icon{font-size:1.3rem;flex-shrink:0;margin-top:1px;}
+.alert-red{background:#FADBD8;border:1px solid var(--danger);}
+.alert-orange{background:#FEF5E7;border:1px solid var(--warning);}
+.alert-green{background:#D5F5E3;border:1px solid var(--success);}
+.alert-blue{background:#D6EAF8;border:1px solid var(--secondary);}
+
+/* INFO BOX */
+.infobox{background:#EBF5FB;border-left:3px solid var(--secondary);padding:11px 15px;border-radius:0 8px 8px 0;font-size:.83rem;margin-top:14px;line-height:1.55;}
+
+/* INSIGHT CARDS */
+.insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;}
+.ic{background:#fff;border-radius:12px;padding:18px 20px;box-shadow:0 2px 8px rgba(0,0,0,.07);}
+.ic.red{border-top:4px solid var(--danger);}
+.ic.orange{border-top:4px solid var(--warning);}
+.ic.green{border-top:4px solid var(--success);}
+.ic.blue{border-top:4px solid var(--secondary);}
+.ic-icon{font-size:1.7rem;margin-bottom:8px;}
+.ic h4{font-size:.9rem;font-weight:700;margin-bottom:5px;}
+.ic p{font-size:.8rem;color:var(--muted);line-height:1.5;}
+
+/* RECS */
+.rec{background:#fff;border-radius:10px;padding:15px 18px;margin-bottom:12px;box-shadow:0 2px 6px rgba(0,0,0,.06);display:flex;gap:14px;align-items:flex-start;}
+.pri{padding:4px 10px;border-radius:20px;font-size:.68rem;font-weight:800;text-transform:uppercase;white-space:nowrap;flex-shrink:0;margin-top:2px;}
+.pri-alta{background:#FADBD8;color:#C0392B;}
+.pri-media{background:#FDEBD0;color:#B7770D;}
+.pri-baja{background:#D5F5E3;color:#1E8449;}
+.rec-body h4{font-size:.88rem;font-weight:700;margin-bottom:3px;}
+.rec-body p{font-size:.8rem;color:var(--muted);line-height:1.5;}
+
+/* DOT */
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px;vertical-align:middle;}
+
+/* FOOTER */
+.ftr{background:var(--primary);color:rgba(255,255,255,.65);text-align:center;padding:18px;font-size:.78rem;margin-top:40px;}
+
+/* HERO NUMBERS */
+.hero-num{font-size:3rem;font-weight:900;color:var(--primary);line-height:1;}
+
+/* SCORE BADGE */
+.score{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.82rem;font-weight:700;}
+
+@media(max-width:768px){
+  .hdr{padding:14px 16px;}
+  .hdr h1{font-size:1.1rem;}
+  .wrap{padding:20px 12px 40px;}
+  .kpi-row{grid-template-columns:repeat(2,1fr);}
+  .g2,.g3{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="hdr">
+  <div class="hdr-inner">
+    <div>
+      <h1>🔬 Saderma · Análisis Web GA4</h1>
+      <div class="sub">Laboratorio Dermatológico Saderma S.A.S. · Google Analytics 4</div>
+    </div>
+    <div class="date-pill">📅 1 Ene 2024 — 6 Abr 2026</div>
+  </div>
+</header>
+
+<!-- NAV -->
+<nav class="nav-bar">
+  <ul>
+    <li><a href="#resumen" class="active">📊 Resumen</a></li>
+    <li><a href="#trafico">🚦 Tráfico</a></li>
+    <li><a href="#ecommerce">🛒 E-commerce</a></li>
+    <li><a href="#audiencia">👥 Audiencia</a></li>
+    <li><a href="#dispositivos">📱 Dispositivos</a></li>
+    <li><a href="#paginas">📄 Páginas</a></li>
+    <li><a href="#insights">💡 Insights</a></li>
+  </ul>
+</nav>
+
+<div class="wrap">
+
+<!-- ====== RESUMEN ====== -->
+<section class="sec" id="resumen">
+  <div class="sec-head"><h2>📊 Resumen General</h2></div>
+
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="lbl">Sesiones Totales</div>
+      <div class="val">115,040</div>
+      <div class="sub">Ene 2024 – Abr 2026</div>
+    </div>
+    <div class="kpi ok">
+      <div class="lbl">Usuarios Activos</div>
+      <div class="val">72,986</div>
+      <div class="sub">Usuarios únicos</div>
+    </div>
+    <div class="kpi ok">
+      <div class="lbl">Ingresos Totales</div>
+      <div class="val">$14,486</div>
+      <div class="sub">USD · E-commerce</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Compras</div>
+      <div class="val">474</div>
+      <div class="sub">Pedidos completados</div>
+    </div>
+    <div class="kpi warn">
+      <div class="lbl">Tasa Conversión</div>
+      <div class="val">0.41%</div>
+      <div class="sub">Meta industria: 1–4%</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Valor Prom. Pedido</div>
+      <div class="val">$30.56</div>
+      <div class="sub">AOV en USD</div>
+    </div>
+    <div class="kpi warn">
+      <div class="lbl">Tasa Interacción</div>
+      <div class="val">45.1%</div>
+      <div class="sub">Media general</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Páginas Vistas</div>
+      <div class="val">267,639</div>
+      <div class="sub">Total de vistas</div>
+    </div>
+  </div>
+
+  <div class="alert alert-red">
+    <span class="alert-icon">🚨</span>
+    <div><strong>Alerta crítica:</strong> Meta Ads genera el 23.5% de las sesiones pero solo el <strong>0.32% de los ingresos</strong> — $46.66 en total sobre $14,486. Además, el canal "Paid Other" suma 6,011 sesiones con <strong>$0 en ventas</strong>. El gasto en tráfico pagado no está convirtiendo.</div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Sesiones por Canal de Tráfico</div>
+      <div class="chart-wrap" style="height:270px"><canvas id="cDonut"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sesiones vs. Ingresos por Canal (%)</div>
+      <div class="chart-wrap" style="height:270px"><canvas id="cRvS"></canvas></div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== TRÁFICO ====== -->
+<section class="sec" id="trafico">
+  <div class="sec-head"><h2>🚦 Análisis de Tráfico por Canal</h2></div>
+
+  <div class="card" style="margin-bottom:20px;overflow-x:auto;">
+    <div class="card-title">Detalle Completo por Canal de Adquisición</div>
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th>Canal</th><th>Sesiones</th><th>% Total</th>
+          <th>Tasa Interacción</th><th>Tiempo Promedio</th>
+          <th>Ingresos</th><th>% Revenue</th><th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="dot" style="background:#27AE60"></span><strong>Organic Search</strong></td>
+          <td><strong>28,860</strong></td><td>25.09%</td>
+          <td><span class="badge b-ok">63.06%</span></td><td>1m 03s</td>
+          <td><strong>$8,027.97</strong></td><td><span class="badge b-ok">55.42%</span></td>
+          <td><span class="badge b-ok">⭐ Estrella</span></td>
+        </tr>
+        <tr style="background:#FFF5F5">
+          <td><span class="dot" style="background:#E74C3C"></span><strong>Paid Social</strong></td>
+          <td><strong>27,089</strong></td><td>23.55%</td>
+          <td><span class="badge b-bad">30.60%</span></td><td>17s</td>
+          <td><strong>$46.66</strong></td><td><span class="badge b-bad">0.32%</span></td>
+          <td><span class="badge b-bad">🚨 Crítico</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#2980B9"></span>Direct</td>
+          <td>23,227</td><td>20.19%</td>
+          <td><span class="badge b-warn">40.78%</span></td><td>31s</td>
+          <td>$2,267.76</td><td>15.65%</td>
+          <td><span class="badge b-info">Regular</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#8E44AD"></span>Organic Social</td>
+          <td>18,972</td><td>16.49%</td>
+          <td><span class="badge b-warn">52.19%</span></td><td>32s</td>
+          <td>$1,795.81</td><td>12.40%</td>
+          <td><span class="badge b-warn">⚠️ Mejorable</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#95A5A6"></span>Unassigned</td>
+          <td>8,790</td><td>7.64%</td>
+          <td>39.95%</td><td>—</td>
+          <td>$1,583.47</td><td>10.93%</td>
+          <td><span class="badge b-warn">Sin atribuir</span></td>
+        </tr>
+        <tr style="background:#FFF5F5">
+          <td><span class="dot" style="background:#E67E22"></span>Paid Other</td>
+          <td>6,011</td><td>5.23%</td>
+          <td><span class="badge b-bad">31.94%</span></td><td>—</td>
+          <td><strong>$0.00</strong></td><td><span class="badge b-bad">0%</span></td>
+          <td><span class="badge b-bad">🚨 Sin retorno</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#16A085"></span>Referral</td>
+          <td>1,197</td><td>1.04%</td>
+          <td><span class="badge b-ok">52.63%</span></td><td>—</td>
+          <td>$667.75</td><td>4.61%</td>
+          <td><span class="badge b-ok">Bueno</span></td>
+        </tr>
+        <tr>
+          <td><span class="dot" style="background:#F39C12"></span>Organic Shopping</td>
+          <td>491</td><td>0.43%</td>
+          <td><span class="badge b-ok">64.97%</span></td><td>—</td>
+          <td>$97.01</td><td>0.67%</td>
+          <td><span class="badge b-ok">Potencial</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Tasa de Interacción por Canal (%)</div>
+      <div class="chart-wrap" style="height:270px"><canvas id="cInter"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Ingresos por Canal (USD)</div>
+      <div class="chart-wrap" style="height:270px"><canvas id="cRevCh"></canvas></div>
+    </div>
+  </div>
+
+  <div class="infobox">
+    💡 <strong>Diagnóstico:</strong> Organic Search genera <strong>$279 por cada 1,000 sesiones</strong>. Paid Social genera <strong>$1.72 por cada 1,000 sesiones</strong>. La diferencia es de 162 veces. El problema no es el volumen de tráfico de Meta Ads — es que ese tráfico llega y no convierte. Esto apunta a una desconexión entre el mensaje del anuncio y la experiencia en la página de destino.
+  </div>
+</section>
+
+<!-- ====== E-COMMERCE ====== -->
+<section class="sec" id="ecommerce">
+  <div class="sec-head"><h2>🛒 Rendimiento E-commerce</h2></div>
+
+  <div class="kpi-row">
+    <div class="kpi ok">
+      <div class="lbl">Ingresos Totales</div>
+      <div class="val">$14,486</div>
+      <div class="sub">USD acumulado</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Pedidos</div>
+      <div class="val">474</div>
+      <div class="sub">Compras completadas</div>
+    </div>
+    <div class="kpi warn">
+      <div class="lbl">AOV</div>
+      <div class="val">$30.56</div>
+      <div class="sub">Valor prom. pedido</div>
+    </div>
+    <div class="kpi bad">
+      <div class="lbl">Tasa Conversión</div>
+      <div class="val">0.41%</div>
+      <div class="sub">Industria: 1–4%</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Productos Únicos</div>
+      <div class="val">41</div>
+      <div class="sub">SKUs en catálogo</div>
+    </div>
+    <div class="kpi warn">
+      <div class="lbl">Ingreso/Sesión</div>
+      <div class="val">$0.13</div>
+      <div class="sub">Revenue per session</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Top 5 Productos — Compras</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="cProdU"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Top 5 Productos — Ingresos (USD)</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="cProdR"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:20px;overflow-x:auto;">
+    <div class="card-title">Ranking Detallado — Top 5 Productos</div>
+    <table class="tbl">
+      <thead>
+        <tr><th>#</th><th>Producto</th><th>Compras</th><th>% Compras</th><th>Ingresos</th><th>Precio Prom.</th><th>% Revenue</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>1</strong></td>
+          <td><strong>Sandet Gel Té Verde</strong></td>
+          <td>100</td>
+          <td>
+            <div class="prow">21.1%
+              <div class="pbar"><div class="pfill" style="width:100%;background:#27AE60"></div></div>
+            </div>
+          </td>
+          <td><strong>$2,234.25</strong></td><td>$22.34</td>
+          <td><span class="badge b-ok">17.5%</span></td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td><strong>Hyderm Face Emulgel</strong></td>
+          <td>76</td>
+          <td>
+            <div class="prow">16.0%
+              <div class="pbar"><div class="pfill" style="width:76%;background:#2980B9"></div></div>
+            </div>
+          </td>
+          <td><strong>$2,028.04</strong></td><td>$26.68</td>
+          <td><span class="badge b-ok">15.9%</span></td>
+        </tr>
+        <tr>
+          <td><strong>3</strong></td>
+          <td><strong>Tensoderm Contorno de Ojos</strong></td>
+          <td>75</td>
+          <td>
+            <div class="prow">15.8%
+              <div class="pbar"><div class="pfill" style="width:75%;background:#8E44AD"></div></div>
+            </div>
+          </td>
+          <td><strong>$1,566.97</strong></td><td>$20.89</td>
+          <td>12.3%</td>
+        </tr>
+        <tr>
+          <td><strong>4</strong></td>
+          <td><strong>Sandet Gel Extra Suave</strong></td>
+          <td>72</td>
+          <td>
+            <div class="prow">15.2%
+              <div class="pbar"><div class="pfill" style="width:72%;background:#16A085"></div></div>
+            </div>
+          </td>
+          <td><strong>$1,481.62</strong></td><td>$20.58</td>
+          <td>11.6%</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td><strong>Newderm Advanced</strong> <span class="badge b-info" style="font-size:.65rem">Precio alto</span></td>
+          <td>25</td>
+          <td>
+            <div class="prow">5.3%
+              <div class="pbar"><div class="pfill" style="width:25%;background:#E67E22"></div></div>
+            </div>
+          </td>
+          <td><strong>$880.63</strong></td><td><strong>$35.23</strong></td>
+          <td>6.9%</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="infobox">
+      💡 Los 5 productos top = <strong>73.5% de las compras y 64.2% de los ingresos</strong>. La línea Sandet domina en volumen. <strong>Newderm Advanced</strong> tiene el precio promedio más alto ($35.23) — hay potencial premium sin explotar. Crear kits que combinen productos puede elevar el AOV de $30 a $55+.
+    </div>
+  </div>
+</section>
+
+<!-- ====== AUDIENCIA ====== -->
+<section class="sec" id="audiencia">
+  <div class="sec-head"><h2>👥 Audiencia y Demografía</h2></div>
+
+  <div class="alert alert-orange">
+    <span class="alert-icon">⚠️</span>
+    <div><strong>Limitación de datos:</strong> El <strong>84.56% de los usuarios</strong> tiene datos demográficos desconocidos (limitación de privacidad en GA4). Las cifras de género y edad corresponden al 15.4% de usuarios identificados (~11,270). Son indicativas, no absolutas.</div>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="card-title">Género (usuarios identificados)</div>
+      <div class="chart-wrap" style="height:210px"><canvas id="cGender"></canvas></div>
+      <div class="infobox" style="margin-top:10px">Audiencia <strong>82.4% femenina</strong> — perfectamente alineada con las buyer personas de Saderma.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Grupos de Edad (usuarios identificados)</div>
+      <div class="chart-wrap" style="height:210px"><canvas id="cAge"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Principales Ciudades · Colombia</div>
+      <div class="chart-wrap" style="height:210px"><canvas id="cCities"></canvas></div>
+    </div>
+  </div>
+
+  <div class="g2" style="margin-top:20px;">
+    <div class="card">
+      <div class="card-title">Tráfico por País</div>
+      <table class="tbl">
+        <thead><tr><th>País</th><th>Usuarios</th><th>% Total</th></tr></thead>
+        <tbody>
+          <tr><td>🇨🇴 Colombia</td><td><strong>67,000</strong></td><td><span class="badge b-ok">91.8%</span></td></tr>
+          <tr><td>🇺🇸 Estados Unidos</td><td>4,300</td><td>5.9%</td></tr>
+          <tr><td>🇲🇽 México</td><td>203</td><td>0.3%</td></tr>
+          <tr><td>🇸🇪 Suecia</td><td>200</td><td>0.3%</td></tr>
+          <tr><td>🇪🇸 España</td><td>178</td><td>0.2%</td></tr>
+          <tr><td>🇮🇪 Irlanda</td><td>162</td><td>0.2%</td></tr>
+          <tr><td>🇧🇷 Brasil</td><td>87</td><td>0.1%</td></tr>
+        </tbody>
+      </table>
+      <div class="infobox">⚠️ El tráfico de <strong>EE.UU. (5.9%)</strong> probablemente son colombianos en el exterior. No hay estrategia internacional activa ni envíos internacionales configurados.</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Intereses de la Audiencia (Google Affinity)</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="cInterests"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Revenue by female age group -->
+  <div class="card" style="margin-top:20px;overflow-x:auto;">
+    <div class="card-title">Ingresos por Segmento Demográfico (usuarios identificados)</div>
+    <table class="tbl">
+      <thead><tr><th>Segmento</th><th>Usuarios</th><th>Tasa Conv. Aprox.</th><th>Ingresos</th><th>% Revenue</th></tr></thead>
+      <tbody>
+        <tr><td>👩 Femenino 25–34</td><td>3,164</td><td><span class="badge b-ok">0.82%</span></td><td>$1,244.90</td><td><span class="badge b-ok">8.59%</span></td></tr>
+        <tr><td>👩 Femenino 35–44</td><td>1,967</td><td>0.61%</td><td>$724.79</td><td>5.00%</td></tr>
+        <tr><td>👩 Femenino 45–54</td><td>1,615</td><td>0.80%</td><td>$553.58</td><td>3.82%</td></tr>
+        <tr><td>👩 Femenino 55–64</td><td>2,051</td><td>0.39%</td><td>$461.30</td><td>3.18%</td></tr>
+        <tr><td>👩 Femenino 18–24</td><td>1,094</td><td><span class="badge b-ok">1.28%</span></td><td>$679.22</td><td>4.69%</td></tr>
+        <tr><td>👩 Femenino 65+</td><td>836</td><td>0.48%</td><td>$122.19</td><td>0.84%</td></tr>
+        <tr><td>👨 Masculino 25–34</td><td>520</td><td>1.35%</td><td>$303.42</td><td>2.09%</td></tr>
+        <tr><td>👨 Masculino 18–24</td><td>321</td><td><span class="badge b-ok">1.56%</span></td><td>$244.76</td><td>1.69%</td></tr>
+        <tr><td>👨 Masculino 55–64</td><td>363</td><td>0.83%</td><td>$194.10</td><td>1.34%</td></tr>
+      </tbody>
+    </table>
+    <div class="infobox">💡 <strong>Femenino 18–24</strong> tiene la tasa de conversión más alta (1.28%) entre mujeres. <strong>Masculino 18–24</strong> tiene la mayor tasa de todos los segmentos (1.56%) — audiencia pequeña pero muy efectiva. El segmento antiaging (F 45–64) suma $1,014 en ingresos.</div>
+  </div>
+</section>
+
+<!-- ====== DISPOSITIVOS ====== -->
+<section class="sec" id="dispositivos">
+  <div class="sec-head"><h2>📱 Tecnología y Dispositivos</h2></div>
+
+  <div class="kpi-row">
+    <div class="kpi bad">
+      <div class="lbl">Tráfico Móvil</div>
+      <div class="val">86.9%</div>
+      <div class="sub">Prioridad crítica</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Tráfico Desktop</div>
+      <div class="val">12.6%</div>
+      <div class="sub">9,200 usuarios</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Tráfico Tablet</div>
+      <div class="val">0.4%</div>
+      <div class="sub">321 usuarios</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">Plataforma</div>
+      <div class="val">Web</div>
+      <div class="sub">100% — sin app nativa</div>
+    </div>
+    <div class="kpi">
+      <div class="lbl">iOS vs Android</div>
+      <div class="val">55 / 44%</div>
+      <div class="sub">35K vs 28K usuarios</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-title">Categoría de Dispositivo</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="cDevice"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Sistema Operativo (usuarios activos)</div>
+      <div class="chart-wrap" style="height:260px"><canvas id="cOS"></canvas></div>
+    </div>
+  </div>
+
+  <div class="alert alert-red" style="margin-top:20px;">
+    <span class="alert-icon">🚨</span>
+    <div><strong>Implicación crítica:</strong> Con el 86.9% de tráfico móvil y una tasa de conversión del 0.41% general, la experiencia móvil es el factor más influyente en las ventas. El checkout, las fichas de producto y el carrito deben estar 100% optimizados para pantalla pequeña. Cada segundo de carga adicional en móvil reduce la conversión ~20%.</div>
+  </div>
+
+  <div class="card" style="margin-top:20px;">
+    <div class="card-title">Navegadores Principales (web/móvil)</div>
+    <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;">
+      <div style="background:#F0F7FC;border-radius:8px;padding:10px 16px;font-size:.84rem;"><strong>Chrome</strong><div style="color:var(--muted);font-size:.75rem">Dominante</div></div>
+      <div style="background:#F0F7FC;border-radius:8px;padding:10px 16px;font-size:.84rem;"><strong>Safari (in-app)</strong><div style="color:var(--muted);font-size:.75rem">Instagram / Facebook</div></div>
+      <div style="background:#F0F7FC;border-radius:8px;padding:10px 16px;font-size:.84rem;"><strong>Android WebView</strong><div style="color:var(--muted);font-size:.75rem">Apps nativas</div></div>
+      <div style="background:#F0F7FC;border-radius:8px;padding:10px 16px;font-size:.84rem;"><strong>Safari</strong><div style="color:var(--muted);font-size:.75rem">iOS nativo</div></div>
+      <div style="background:#F0F7FC;border-radius:8px;padding:10px 16px;font-size:.84rem;"><strong>Samsung Internet</strong><div style="color:var(--muted);font-size:.75rem">Dispositivos Samsung</div></div>
+      <div style="background:#F0F7FC;border-radius:8px;padding:10px 16px;font-size:.84rem;"><strong>Edge / Firefox</strong><div style="color:var(--muted);font-size:.75rem">Desktop</div></div>
+    </div>
+    <div class="infobox">⚠️ La presencia alta de <strong>Safari (in-app)</strong> confirma que gran parte del tráfico llega directamente desde Instagram/Facebook. Estos navegadores tienen comportamientos distintos al nativo (cookies limitadas, tracking reducido) lo que también puede explicar parte del problema de atribución.</div>
+  </div>
+</section>
+
+<!-- ====== PÁGINAS ====== -->
+<section class="sec" id="paginas">
+  <div class="sec-head"><h2>📄 Páginas Más Visitadas</h2></div>
+
+  <div class="card" style="overflow-x:auto;">
+    <div class="card-title">Top 10 Páginas — Vistas y Tiempo de Interacción</div>
+    <table class="tbl">
+      <thead>
+        <tr><th>#</th><th>Página</th><th>Vistas</th><th>% Total</th><th>Tiempo Prom.</th><th>Señal</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td><td><strong>/</strong> <em style="color:var(--muted)">(Inicio)</em></td>
+          <td>42,654</td><td>15.9%</td><td>19s</td>
+          <td><span class="badge b-warn">⚠️ Tiempo bajo</span></td>
+        </tr>
+        <tr>
+          <td>2</td><td>/producto/<strong>sandet-gel-té-verde</strong>/</td>
+          <td>17,862</td><td>6.7%</td><td>20s</td>
+          <td><span class="badge b-ok">⭐ Producto #1</span></td>
+        </tr>
+        <tr>
+          <td>3</td><td>/producto/<strong>hyderm-face-emulgel</strong>/</td>
+          <td>17,360</td><td>6.5%</td><td>21s</td>
+          <td><span class="badge b-ok">⭐ Producto #2</span></td>
+        </tr>
+        <tr>
+          <td>4</td><td>/producto/<strong>sandet-gel-limpiador</strong>/</td>
+          <td>12,091</td><td>4.5%</td><td>19s</td>
+          <td><span class="badge b-info">Normal</span></td>
+        </tr>
+        <tr style="background:#FFF3CD;">
+          <td>5</td>
+          <td><strong>/finalizar-compra/</strong> ⚠️</td>
+          <td>11,564</td><td>4.3%</td>
+          <td><strong style="color:var(--danger)">1m 34s</strong></td>
+          <td><span class="badge b-bad">🚨 Fricción</span></td>
+        </tr>
+        <tr>
+          <td>6</td><td>/categoria-producto/<strong>serum</strong>/</td>
+          <td>9,936</td><td>3.7%</td><td>—</td>
+          <td><span class="badge b-info">Categoría activa</span></td>
+        </tr>
+        <tr style="background:#F0FFF4;">
+          <td>7</td><td><strong>/ofertas/</strong> ✅</td>
+          <td>9,842</td><td>3.7%</td>
+          <td><strong style="color:var(--success)">52s</strong></td>
+          <td><span class="badge b-ok">💚 Alta interacción</span></td>
+        </tr>
+        <tr>
+          <td>8</td><td>/producto/<strong>tensoderm</strong>/</td>
+          <td>8,289</td><td>3.1%</td><td>—</td>
+          <td><span class="badge b-info">Producto top 3</span></td>
+        </tr>
+        <tr>
+          <td>9</td><td>/categoria-producto/<strong>limpieza</strong>/</td>
+          <td>8,220</td><td>3.1%</td><td>—</td>
+          <td><span class="badge b-info">Categoría activa</span></td>
+        </tr>
+        <tr>
+          <td>10</td><td>/producto/<strong>tensoderm-contorno</strong>/</td>
+          <td>6,229</td><td>2.3%</td><td>—</td>
+          <td><span class="badge b-ok">⭐ Top revenue</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="g2" style="margin-top:18px;">
+    <div class="alert alert-red">
+      <span class="alert-icon">🚨</span>
+      <div><strong>/finalizar-compra/ — Fricción crítica:</strong> 11,564 visitas y <strong>1m 34s</strong> de tiempo promedio. Los usuarios están atascados en el último paso. Esto indica confusión en el formulario, opciones de pago no claras, o errores de UX en móvil. Simplificar aquí puede ser la acción de mayor impacto en conversiones.</div>
+    </div>
+    <div class="alert alert-green">
+      <span class="alert-icon">💡</span>
+      <div><strong>/ofertas/ — El mejor tiempo de interacción:</strong> Con <strong>52 segundos</strong> promedio, la página de ofertas supera a todas las categorías en engagement. Los descuentos activan a los usuarios. Mantener una sección de ofertas activa permanentemente o usar urgencia limitada puede elevar conversiones sin más tráfico.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ====== INSIGHTS ====== -->
+<section class="sec" id="insights">
+  <div class="sec-head"><h2>💡 Insights Estratégicos</h2></div>
+
+  <div class="insight-grid" style="margin-bottom:32px;">
+    <div class="ic red">
+      <div class="ic-icon">🚨</div>
+      <h4>Meta Ads: gasto sin retorno</h4>
+      <p>27,089 sesiones de Paid Social generan solo $46.66 en ingresos. Tasa de interacción 30.6% y tiempo promedio 17 segundos. El tráfico llega y rebota. El problema está en las landing pages, el targeting o la propuesta de valor del anuncio.</p>
+    </div>
+    <div class="ic red">
+      <div class="ic-icon">🛒</div>
+      <h4>Checkout con alta fricción</h4>
+      <p>La página /finalizar-compra/ registra 1m 34s de tiempo promedio con 11,564 vistas. Los usuarios se atascan en el último paso. Un checkout simplificado podría ser la mejora de mayor impacto en conversiones.</p>
+    </div>
+    <div class="ic red">
+      <div class="ic-icon">💸</div>
+      <h4>Paid Other: $0 en ventas</h4>
+      <p>6,011 sesiones de una fuente de pago no identificada sin ningún ingreso generado. Tasa de interacción del 31.94%. Este gasto debe identificarse y detenerse inmediatamente — es inversión perdida.</p>
+    </div>
+    <div class="ic orange">
+      <div class="ic-icon">📱</div>
+      <h4>Sitio 87% móvil, sin app</h4>
+      <p>El 86.9% del tráfico es móvil y el sitio es 100% web. La experiencia en pantalla pequeña es determinante para las ventas. Botones, formularios, checkout y velocidad deben estar optimizados para móvil.</p>
+    </div>
+    <div class="ic orange">
+      <div class="ic-icon">📊</div>
+      <h4>Conversión muy baja: 0.41%</h4>
+      <p>La industria e-commerce promedia 1–4%. Con 115,040 sesiones y solo 474 compras, hay fugas severas en el embudo. El problema no es el tráfico — es la conversión. Mejorar UX, confianza y urgencia puede doblar ventas sin más inversión en tráfico.</p>
+    </div>
+    <div class="ic orange">
+      <div class="ic-icon">🔍</div>
+      <h4>Atribución incompleta</h4>
+      <p>8,790 sesiones (7.64%) están sin atribuir. Esto señala UTMs no configurados en canales como WhatsApp, email, bio de Instagram. El 84.56% de datos demográficos desconocidos limita la capacidad de hacer targeting inteligente.</p>
+    </div>
+    <div class="ic green">
+      <div class="ic-icon">⭐</div>
+      <h4>SEO es la mina de oro</h4>
+      <p>Organic Search genera el 55.4% de los ingresos con solo el 25% del tráfico. Tasa de interacción 63% y tiempo en página 1m 03s. El ROI es 162 veces superior al de Meta Ads. Ampliar el contenido SEO es la prioridad número uno.</p>
+    </div>
+    <div class="ic green">
+      <div class="ic-icon">🌸</div>
+      <h4>Audiencia femenina muy clara</h4>
+      <p>82.4% femenina. El grupo 18–24 tiene la tasa de conversión más alta (1.28%), seguido por 25–34. El targeting por género ya está alineado con el catálogo — la oportunidad está en activar más a cada segmento con mensajes específicos.</p>
+    </div>
+    <div class="ic blue">
+      <div class="ic-icon">📍</div>
+      <h4>Cali domina, Bogotá y Medellín esperan</h4>
+      <p>Cali aporta 47.7% del tráfico (32K usuarios). Bogotá (11K) y Medellín (6.3K) son mercados con potencial sin desarrollar. Campañas geo-segmentadas en estas ciudades pueden abrir un segundo motor de crecimiento.</p>
+    </div>
+    <div class="ic blue">
+      <div class="ic-icon">💊</div>
+      <h4>Sandet como producto ancla</h4>
+      <p>Sandet Té Verde + Extra Suave = 172 compras y $3,715 en ingresos. Es el producto que más fácil convierte. Puede usarse como "puerta de entrada" al ecosistema Saderma para hacer upsell a Tensoderm, Hyderm o kits.</p>
+    </div>
+  </div>
+
+  <!-- RECOMENDACIONES -->
+  <h3 style="font-size:1.1rem;font-weight:700;color:var(--primary);margin-bottom:16px;">🎯 Plan de Acción — Recomendaciones Priorizadas</h3>
+
+  <div class="rec">
+    <span class="pri pri-alta">Alta</span>
+    <div class="rec-body">
+      <h4>1. Auditar y simplificar el checkout de saderma.co</h4>
+      <p>Diagnosticar por qué /finalizar-compra/ toma 1m34s. Metas: checkout de 1 paso, autocompletar de dirección, destacar Addi (cuotas sin intereses), reducir campos obligatorios, optimizar para móvil. Meta: reducir tiempo a &lt;40s y aumentar tasa de conversión.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-alta">Alta</span>
+    <div class="rec-body">
+      <h4>2. Reestructurar campañas de Meta Ads radicalmente</h4>
+      <p>El canal Paid Social tiene ROI de $0.0017 por sesión. Pasos: revisar públicos, cambiar destino de anuncios (ir a página de producto, no a inicio), instalar correctamente el Pixel + API de conversiones, activar catálogo dinámico, crear audiencias de remarketing de visitantes de checkout.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-alta">Alta</span>
+    <div class="rec-body">
+      <h4>3. Identificar y eliminar "Paid Other" ($0 en ventas)</h4>
+      <p>6,011 sesiones pagadas sin ningún retorno. Identificar la fuente (probablemente redes de display, tráfico de baja calidad o un canal mal configurado) y desactivarla. Este presupuesto puede redirigirse a SEO o retargeting.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-alta">Alta</span>
+    <div class="rec-body">
+      <h4>4. Invertir en contenido SEO — el canal más rentable</h4>
+      <p>Organic Search genera $279 por cada 1,000 sesiones. Crear artículos sobre: "cómo quitar manchas en la piel", "rutina para piel con acné", "mejores ingredientes antiedad después de los 40". Optimizar meta titles y descripciones de fichas de producto. Esto amplifica el canal de mayor ROI.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-alta">Alta</span>
+    <div class="rec-body">
+      <h4>5. Optimizar experiencia móvil en todo el sitio</h4>
+      <p>86.9% de tráfico es móvil. Prioridades: botón "Agregar al carrito" sticky y visible, imágenes ligeras y rápidas, tiempo de carga &lt;3s, formularios adaptados para teclado móvil, texto legible sin zoom. Revisar Core Web Vitals en Google Search Console.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-media">Media</span>
+    <div class="rec-body">
+      <h4>6. Activar remarketing — los visitantes de checkout son el público más caliente</h4>
+      <p>Crear audiencia en Meta de "visitó /finalizar-compra/ sin comprar" y activar anuncio con descuento o testimonio. También crear audiencia lookalike de compradores reales. Este tipo de retargeting tiene 5–10x mejor ROI que tráfico frío.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-media">Media</span>
+    <div class="rec-body">
+      <h4>7. Lanzar campañas geo-segmentadas para Bogotá y Medellín</h4>
+      <p>Con 11K y 6.3K usuarios respectivamente, hay demanda latente. Crear campañas con mensaje: "Marca colombiana, envío rápido, paga en cuotas con Addi". Diferencia frente a marcas importadas de lujo. Bogotá primero, luego Medellín.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-media">Media</span>
+    <div class="rec-body">
+      <h4>8. Crear kits de productos para aumentar AOV de $30 a $55+</h4>
+      <p>Ejemplos: "Kit Limpieza Profunda" (Sandet Té Verde + Hyderm = ~$50), "Kit Antiedad" (Lign-D + Tensoderm Contorno + Hylum-C = ~$75), "Kit Rutina Básica Acné" (Sandet + Newderm Emulgel). Los kits aumentan el ticket promedio y la satisfacción del cliente.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-baja">Baja</span>
+    <div class="rec-body">
+      <h4>9. Implementar UTMs en todos los canales de comunicación</h4>
+      <p>El 7.64% del tráfico está "Unassigned". Configurar UTMs en: enlace de WhatsApp Business, bio de Instagram, historias con swipe-up, emails y mensajes de WhatsApp. Esto mejora la atribución y permite saber realmente qué canal cierra ventas.</p>
+    </div>
+  </div>
+  <div class="rec">
+    <span class="pri pri-baja">Baja</span>
+    <div class="rec-body">
+      <h4>10. Mantener /ofertas/ activa con descuentos rotativos</h4>
+      <p>La página de ofertas tiene 52s de tiempo de interacción — el más alto de las páginas generales. Los usuarios se involucran con los descuentos. Estrategia: oferta del mes en productos clave + timer de urgencia. No depender solo de descuentos esporádicos.</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- /wrap -->
+
+<footer class="ftr">
+  Saderma · Laboratorio Dermatológico S.A.S. &nbsp;|&nbsp; Análisis generado con datos reales de Google Analytics 4 &nbsp;|&nbsp; Periodo: 1 Enero 2024 – 6 Abril 2026
+</footer>
+
+<script>
+Chart.defaults.font.family = "'Segoe UI', Arial, sans-serif";
+Chart.defaults.color = '#7F8C8D';
+Chart.defaults.plugins.legend.labels.boxWidth = 12;
+
+const C = {
+  organic:'#27AE60', paid:'#E74C3C', direct:'#2980B9',
+  social:'#8E44AD', unassigned:'#95A5A6', paidOther:'#E67E22',
+  referral:'#16A085', shopping:'#F39C12',
+  female:'#E91E8C', male:'#2196F3',
+  mobile:'#E74C3C', desktop:'#2980B9', tablet:'#F39C12',
+};
+
+// 1. Sessions donut
+new Chart(document.getElementById('cDonut'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Organic Search','Paid Social','Direct','Organic Social','Unassigned','Paid Other','Referral','Org. Shopping'],
+    datasets: [{
+      data: [28860,27089,23227,18972,8790,6011,1197,491],
+      backgroundColor: [C.organic,C.paid,C.direct,C.social,C.unassigned,C.paidOther,C.referral,C.shopping],
+      borderWidth: 2, borderColor: '#fff'
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: {
+      legend: { position:'right', labels:{font:{size:11}} },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw.toLocaleString()} (${(ctx.raw/115040*100).toFixed(1)}%)` }}
+    }
+  }
+});
+
+// 2. Revenue vs Sessions
+new Chart(document.getElementById('cRvS'), {
+  type: 'bar',
+  data: {
+    labels: ['Organic Search','Paid Social','Direct','Org. Social','Unassigned','Referral'],
+    datasets: [
+      { label:'% Sesiones', data:[25.09,23.55,20.19,16.49,7.64,1.04], backgroundColor:'rgba(41,128,185,0.55)', borderRadius:4 },
+      { label:'% Ingresos',  data:[55.42,0.32,15.65,12.40,10.93,4.61],
+        backgroundColor:['#27AE60','#E74C3C','#2980B9','#8E44AD','#95A5A6','#16A085'], borderRadius:4 }
+    ]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: { legend:{ position:'top' }, tooltip:{ callbacks:{ label: ctx => ` ${ctx.dataset.label}: ${ctx.raw}%`}}},
+    scales: { y:{ beginAtZero:true, max:65, ticks:{ callback: v => v+'%' }}}
+  }
+});
+
+// 3. Interaction rate
+new Chart(document.getElementById('cInter'), {
+  type: 'bar',
+  data: {
+    labels: ['Org. Shopping','Organic Search','Referral','Org. Social','Direct','Unassigned','Paid Other','Paid Social'],
+    datasets: [{
+      label: 'Tasa de Interacción',
+      data: [64.97,63.06,52.63,52.19,40.78,39.95,31.94,30.60],
+      backgroundColor: [C.shopping,C.organic,C.referral,C.social,C.direct,C.unassigned,C.paidOther,C.paid],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{ beginAtZero:true, max:80, ticks:{ callback: v => v+'%' }}}
+  }
+});
+
+// 4. Revenue by channel
+new Chart(document.getElementById('cRevCh'), {
+  type: 'bar',
+  data: {
+    labels: ['Organic Search','Direct','Org. Social','Unassigned','Referral','Org. Shopping','Paid Social','Paid Other'],
+    datasets: [{
+      label: 'Ingresos (USD)',
+      data: [8027.97,2267.76,1795.81,1583.47,667.75,97.01,46.66,0],
+      backgroundColor: [C.organic,C.direct,C.social,C.unassigned,C.referral,C.shopping,C.paid,C.paidOther],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{ beginAtZero:true, ticks:{ callback: v => '$'+v.toLocaleString() }}}
+  }
+});
+
+// 5. Top Products Units
+new Chart(document.getElementById('cProdU'), {
+  type: 'bar',
+  data: {
+    labels: ['Sandet\nTé Verde','Hyderm\nEmulgel','Tensoderm\nContorno','Sandet\nExtra Suave','Newderm\nAdvanced'],
+    datasets: [{
+      label: 'Compras',
+      data: [100,76,75,72,25],
+      backgroundColor: ['#27AE60','#2980B9','#8E44AD','#16A085','#E67E22'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{ beginAtZero:true }}
+  }
+});
+
+// 6. Top Products Revenue
+new Chart(document.getElementById('cProdR'), {
+  type: 'bar',
+  data: {
+    labels: ['Sandet\nTé Verde','Hyderm\nEmulgel','Tensoderm\nContorno','Sandet\nExtra Suave','Newderm\nAdvanced'],
+    datasets: [{
+      label: 'Ingresos USD',
+      data: [2234.25,2028.04,1566.97,1481.62,880.63],
+      backgroundColor: ['#27AE60','#2980B9','#8E44AD','#16A085','#E67E22'],
+      borderRadius: 6
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{ beginAtZero:true, ticks:{ callback: v => '$'+v.toLocaleString() }}}
+  }
+});
+
+// 7. Gender
+new Chart(document.getElementById('cGender'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Femenino 82.4%','Masculino 17.6%'],
+    datasets: [{
+      data: [82.4,17.6],
+      backgroundColor: [C.female, C.male],
+      borderWidth: 2, borderColor:'#fff'
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: {
+      legend:{ position:'bottom' },
+      tooltip:{ callbacks:{ label: ctx => ` ${ctx.raw}%` }}
+    }
+  }
+});
+
+// 8. Age
+new Chart(document.getElementById('cAge'), {
+  type: 'bar',
+  data: {
+    labels: ['25–34','55–64','35–44','45–54','18–24','65+'],
+    datasets: [{
+      label: 'Usuarios',
+      data: [3684,2414,2394,1961,1415,1049],
+      backgroundColor: ['#27AE60','#2980B9','#8E44AD','#16A085','#E67E22','#95A5A6'],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ y:{ beginAtZero:true }}
+  }
+});
+
+// 9. Cities
+new Chart(document.getElementById('cCities'), {
+  type: 'bar',
+  data: {
+    labels: ['Cali','Bogotá','Medellín','Popayán','Barranquilla','Jamundí','Palmira'],
+    datasets: [{
+      label: 'Usuarios',
+      data: [32000,11000,6300,3500,1800,1200,1100],
+      backgroundColor: ['#1A5276','#2980B9','#52B3D9','#7FB3D3','#A9CCE3','#D6EAF8','#EBF5FB'],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{ beginAtZero:true, ticks:{ callback: v => (v/1000)+'K' }}}
+  }
+});
+
+// 10. Interests
+new Chart(document.getElementById('cInterests'), {
+  type: 'bar',
+  data: {
+    labels: ['Noticias & Política','Deporte / Fútbol','Tecnología','Entretenimiento','Viajes','Compradores'],
+    datasets: [{
+      label: 'Usuarios',
+      data: [3000,2100,2100,2100,1700,1700],
+      backgroundColor: '#2E86AB',
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis:'y', responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ x:{ beginAtZero:true }}
+  }
+});
+
+// 11. Device
+new Chart(document.getElementById('cDevice'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Móvil 86.9%','Desktop 12.6%','Tablet 0.4%'],
+    datasets: [{
+      data: [86.9,12.6,0.4],
+      backgroundColor: [C.mobile, C.desktop, C.tablet],
+      borderWidth: 2, borderColor:'#fff'
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins: {
+      legend:{ position:'bottom' },
+      tooltip:{ callbacks:{ label: ctx => ` ${ctx.raw}%` }}
+    }
+  }
+});
+
+// 12. OS
+new Chart(document.getElementById('cOS'), {
+  type: 'bar',
+  data: {
+    labels: ['iOS','Android','Windows','Linux','macOS','Chrome OS'],
+    datasets: [{
+      label: 'Usuarios Activos',
+      data: [35000,28000,6600,2100,1000,18],
+      backgroundColor: ['#555555','#3DDC84','#0078D4','#E95420','#888888','#F4B400'],
+      borderRadius: 4
+    }]
+  },
+  options: {
+    responsive:true, maintainAspectRatio:false,
+    plugins:{ legend:{display:false} },
+    scales:{ y:{ beginAtZero:true, ticks:{ callback: v => (v/1000).toFixed(0)+'K' }}}
+  }
+});
+
+// NAV scroll highlighting
+const navLinks = document.querySelectorAll('.nav-bar a');
+const sections = document.querySelectorAll('.sec');
+
+navLinks.forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if(target) target.scrollIntoView({ behavior:'smooth' });
+    navLinks.forEach(x => x.classList.remove('active'));
+    a.classList.add('active');
+  });
+});
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if(entry.isIntersecting) {
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + entry.target.id);
+      });
+    }
+  });
+}, { rootMargin:'-30% 0px -65% 0px' });
+
+sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>

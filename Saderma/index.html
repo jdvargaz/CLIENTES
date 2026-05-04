@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saderma — Dashboards & Análisis Digital · Juan David Vargas</title>
+<meta name="description" content="Dashboards y análisis digital para Laboratorio Dermatológico Saderma. Meta Ads, GA4, e-commerce y propuesta 360.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+:root{
+  --black:#0a0a0a;
+  --bg:#0a0a0a;
+  --surface:#141414;
+  --surface-2:#1c1c1c;
+  --border:#262626;
+  --white:#ffffff;
+  --gray:#9a9a9a;
+  --gray-2:#5a5a5a;
+  --blue:#0066ff;
+  --blue-soft:#1a75ff;
+}
+body{
+  background:var(--bg);
+  color:var(--white);
+  font-family:'Inter',system-ui,sans-serif;
+  font-size:16px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+.container{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* Header */
+header{
+  padding:32px 0 24px;
+  border-bottom:1px solid var(--border);
+}
+.brand{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:24px;flex-wrap:wrap;
+}
+.brand-mark{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;font-size:18px;letter-spacing:-0.02em;
+}
+.brand-mark span{color:var(--blue)}
+.brand-meta{font-size:13px;color:var(--gray);font-variant-numeric:tabular-nums}
+
+/* Hero */
+.hero{padding:64px 0 56px;border-bottom:1px solid var(--border)}
+.eyebrow{
+  display:inline-block;font-size:12px;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.12em;color:var(--blue);
+  padding:6px 12px;border:1px solid var(--blue);border-radius:99px;
+  margin-bottom:20px;
+}
+h1{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(40px,6vw,72px);
+  font-weight:700;line-height:1.05;letter-spacing:-0.03em;
+  margin-bottom:20px;
+}
+h1 em{font-style:normal;color:var(--blue)}
+.lead{
+  font-size:clamp(16px,1.6vw,19px);color:var(--gray);
+  max-width:680px;margin-bottom:32px;
+}
+.client-stats{
+  display:flex;gap:32px;flex-wrap:wrap;
+  padding-top:24px;border-top:1px dashed var(--border);
+}
+.stat-item{display:flex;flex-direction:column;gap:4px}
+.stat-label{font-size:11px;color:var(--gray-2);text-transform:uppercase;letter-spacing:0.08em}
+.stat-value{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px}
+
+/* Section */
+.section{padding:64px 0}
+.section-head{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  gap:24px;margin-bottom:40px;flex-wrap:wrap;
+}
+h2{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:clamp(28px,3.5vw,40px);font-weight:700;
+  letter-spacing:-0.02em;line-height:1.1;
+}
+.section-tag{
+  font-size:13px;color:var(--gray);
+  font-variant-numeric:tabular-nums;
+}
+
+/* Cards grid */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
+  gap:16px;
+}
+.card{
+  display:flex;flex-direction:column;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:28px;
+  text-decoration:none;color:inherit;
+  transition:all .25s ease;
+  position:relative;overflow:hidden;
+}
+.card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at top right,rgba(0,102,255,0.08),transparent 60%);
+  opacity:0;transition:opacity .3s;
+}
+.card:hover{
+  border-color:var(--blue);
+  transform:translateY(-2px);
+  background:var(--surface-2);
+}
+.card:hover::before{opacity:1}
+.card-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;
+  color:var(--gray);margin-bottom:16px;
+}
+.card-tag::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--blue);
+}
+.card h3{
+  font-family:'Space Grotesk',sans-serif;
+  font-size:22px;font-weight:700;line-height:1.25;
+  letter-spacing:-0.01em;margin-bottom:12px;
+}
+.card p{
+  font-size:14px;color:var(--gray);line-height:1.55;
+  margin-bottom:24px;flex:1;
+}
+.card-footer{
+  display:flex;align-items:center;justify-content:space-between;
+  padding-top:16px;border-top:1px solid var(--border);
+  font-size:13px;
+}
+.card-meta{color:var(--gray-2);font-variant-numeric:tabular-nums}
+.card-cta{
+  color:var(--blue);font-weight:600;
+  display:inline-flex;align-items:center;gap:6px;
+  transition:gap .2s;
+}
+.card:hover .card-cta{gap:10px}
+.card-cta svg{width:14px;height:14px}
+
+/* Featured card */
+.card.featured{
+  grid-column:1/-1;
+  background:linear-gradient(135deg,var(--blue) 0%,#0044cc 100%);
+  border-color:var(--blue);
+}
+.card.featured::before{display:none}
+.card.featured .card-tag{color:rgba(255,255,255,0.85)}
+.card.featured .card-tag::before{background:#fff}
+.card.featured p{color:rgba(255,255,255,0.9);max-width:640px}
+.card.featured .card-footer{border-color:rgba(255,255,255,0.2)}
+.card.featured .card-meta{color:rgba(255,255,255,0.7)}
+.card.featured .card-cta{color:#fff}
+@media(min-width:720px){
+  .card.featured{padding:40px}
+  .card.featured h3{font-size:28px}
+}
+
+/* Footer */
+footer{
+  padding:48px 0 64px;
+  border-top:1px solid var(--border);
+  margin-top:64px;
+}
+.foot-grid{
+  display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;
+}
+.foot-author{
+  font-family:'Space Grotesk',sans-serif;
+  font-weight:700;font-size:16px;
+}
+.foot-author span{color:var(--gray);font-weight:500}
+.foot-contact{font-size:13px;color:var(--gray);text-align:right}
+.foot-contact a{color:var(--blue);text-decoration:none}
+.foot-contact a:hover{text-decoration:underline}
+@media(max-width:600px){
+  .foot-grid{grid-template-columns:1fr}
+  .foot-contact{text-align:left}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container brand">
+    <div class="brand-mark">JDVARGAZ <span>·</span> Clientes</div>
+    <div class="brand-meta">Saderma · Cali, Valle del Cauca</div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="eyebrow">Cliente activo · Dermocosmética</span>
+    <h1>Saderma <em>—</em> Dashboards & análisis digital</h1>
+    <p class="lead">Centro de control digital para Laboratorio Dermatológico Saderma. Análisis de Meta Ads, comportamiento web (GA4), performance e-commerce y propuesta estratégica 360.</p>
+    <div class="client-stats">
+      <div class="stat-item">
+        <span class="stat-label">Industria</span>
+        <span class="stat-value">Dermocosmética</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Mercado</span>
+        <span class="stat-value">Colombia</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Canales</span>
+        <span class="stat-value">Meta · GA4 · E-commerce</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-label">Documentos</span>
+        <span class="stat-value">7 dashboards</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <h2>Dashboards y análisis</h2>
+      <span class="section-tag">Actualizado · Mayo 2026</span>
+    </div>
+
+    <div class="grid">
+
+      <a class="card featured" href="analisis-360-saderma-2025-2026.html">
+        <div class="card-tag">Estrategia · Documento principal</div>
+        <h3>Análisis 360 Saderma 2025–2026</h3>
+        <p>Diagnóstico integral del estado digital de Saderma: web, redes, paid media, e-commerce y oportunidades de crecimiento. Documento estratégico que conecta todos los dashboards.</p>
+        <div class="card-footer">
+          <span class="card-meta">125 KB · Documento estratégico</span>
+          <span class="card-cta">Abrir análisis
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card" href="analisis-meta-ads-saderma.html">
+        <div class="card-tag">Meta Ads</div>
+        <h3>Análisis Meta Ads Saderma</h3>
+        <p>Análisis comparativo interactivo de la gestión publicitaria en Facebook e Instagram Ads. Métricas, campañas y diagnóstico.</p>
+        <div class="card-footer">
+          <span class="card-meta">Período abril 2026</span>
+          <span class="card-cta">Abrir
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card" href="comparativa-periodos-saderma.html">
+        <div class="card-tag">Meta Ads · Comparativa</div>
+        <h3>Comparativa de períodos</h3>
+        <p>Análisis lado a lado de dos períodos de gestión publicitaria. Diferencias de performance, CPA y eficiencia entre gestores.</p>
+        <div class="card-footer">
+          <span class="card-meta">Comparativo gestión</span>
+          <span class="card-cta">Abrir
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card" href="dashboard-ecommerce-saderma.html">
+        <div class="card-tag">E-commerce</div>
+        <h3>Dashboard E-commerce</h3>
+        <p>Performance de la tienda online saderma.co. Tráfico, conversiones, ticket promedio y comportamiento de compra.</p>
+        <div class="card-footer">
+          <span class="card-meta">Tienda online</span>
+          <span class="card-cta">Abrir
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card" href="saderma-ga4-analisis-web-2024-2026.html">
+        <div class="card-tag">GA4 · Web Analytics</div>
+        <h3>Análisis web GA4 2024–2026</h3>
+        <p>Comportamiento del tráfico web en Google Analytics 4. Fuentes, sesiones, engagement y rutas de conversión.</p>
+        <div class="card-footer">
+          <span class="card-meta">Histórico 2 años</span>
+          <span class="card-cta">Abrir
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card" href="retorno-saderma-2025-2026.html">
+        <div class="card-tag">Performance · ROAS</div>
+        <h3>Retorno Saderma 2025–2026</h3>
+        <p>Análisis del retorno sobre inversión publicitaria. ROAS, CAC y proyección de inversión por canal.</p>
+        <div class="card-footer">
+          <span class="card-meta">Inversión vs. retorno</span>
+          <span class="card-cta">Abrir
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card" href="saderma_infografia_marca.html">
+        <div class="card-tag">Brand · Identidad</div>
+        <h3>Infografía de marca</h3>
+        <p>Resumen visual de la identidad Saderma: líneas de producto, buyer personas, voz, diferenciadores y social proof.</p>
+        <div class="card-footer">
+          <span class="card-meta">Brand book digital</span>
+          <span class="card-cta">Abrir
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container foot-grid">
+    <div>
+      <div class="foot-author">Juan David Vargas <span>· Digital Media Strategist</span></div>
+    </div>
+    <div class="foot-contact">
+      <a href="mailto:jdvargaz.com@gmail.com">jdvargaz.com@gmail.com</a><br>
+      Cliente: Laboratorio Dermatológico Saderma S.A.S.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

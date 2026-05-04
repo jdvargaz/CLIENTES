@@ -1,0 +1,341 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font-sans); background: transparent; }
+  .wrap { padding: 8px 0 24px; }
+
+  .header { text-align: center; padding: 20px 24px 16px; border-bottom: 1px solid var(--color-border-tertiary); margin-bottom: 20px; }
+  .brand-name { font-size: 28px; font-weight: 500; letter-spacing: 6px; color: var(--color-text-primary); }
+  .brand-tag { font-size: 13px; color: var(--color-text-secondary); margin-top: 4px; letter-spacing: 1px; }
+  .accent-bar { width: 48px; height: 3px; background: #0F6E56; margin: 10px auto 0; border-radius: 2px; }
+
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 0 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; padding: 0 16px; margin-top: 14px; }
+  .full { grid-column: 1 / -1; }
+
+  .card { background: var(--color-background-secondary); border: 1px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 16px 18px; }
+  .card-title { font-size: 11px; font-weight: 500; letter-spacing: 1.5px; color: var(--color-text-tertiary); text-transform: uppercase; margin-bottom: 10px; }
+
+  /* Identidad */
+  .identity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .id-item { background: var(--color-background-primary); border: 1px solid var(--color-border-tertiary); border-radius: 8px; padding: 10px 12px; }
+  .id-label { font-size: 11px; color: var(--color-text-tertiary); margin-bottom: 2px; }
+  .id-value { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+
+  /* Personalidad */
+  .pill-grid { display: flex; flex-wrap: wrap; gap: 7px; }
+  .pill { font-size: 12px; font-weight: 500; padding: 5px 12px; border-radius: 20px; }
+  .p-teal   { background: #E1F5EE; color: #0F6E56; }
+  .p-blue   { background: #E6F1FB; color: #185FA5; }
+  .p-amber  { background: #FAEEDA; color: #854F0B; }
+  .p-coral  { background: #FAECE7; color: #993C1D; }
+  .p-purple { background: #EEEDFE; color: #534AB7; }
+
+  /* Líneas de producto */
+  .product-line { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--color-border-tertiary); }
+  .product-line:last-child { border-bottom: none; padding-bottom: 0; }
+  .prod-dot { width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+  .prod-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .prod-ex { font-size: 12px; color: var(--color-text-secondary); }
+
+  /* Buyer personas */
+  .persona { background: var(--color-background-primary); border: 1px solid var(--color-border-tertiary); border-radius: 8px; padding: 12px; }
+  .persona-name { font-size: 13px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 2px; }
+  .persona-age { font-size: 11px; color: var(--color-text-secondary); margin-bottom: 6px; }
+  .persona-line { font-size: 12px; color: var(--color-text-secondary); line-height: 1.5; }
+  .persona-tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; margin-top: 6px; }
+
+  /* Diferenciadores */
+  .dif-item { display: flex; gap: 12px; align-items: flex-start; padding: 9px 0; border-bottom: 1px solid var(--color-border-tertiary); }
+  .dif-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .dif-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 16px; }
+  .dif-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .dif-desc { font-size: 12px; color: var(--color-text-secondary); }
+
+  /* Voz */
+  .voz-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .voz-box { border-radius: 8px; padding: 10px 12px; }
+  .voz-yes { background: #E1F5EE; border-left: 3px solid #1D9E75; }
+  .voz-no  { background: #FAECE7; border-left: 3px solid #D85A30; }
+  .voz-label { font-size: 10px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 5px; }
+  .voz-yes .voz-label { color: #0F6E56; }
+  .voz-no  .voz-label { color: #993C1D; }
+  .voz-item { font-size: 12px; color: var(--color-text-secondary); line-height: 1.6; }
+
+  /* Canales */
+  .canal-item { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid var(--color-border-tertiary); }
+  .canal-item:last-child { border-bottom: none; }
+  .canal-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; flex-shrink: 0; }
+  .canal-text { font-size: 13px; color: var(--color-text-primary); }
+  .canal-sub  { font-size: 12px; color: var(--color-text-secondary); }
+
+  /* CTA estándar */
+  .cta-box { background: #04342C; border-radius: var(--border-radius-lg); padding: 14px 18px; margin-top: 14px; margin-left: 16px; margin-right: 16px; }
+  .cta-title { font-size: 11px; font-weight: 500; letter-spacing: 1.5px; color: #5DCAA5; text-transform: uppercase; margin-bottom: 8px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; }
+  .cta-item { font-size: 12px; color: #9FE1CB; }
+
+  /* Niveles de conciencia */
+  .nivel { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 10px; }
+  .nivel:last-child { margin-bottom: 0; }
+  .nivel-num { width: 24px; height: 24px; border-radius: 50%; background: #1D9E75; color: #fff; font-size: 11px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .nivel-title { font-size: 13px; font-weight: 500; color: var(--color-text-primary); }
+  .nivel-desc { font-size: 12px; color: var(--color-text-secondary); }
+
+  /* Social proof */
+  .stat-row { display: flex; gap: 10px; }
+  .stat-item { flex: 1; background: var(--color-background-primary); border: 1px solid var(--color-border-tertiary); border-radius: 8px; padding: 10px 12px; text-align: center; }
+  .stat-num { font-size: 20px; font-weight: 500; color: #0F6E56; }
+  .stat-label { font-size: 11px; color: var(--color-text-secondary); margin-top: 2px; }
+
+  /* Footer */
+  .footer { text-align: center; padding: 14px 16px 0; font-size: 11px; color: var(--color-text-tertiary); border-top: 1px solid var(--color-border-tertiary); margin-top: 20px; }
+</style>
+
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="brand-name">SADERMA</div>
+    <div class="brand-tag">Laboratorio Dermatológico · Cali, Colombia · 2015</div>
+    <div class="accent-bar"></div>
+  </div>
+
+  <div class="grid">
+
+    <!-- IDENTIDAD -->
+    <div class="card">
+      <div class="card-title">Identidad de marca</div>
+      <div class="identity-grid">
+        <div class="id-item">
+          <div class="id-label">Fundación</div>
+          <div class="id-value">2015 — ~10 años</div>
+        </div>
+        <div class="id-item">
+          <div class="id-label">Sede</div>
+          <div class="id-value">Cali, Valle del Cauca</div>
+        </div>
+        <div class="id-item">
+          <div class="id-label">Cobertura</div>
+          <div class="id-value">Toda Colombia</div>
+        </div>
+        <div class="id-item">
+          <div class="id-label">NIT</div>
+          <div class="id-value">900.866.560-4</div>
+        </div>
+        <div class="id-item" style="grid-column: 1/-1;">
+          <div class="id-label">Tagline</div>
+          <div class="id-value" style="font-size:12px; font-style:italic;">"Inspirados en la naturaleza, realizados por la ciencia."</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PERSONALIDAD -->
+    <div class="card">
+      <div class="card-title">Personalidad de marca</div>
+      <div class="pill-grid">
+        <span class="pill p-teal">Científica</span>
+        <span class="pill p-blue">Cercana</span>
+        <span class="pill p-amber">Empoderada</span>
+        <span class="pill p-coral">Comprometida</span>
+        <span class="pill p-purple">Accesible</span>
+      </div>
+      <div style="margin-top: 12px; font-size: 12px; color: var(--color-text-secondary); line-height: 1.6;">
+        Tono: como una <strong style="font-weight:500; color:var(--color-text-primary)">dermatóloga amiga</strong> que sabe mucho y lo explica sin complicar. Mezcla emoción con sustento científico.
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LÍNEAS DE PRODUCTO -->
+  <div class="grid" style="margin-top: 14px;">
+    <div class="card">
+      <div class="card-title">Líneas de producto (19 SKUs)</div>
+      <div class="product-line">
+        <div class="prod-dot" style="background:#1D9E75;"></div>
+        <div><div class="prod-name">Limpieza</div><div class="prod-ex">Sandet Gel (todo tipo · té verde)</div></div>
+      </div>
+      <div class="product-line">
+        <div class="prod-dot" style="background:#378ADD;"></div>
+        <div><div class="prod-name">Sérums</div><div class="prod-ex">Hylum-C, Lign-D, Perfectinol, HIP-X50…</div></div>
+      </div>
+      <div class="product-line">
+        <div class="prod-dot" style="background:#D85A30;"></div>
+        <div><div class="prod-name">Antiedad</div><div class="prod-ex">Tensoderm ojos, Newderm Emulgel, Sunfeel SPF30</div></div>
+      </div>
+      <div class="product-line">
+        <div class="prod-dot" style="background:#7F77DD;"></div>
+        <div><div class="prod-name">Hidratación</div><div class="prod-ex">Hyderm Emulgel, Hyderm Advanced, Hylum TRPV1</div></div>
+      </div>
+      <div class="product-line">
+        <div class="prod-dot" style="background:#BA7517;"></div>
+        <div><div class="prod-name">Capilar</div><div class="prod-ex">Newkpil (liso · ondulado), Derseb control caspa</div></div>
+      </div>
+    </div>
+
+    <!-- DIFERENCIADORES -->
+    <div class="card">
+      <div class="card-title">Diferenciadores clave</div>
+      <div class="dif-item">
+        <div class="dif-icon" style="background:#E1F5EE;">🔬</div>
+        <div>
+          <div class="dif-title">Respaldo científico</div>
+          <div class="dif-desc">Fórmulas dermatológicamente probadas. Ingredientes activos con mecanismo de acción explicado.</div>
+        </div>
+      </div>
+      <div class="dif-item">
+        <div class="dif-icon" style="background:#FAEEDA;">💰</div>
+        <div>
+          <div class="dif-title">Precio competitivo</div>
+          <div class="dif-desc">Más accesible que Sesderma o Medipiel. Descuentos frecuentes + Addi hasta 3 cuotas sin intereses.</div>
+        </div>
+      </div>
+      <div class="dif-item">
+        <div class="dif-icon" style="background:#E6F1FB;">💬</div>
+        <div>
+          <div class="dif-title">Atención personalizada</div>
+          <div class="dif-desc">Asesoría directa por WhatsApp. Marca pequeña con trato humano y cercano.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BUYER PERSONAS -->
+  <div class="grid-3">
+    <div class="card" style="padding:14px;">
+      <div class="card-title">Persona 1</div>
+      <div class="persona">
+        <div class="persona-name">Daniela la Consciente</div>
+        <div class="persona-age">28–38 años · Profesional urbana</div>
+        <div class="persona-line">Busca ingredientes que entiende. Quiere resultados reales, no solo estética.</div>
+        <span class="persona-tag" style="background:#E6F1FB; color:#185FA5;">Sandet · Hylum-C · Hyderm</span>
+      </div>
+    </div>
+    <div class="card" style="padding:14px;">
+      <div class="card-title">Persona 2</div>
+      <div class="persona">
+        <div class="persona-name">Patricia la Antiaging</div>
+        <div class="persona-age">40–55 años · Poder adquisitivo medio-alto</div>
+        <div class="persona-line">Ya tiene rutina. Busca resultados antiedad reales al mejor precio vs. marcas importadas.</div>
+        <span class="persona-tag" style="background:#EEEDFE; color:#534AB7;">Lign-D · Tensoderm · Perfectinol</span>
+      </div>
+    </div>
+    <div class="card" style="padding:14px;">
+      <div class="card-title">Persona 3</div>
+      <div class="persona">
+        <div class="persona-name">Sofía con Piel Problemática</div>
+        <div class="persona-age">18–32 años · Con acné, manchas o caspa</div>
+        <div class="persona-line">Frustrada con productos que no cumplen. Busca solución real respaldada por especialistas.</div>
+        <span class="persona-tag" style="background:#FAECE7; color:#993C1D;">Sandet TéVerde · Derseb · Newderm</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VOZ + NIVELES -->
+  <div class="grid" style="margin-top: 14px;">
+
+    <div class="card">
+      <div class="card-title">Voz de marca — Sí / No</div>
+      <div class="voz-row">
+        <div class="voz-box voz-yes">
+          <div class="voz-label">Sí suena a Saderma</div>
+          <div class="voz-item">✔ Tutear siempre<br>✔ Ancla científica en cada pieza<br>✔ "Ayuda a", "mejora visiblemente"<br>✔ Problema → Activo → Beneficio<br>✔ Emojis 🔬 ✨ 💙 🧬</div>
+        </div>
+        <div class="voz-box voz-no">
+          <div class="voz-label">No suena a Saderma</div>
+          <div class="voz-item">✗ Lenguaje de lujo aspiracional<br>✗ Promesas absolutas sin respaldo<br>✗ Claims médicos ("cura", "trata")<br>✗ Inventar datos o testimonios<br>✗ Slang extremo o infantilizante</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Niveles de conciencia del comprador</div>
+      <div class="nivel">
+        <div class="nivel-num">1</div>
+        <div>
+          <div class="nivel-title">Consciente del problema</div>
+          <div class="nivel-desc">Sabe que tiene acné/manchas/arrugas. No conoce Saderma. → Contenido educativo: "¿Por qué te salen manchas aunque uses protector?"</div>
+        </div>
+      </div>
+      <div class="nivel">
+        <div class="nivel-num">2</div>
+        <div>
+          <div class="nivel-title">Consciente de la solución</div>
+          <div class="nivel-desc">Compara marcas. → Diferenciadores: precio, ciencia, asesoría. "Antes de comprar ese sérum importado, lee esto."</div>
+        </div>
+      </div>
+      <div class="nivel">
+        <div class="nivel-num">3</div>
+        <div>
+          <div class="nivel-title">Consciente del producto</div>
+          <div class="nivel-desc">Ya conoce o ha comprado. → Retargeting, ofertas, upsell, puntos. "Tu Lign-D está con 30% OFF este mes."</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SOCIAL PROOF + CANALES -->
+  <div class="grid" style="margin-top: 14px;">
+    <div class="card">
+      <div class="card-title">Social proof verificable</div>
+      <div class="stat-row" style="margin-bottom:12px;">
+        <div class="stat-item">
+          <div class="stat-num">~10</div>
+          <div class="stat-label">Años en el mercado</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">SPF 30+</div>
+          <div class="stat-label">Norma CAN cumplida</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">Addi</div>
+          <div class="stat-label">3 cuotas sin intereses</div>
+        </div>
+      </div>
+      <div style="font-size:12px; color:var(--color-text-secondary); line-height:1.6;">
+        Claims seguros: "Dermatológicamente probado" · "Fórmulas con respaldo científico" · "10 años en el mercado colombiano" · "Envíos a toda Colombia"
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Canales de distribución</div>
+      <div class="canal-item">
+        <div class="canal-dot"></div>
+        <div><div class="canal-text">Tienda online</div><div class="canal-sub">saderma.co — todos los productos</div></div>
+      </div>
+      <div class="canal-item">
+        <div class="canal-dot"></div>
+        <div><div class="canal-text">WhatsApp directo</div><div class="canal-sub">316 206 6294 — asesoría y ventas</div></div>
+      </div>
+      <div class="canal-item">
+        <div class="canal-dot"></div>
+        <div><div class="canal-text">Instagram / TikTok</div><div class="canal-sub">@sadermalab — contenido y comunidad</div></div>
+      </div>
+      <div class="canal-item">
+        <div class="canal-dot"></div>
+        <div><div class="canal-text">Distribuidores físicos</div><div class="canal-sub">Tiendas dermatológicas y dermatólogos (Valle del Cauca)</div></div>
+      </div>
+      <div class="canal-item" style="border-bottom:none;">
+        <div class="canal-dot" style="background: var(--color-text-info);"></div>
+        <div><div class="canal-text">Programa Puntos Saderma</div><div class="canal-sub">Fidelización con acumulación de puntos</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA ESTÁNDAR -->
+  <div class="cta-box">
+    <div class="cta-title">CTA estándar de ventas</div>
+    <div class="cta-row">
+      <span class="cta-item">🛒 www.saderma.co</span>
+      <span class="cta-item">💬 WhatsApp: 316 206 6294</span>
+      <span class="cta-item">📦 Envíos a toda Colombia</span>
+      <span class="cta-item">💳 Addi · hasta 3 cuotas sin intereses</span>
+    </div>
+  </div>
+
+  <div class="footer">
+    Saderma S.A.S. · NIT 900.866.560-4 · Calle 13 # 68-26 Of. 211, Cali · Investigación Abril 2026
+  </div>
+
+</div>

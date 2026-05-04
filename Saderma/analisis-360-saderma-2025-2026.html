@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saderma — Análisis 360° | 2025–Mar 2026</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --bg: #0d0f1a;
+    --card: #141726;
+    --card2: #1a1e30;
+    --border: #252a42;
+    --accent: #7c6ff7;
+    --accent2: #5e9fff;
+    --green: #3ecf8e;
+    --red: #f05252;
+    --yellow: #f5a623;
+    --orange: #f97316;
+    --text: #e8eaf0;
+    --muted: #8892a4;
+    --white: #ffffff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #0d0f1a 0%, #1a1040 50%, #0d1a30 100%);
+    padding: 60px 40px 40px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124,111,247,0.15) 0%, transparent 60%);
+  }
+  .header-badge {
+    display: inline-block;
+    background: rgba(124,111,247,0.15);
+    border: 1px solid rgba(124,111,247,0.3);
+    color: #a89df8;
+    padding: 5px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .header h1 {
+    font-size: clamp(28px, 4vw, 48px);
+    font-weight: 800;
+    background: linear-gradient(135deg, #ffffff 0%, #a89df8 50%, #5e9fff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.2;
+  }
+  .header-sub {
+    color: var(--muted);
+    font-size: 15px;
+    margin-top: 12px;
+  }
+  .header-kpis {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 40px;
+    flex-wrap: wrap;
+  }
+  .header-kpi {
+    text-align: center;
+  }
+  .header-kpi .val {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--white);
+    display: block;
+  }
+  .header-kpi .val.green { color: var(--green); }
+  .header-kpi .val.yellow { color: var(--yellow); }
+  .header-kpi .val.red { color: var(--red); }
+  .header-kpi .lbl {
+    font-size: 12px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── NAV ── */
+  .nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13,15,26,0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    padding: 0 20px;
+  }
+  .nav-btn {
+    background: none;
+    border: none;
+    color: var(--muted);
+    padding: 16px 18px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all .2s;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+  .nav-btn:hover { color: var(--text); }
+  .nav-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+  }
+
+  /* ── SECTIONS ── */
+  .section { display: none; padding: 40px 30px; max-width: 1200px; margin: 0 auto; }
+  .section.active { display: block; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .card-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+  .card-icon.purple { background: rgba(124,111,247,0.15); }
+  .card-icon.blue { background: rgba(94,159,255,0.15); }
+  .card-icon.green { background: rgba(62,207,142,0.15); }
+  .card-icon.red { background: rgba(240,82,82,0.15); }
+  .card-icon.yellow { background: rgba(245,166,35,0.15); }
+  .card-icon.orange { background: rgba(249,115,22,0.15); }
+  .card-title { font-size: 16px; font-weight: 700; color: var(--white); }
+  .card-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ── GRID LAYOUTS ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 900px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+    .section { padding: 24px 16px; }
+  }
+
+  /* ── STAT BOXES ── */
+  .stat-box {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .stat-box::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .stat-box.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .stat-box.red::before { background: linear-gradient(90deg, var(--red), transparent); }
+  .stat-box.blue::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .stat-box.yellow::before { background: linear-gradient(90deg, var(--yellow), transparent); }
+  .stat-box.purple::before { background: linear-gradient(90deg, var(--accent), transparent); }
+  .stat-val {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--white);
+    line-height: 1;
+  }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-val.yellow { color: var(--yellow); }
+  .stat-val.blue { color: var(--accent2); }
+  .stat-val.purple { color: var(--accent); }
+  .stat-label { font-size: 12px; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat-delta { font-size: 13px; margin-top: 8px; font-weight: 600; }
+  .stat-delta.up { color: var(--green); }
+  .stat-delta.down { color: var(--red); }
+  .stat-delta.neutral { color: var(--muted); }
+
+  /* ── CHART CONTAINERS ── */
+  .chart-wrap {
+    position: relative;
+    height: 300px;
+  }
+  .chart-wrap.tall { height: 380px; }
+  .chart-wrap.short { height: 220px; }
+
+  /* ── TABLES ── */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .data-table th {
+    text-align: left;
+    padding: 10px 14px;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+  .data-table td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(37,42,66,0.5);
+    color: var(--text);
+  }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .badge.green { background: rgba(62,207,142,0.15); color: var(--green); }
+  .badge.red { background: rgba(240,82,82,0.15); color: var(--red); }
+  .badge.yellow { background: rgba(245,166,35,0.15); color: var(--yellow); }
+  .badge.blue { background: rgba(94,159,255,0.15); color: var(--accent2); }
+  .badge.purple { background: rgba(124,111,247,0.15); color: var(--accent); }
+  .badge.orange { background: rgba(249,115,22,0.15); color: var(--orange); }
+
+  /* ── FUNNEL ── */
+  .funnel-step {
+    position: relative;
+    margin-bottom: 4px;
+  }
+  .funnel-bar {
+    height: 64px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    justify-content: space-between;
+    transition: transform .15s;
+  }
+  .funnel-bar:hover { transform: scale(1.01); cursor: default; }
+  .funnel-label { font-size: 14px; font-weight: 700; color: white; }
+  .funnel-val { font-size: 20px; font-weight: 800; color: white; }
+  .funnel-sub { font-size: 11px; color: rgba(255,255,255,0.7); }
+  .funnel-arrow {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    margin: 3px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .funnel-pct {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  /* ── VERSUS ── */
+  .vs-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(37,42,66,0.5);
+  }
+  .vs-row:last-child { border-bottom: none; }
+  .vs-left { text-align: right; }
+  .vs-right { text-align: left; }
+  .vs-metric { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+  .vs-val { font-size: 20px; font-weight: 800; margin: 2px 0; }
+  .vs-center {
+    text-align: center;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 600;
+    white-space: nowrap;
+    min-width: 80px;
+  }
+
+  /* ── INSIGHT BLOCKS ── */
+  .insight {
+    display: flex;
+    gap: 14px;
+    padding: 16px;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid transparent;
+  }
+  .insight.win {
+    background: rgba(62,207,142,0.08);
+    border-color: rgba(62,207,142,0.2);
+  }
+  .insight.fail {
+    background: rgba(240,82,82,0.08);
+    border-color: rgba(240,82,82,0.2);
+  }
+  .insight.warn {
+    background: rgba(245,166,35,0.08);
+    border-color: rgba(245,166,35,0.2);
+  }
+  .insight.opp {
+    background: rgba(94,159,255,0.08);
+    border-color: rgba(94,159,255,0.2);
+  }
+  .insight-icon { font-size: 20px; flex-shrink: 0; }
+  .insight-body strong { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .insight.win strong { color: var(--green); }
+  .insight.fail strong { color: var(--red); }
+  .insight.warn strong { color: var(--yellow); }
+  .insight.opp strong { color: var(--accent2); }
+  .insight-body p { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+  /* ── PROGRESS BARS ── */
+  .progress-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .progress-label { font-size: 13px; color: var(--text); width: 140px; flex-shrink: 0; }
+  .progress-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease;
+  }
+  .progress-val { font-size: 13px; font-weight: 700; width: 60px; text-align: right; flex-shrink: 0; }
+
+  /* ── ROADMAP ── */
+  .roadmap-item {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .roadmap-item::before {
+    content: '';
+    position: absolute;
+    left: 21px; top: 44px; bottom: -24px;
+    width: 2px;
+    background: var(--border);
+  }
+  .roadmap-item:last-child::before { display: none; }
+  .roadmap-num {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .roadmap-num.priority-1 { background: rgba(240,82,82,0.2); border: 2px solid rgba(240,82,82,0.5); color: var(--red); }
+  .roadmap-num.priority-2 { background: rgba(245,166,35,0.2); border: 2px solid rgba(245,166,35,0.5); color: var(--yellow); }
+  .roadmap-num.priority-3 { background: rgba(62,207,142,0.2); border: 2px solid rgba(62,207,142,0.5); color: var(--green); }
+  .roadmap-content { flex: 1; padding-top: 6px; }
+  .roadmap-title { font-size: 15px; font-weight: 700; color: var(--white); }
+  .roadmap-desc { font-size: 13px; color: var(--muted); margin-top: 6px; line-height: 1.6; }
+  .roadmap-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+  .roadmap-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    background: var(--card2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ── SECTION TITLE ── */
+  .section-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+  .section-desc {
+    font-size: 14px;
+    color: var(--muted);
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+
+  /* ── ALERT BOX ── */
+  .alert {
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-size: 13px;
+    margin-bottom: 16px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    line-height: 1.6;
+  }
+  .alert.critical { background: rgba(240,82,82,0.1); border: 1px solid rgba(240,82,82,0.25); color: #fca5a5; }
+  .alert.warning { background: rgba(245,166,35,0.1); border: 1px solid rgba(245,166,35,0.25); color: #fcd34d; }
+  .alert.success { background: rgba(62,207,142,0.1); border: 1px solid rgba(62,207,142,0.25); color: #6ee7b7; }
+  .alert.info { background: rgba(94,159,255,0.1); border: 1px solid rgba(94,159,255,0.25); color: #93c5fd; }
+  .alert-icon { font-size: 18px; flex-shrink: 0; }
+
+  /* ── CHANNEL ROW ── */
+  .channel-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(37,42,66,0.5);
+  }
+  .channel-row:last-child { border-bottom: none; }
+  .channel-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .channel-name { font-size: 14px; font-weight: 600; color: var(--white); }
+  .channel-sessions { font-size: 12px; color: var(--muted); }
+  .channel-bar-wrap { flex: 1; }
+  .channel-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; }
+  .channel-bar-fill { height: 100%; border-radius: 3px; }
+  .channel-revenue { text-align: right; min-width: 80px; }
+  .channel-revenue .val { font-size: 14px; font-weight: 700; color: var(--white); }
+  .channel-revenue .pct { font-size: 11px; color: var(--muted); }
+
+  /* ── PERIOD HEADER ── */
+  .period-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .period-dot {
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .period-name { font-size: 16px; font-weight: 700; color: var(--white); }
+  .period-range { font-size: 12px; color: var(--muted); }
+
+  /* ── ATTRIBUTION BOX ── */
+  .attribution-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .attribution-card {
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+  }
+  .attribution-card .logo { font-size: 28px; margin-bottom: 8px; }
+  .attribution-card .source { font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+  .attribution-card .metric { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+  .attribution-card .value { font-size: 22px; font-weight: 800; color: var(--white); margin: 4px 0; }
+  .attribution-card .note { font-size: 11px; color: var(--muted); }
+
+  /* ── SUMMARY PILL ── */
+  .summary-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--card2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: var(--text);
+    margin: 4px;
+  }
+
+  /* PERIOD TIMELINE */
+  .timeline-period {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .timeline-line {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .timeline-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid;
+    flex-shrink: 0;
+    margin-top: 4px;
+  }
+  .timeline-connector {
+    width: 2px;
+    flex: 1;
+    min-height: 30px;
+    margin: 4px 0;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 60px;
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="position:relative;z-index:1;">
+    <div class="header-badge">🔬 Análisis 360° · Digital Saderma</div>
+    <h1>Panorama Digital Completo<br>2025 — Marzo 2026</h1>
+    <p class="header-sub">Meta Ads · GA4 · Ecommerce WooCommerce · Funnel Completo · Datos al 6 Abr 2026</p>
+    <div class="header-kpis">
+      <div class="header-kpi">
+        <span class="val green">+84%</span>
+        <span class="lbl">Ventas YTD 2026</span>
+      </div>
+      <div class="header-kpi">
+        <span class="val">$552.1M</span>
+        <span class="lbl">Ingresos Brutos Totales</span>
+      </div>
+      <div class="header-kpi">
+        <span class="val">2,893</span>
+        <span class="lbl">Pedidos en 20 meses</span>
+      </div>
+      <div class="header-kpi">
+        <span class="val yellow">0.41%</span>
+        <span class="lbl">Tasa Conversión Web</span>
+      </div>
+      <div class="header-kpi">
+        <span class="val">234+</span>
+        <span class="lbl">Compras vía Meta Ads</span>
+      </div>
+      <div class="header-kpi">
+        <span class="val red">22.5×</span>
+        <span class="lbl">Frecuencia Crítica Remarketing</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <button class="nav-btn active" onclick="showSection('resumen')">📊 Resumen Ejecutivo</button>
+  <button class="nav-btn" onclick="showSection('timeline')">📅 Evolución & Timeline</button>
+  <button class="nav-btn" onclick="showSection('metaads')">🎯 Meta Ads</button>
+  <button class="nav-btn" onclick="showSection('ecommerce')">🛒 Ecommerce</button>
+  <button class="nav-btn" onclick="showSection('ga4')">📈 GA4 & Web</button>
+  <button class="nav-btn" onclick="showSection('funnel')">🔄 Embudo Completo</button>
+  <button class="nav-btn" onclick="showSection('analisis')">⚡ Lo que Funcionó</button>
+  <button class="nav-btn" onclick="showSection('oportunidades')">💡 Oportunidades</button>
+  <button class="nav-btn" onclick="showSection('hoja-ruta')">🗺️ Hoja de Ruta</button>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 1: RESUMEN EJECUTIVO
+═══════════════════════════════════════════════════════════ -->
+<section class="section active" id="resumen">
+  <div class="section-title">Resumen Ejecutivo</div>
+  <p class="section-desc">Visión consolidada de todo el ecosistema digital de Saderma. Un negocio que creció explosivamente pero con fricciones claras que limitan el potencial real.</p>
+
+  <div class="alert success">
+    <span class="alert-icon">🚀</span>
+    <div><strong>La historia positiva:</strong> Saderma pasó de $0 a >$36M COP/mes promedio en 20 meses. El YTD 2026 creció +84% vs el mismo período del año anterior. El SEO orgánico es una mina de oro y el ecommerce tiene momentum real.</div>
+  </div>
+
+  <div class="alert critical">
+    <span class="alert-icon">🚨</span>
+    <div><strong>El problema crítico:</strong> Meta Ads representa el 23.5% de las sesiones web pero solo genera el 0.32% de los ingresos atribuidos en GA4. El remarketing está saturado (frecuencia 22.5×). La retención de clientes es muy baja (1.71 pedidos/cliente) y el AOV cayó -22%.</div>
+  </div>
+
+  <!-- 4 grandes KPIs de salud del negocio -->
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="stat-box green">
+      <div class="stat-val green">$552M</div>
+      <div class="stat-label">Ingresos Brutos Totales<br>Jul 2024 – Mar 2026</div>
+      <div class="stat-delta up">↑ Base construida desde $0</div>
+    </div>
+    <div class="stat-box blue">
+      <div class="stat-val blue">$36.9M</div>
+      <div class="stat-label">Ingresos Prom/Mes<br>Últimos 5 meses</div>
+      <div class="stat-delta up">↑ +51% vs Juanda</div>
+    </div>
+    <div class="stat-box yellow">
+      <div class="stat-val yellow">0.41%</div>
+      <div class="stat-label">Tasa Conversión Web<br>GA4 — 115K sesiones</div>
+      <div class="stat-delta down">↓ Industria: 1–4%</div>
+    </div>
+    <div class="stat-box red">
+      <div class="stat-val red">2.7%</div>
+      <div class="stat-label">Tasa Devolución<br>Nov 2025 – Mar 2026</div>
+      <div class="stat-delta down">↑ +80% vs período anterior (1.5%)</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Scorecard por área -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">🏆</div>
+        <div><div class="card-title">Scorecard por Área Digital</div><div class="card-sub">Evaluación consolidada</div></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Área</th><th>Estado</th><th>Nota</th></tr></thead>
+        <tbody>
+          <tr><td>📈 SEO Orgánico</td><td><span class="badge green">Excelente</span></td><td>55.4% de ingresos web</td></tr>
+          <tr><td>🛒 Volumen Ecommerce</td><td><span class="badge green">Creciendo</span></td><td>+84% YTD 2026</td></tr>
+          <tr><td>🎯 Meta Ads — Prospecting</td><td><span class="badge yellow">Regular</span></td><td>Alcance OK, atribución rota</td></tr>
+          <tr><td>🎯 Meta Ads — Remarketing</td><td><span class="badge red">Crítico</span></td><td>Frec. 22.5× — saturado</td></tr>
+          <tr><td>🔄 Retención de Clientes</td><td><span class="badge red">Crítico</span></td><td>1.71 ped/cliente — muy bajo</td></tr>
+          <tr><td>💰 AOV (Valor Pedido)</td><td><span class="badge yellow">Cayendo</span></td><td>$175K, -22% YoY</td></tr>
+          <tr><td>📱 Experiencia Móvil</td><td><span class="badge yellow">Mejorable</span></td><td>87% tráfico, checkout 1m34s</td></tr>
+          <tr><td>📊 Atribución / UTMs</td><td><span class="badge red">Rota</span></td><td>7.6% sin atribuir, Meta gap</td></tr>
+          <tr><td>📍 Diversificación Geo</td><td><span class="badge yellow">Baja</span></td><td>75% Valle del Cauca</td></tr>
+          <tr><td>📧 Email Marketing</td><td><span class="badge orange">Sin usar</span></td><td>Mailchimp conectado, inactivo</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Las 5 decisiones que más impacto tuvieron -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">⚡</div>
+        <div><div class="card-title">Las 5 Decisiones de Mayor Impacto</div><div class="card-sub">Qué movió la aguja de verdad</div></div>
+      </div>
+      <div class="roadmap-item" style="margin-bottom:20px;">
+        <div class="roadmap-num priority-3" style="font-size:20px;">1</div>
+        <div class="roadmap-content">
+          <div class="roadmap-title">Estrategia 2x1 masiva (Nov 2025)</div>
+          <div class="roadmap-desc">Fue el catalizador que llevó los ingresos de $21.8M → $40.9M en un mes (+88%). Las ofertas 2x1 se convirtieron en el motor de conversión más efectivo de la marca.</div>
+        </div>
+      </div>
+      <div class="roadmap-item" style="margin-bottom:20px;">
+        <div class="roadmap-num priority-3" style="font-size:20px;">2</div>
+        <div class="roadmap-content">
+          <div class="roadmap-title">Activar Derseb Capilar como producto</div>
+          <div class="roadmap-desc">Un producto que existía pero estaba dormido. Al activarlo, se convirtió en el 4to más vendido: 138 unidades y $13M COP en 5 meses.</div>
+        </div>
+      </div>
+      <div class="roadmap-item" style="margin-bottom:20px;">
+        <div class="roadmap-num priority-3" style="font-size:20px;">3</div>
+        <div class="roadmap-content">
+          <div class="roadmap-title">Estructura CBO + ABO en Meta Ads</div>
+          <div class="roadmap-desc">Pasar de campañas sin estructura a una arquitectura CBO (remarketing) + ABO (prospecting) permitió registrar 234 compras reales y subir el alcance mensual 3.5×.</div>
+        </div>
+      </div>
+      <div class="roadmap-item" style="margin-bottom:20px;">
+        <div class="roadmap-num priority-2" style="font-size:20px;">4</div>
+        <div class="roadmap-content">
+          <div class="roadmap-title">SEO acumulado (construcción Juanda)</div>
+          <div class="roadmap-desc">15 meses de gestión construyeron un SEO que hoy genera el 55.4% de los ingresos web con el mejor ROI de todos los canales (162× más eficiente que Meta Ads).</div>
+        </div>
+      </div>
+      <div class="roadmap-item">
+        <div class="roadmap-num priority-1" style="font-size:20px;">5</div>
+        <div class="roadmap-content">
+          <div class="roadmap-title">⚠️ Saturar el remarketing (error)</div>
+          <div class="roadmap-desc">La campaña FM 04/12 CBO Remarketing llegó a frecuencia 22.51×. Esto erosiona la audiencia caliente, sube los CPMs y quema el activo más valioso de Meta Ads.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Los 3 grandes cuellos de botella -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon red">🚧</div>
+      <div><div class="card-title">Los 3 Cuellos de Botella que Frenan el Crecimiento</div><div class="card-sub">Resolver estos 3 problemas podría doblar los ingresos sin más inversión publicitaria</div></div>
+    </div>
+    <div class="grid-3">
+      <div style="padding:16px; background: rgba(240,82,82,0.06); border: 1px solid rgba(240,82,82,0.2); border-radius:12px;">
+        <div style="font-size:28px; margin-bottom:10px;">🛒</div>
+        <div style="font-size:15px; font-weight:700; color: var(--red); margin-bottom:8px;">Checkout con Alta Fricción</div>
+        <div style="font-size:13px; color: var(--muted);">11,564 usuarios llegan al checkout y tardan 1 minuto 34 segundos en completarlo (o abandonan). Si la tasa de conversión mejorara de 0.41% al promedio de la industria (2%), los pedidos se multiplicarían por 5 sin cambiar el tráfico.</div>
+        <div style="margin-top:12px;"><span class="badge red">Impacto: muy alto</span></div>
+      </div>
+      <div style="padding:16px; background: rgba(240,82,82,0.06); border: 1px solid rgba(240,82,82,0.2); border-radius:12px;">
+        <div style="font-size:28px; margin-bottom:10px;">🔁</div>
+        <div style="font-size:15px; font-weight:700; color: var(--red); margin-bottom:8px;">Retención de Clientes Crítica</div>
+        <div style="font-size:13px; color: var(--muted);">Con 2,154 clientes y solo 1.71 pedidos promedio, el negocio depende de adquirir nuevos clientes constantemente. Subir a 2.5 pedidos/cliente con email marketing equivale a +$221M COP sin gastar un peso más en pauta.</div>
+        <div style="margin-top:12px;"><span class="badge red">Impacto: muy alto</span></div>
+      </div>
+      <div style="padding:16px; background: rgba(240,82,82,0.06); border: 1px solid rgba(240,82,82,0.2); border-radius:12px;">
+        <div style="font-size:28px; margin-bottom:10px;">🎯</div>
+        <div style="font-size:15px; font-weight:700; color: var(--red); margin-bottom:8px;">Atribución Meta Ads Rota</div>
+        <div style="font-size:13px; color: var(--muted);">GA4 atribuye solo $46 USD a Meta Ads en 2+ años, mientras el Ads Manager muestra 234 compras. Esta brecha gigante hace imposible optimizar el presupuesto correctamente. Sin datos limpios, se está volando a ciegas.</div>
+        <div style="margin-top:12px;"><span class="badge red">Impacto: muy alto</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 2: TIMELINE
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="timeline">
+  <div class="section-title">Evolución Histórica — Timeline Completo</div>
+  <p class="section-desc">Desde el lanzamiento en julio 2024 hasta marzo 2026. Dos gestores, dos estrategias, una marca que creció consistentemente.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">📅</div>
+      <div><div class="card-title">Ingresos Brutos Mensuales — Jul 2024 → Mar 2026</div><div class="card-sub">COP · Línea de tendencia con zonas de gestión</div></div>
+    </div>
+    <div class="chart-wrap tall">
+      <canvas id="timelineChart"></canvas>
+    </div>
+    <div style="display:flex; gap:20px; margin-top:16px; flex-wrap:wrap;">
+      <div class="summary-pill"><span style="width:12px;height:12px;border-radius:50%;background:#6366f1;display:inline-block;"></span> Juanda (Ago 2024 – Oct 2025)</div>
+      <div class="summary-pill"><span style="width:12px;height:12px;border-radius:50%;background:#f97316;display:inline-block;"></span> Gestor Externo (Nov 2025 – Mar 2026)</div>
+      <div class="summary-pill">📌 Máx Juanda: $40.3M (Jul 2025)</div>
+      <div class="summary-pill">📌 Máx Externo: $40.9M (Nov 2025)</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">📦</div>
+        <div><div class="card-title">Pedidos Mensuales</div><div class="card-sub">Volumen de órdenes por mes</div></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="ordersChart"></canvas>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">💰</div>
+        <div><div class="card-title">Evolución del AOV (Ticket Promedio)</div><div class="card-sub">COP por pedido — tendencia mensual</div></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="aovChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hitos clave -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">⚡</div>
+      <div><div class="card-title">Hitos Clave de la Línea de Tiempo</div><div class="card-sub">Los momentos que definieron la trayectoria</div></div>
+    </div>
+    <div style="position:relative; padding-left:30px;">
+      <div style="position:absolute; left:10px; top:0; bottom:0; width:2px; background: var(--border);"></div>
+
+      <div style="margin-bottom:28px; position:relative;">
+        <div style="position:absolute; left:-26px; top:0; width:14px; height:14px; border-radius:50%; background:#6366f1; border:2px solid #a89df8;"></div>
+        <div style="font-size:13px; color: var(--accent); font-weight:700; margin-bottom:4px;">Jul 2024 — Lanzamiento</div>
+        <div style="font-size:14px; color: var(--white); font-weight:600;">32 pedidos · $6.5M COP</div>
+        <div style="font-size:13px; color: var(--muted);">La tienda arranca. Juanda toma el timón del marketing digital.</div>
+      </div>
+
+      <div style="margin-bottom:28px; position:relative;">
+        <div style="position:absolute; left:-26px; top:0; width:14px; height:14px; border-radius:50%; background:#6366f1; border:2px solid #a89df8;"></div>
+        <div style="font-size:13px; color: var(--accent); font-weight:700; margin-bottom:4px;">Ago 2024 — Primer Despegue</div>
+        <div style="font-size:14px; color: var(--white); font-weight:600;">125 pedidos · +290% MoM</div>
+        <div style="font-size:13px; color: var(--muted);">La base del SEO empieza a construirse. Primeras campañas de Meta con objetivos mixtos.</div>
+      </div>
+
+      <div style="margin-bottom:28px; position:relative;">
+        <div style="position:absolute; left:-26px; top:0; width:14px; height:14px; border-radius:50%; background:#ef4444; border:2px solid #fca5a5;"></div>
+        <div style="font-size:13px; color: var(--red); font-weight:700; margin-bottom:4px;">Feb 2025 — Valle Profundo</div>
+        <div style="font-size:14px; color: var(--white); font-weight:600;">61 pedidos · $11.2M — Peor mes Juanda</div>
+        <div style="font-size:13px; color: var(--muted);">Efecto estacional de febrero. Sin estrategia de retención activa, el volumen depende enteramente de la inversión en pauta mensual.</div>
+      </div>
+
+      <div style="margin-bottom:28px; position:relative;">
+        <div style="position:absolute; left:-26px; top:0; width:14px; height:14px; border-radius:50%; background:#22c55e; border:2px solid #86efac;"></div>
+        <div style="font-size:13px; color: var(--green); font-weight:700; margin-bottom:4px;">Jul 2025 — Pico Máximo Juanda</div>
+        <div style="font-size:14px; color: var(--white); font-weight:600;">233 pedidos · $40.3M COP</div>
+        <div style="font-size:13px; color: var(--muted);">El mejor mes de la gestión Juanda. El SEO está maduro y las campañas de producto están en su punto más alto. Desafortunadamente seguido de 3 meses de caída consecutiva.</div>
+      </div>
+
+      <div style="margin-bottom:28px; position:relative;">
+        <div style="position:absolute; left:-26px; top:0; width:14px; height:14px; border-radius:50%; background:#ef4444; border:2px solid #fca5a5;"></div>
+        <div style="font-size:13px; color: var(--red); font-weight:700; margin-bottom:4px;">Ago–Oct 2025 — Caída de 3 Meses</div>
+        <div style="font-size:14px; color: var(--white); font-weight:600;">$40.3M → $21.8M · -46% en 3 meses</div>
+        <div style="font-size:13px; color: var(--muted);">Posible fatiga de campañas, reducción de inversión o saturación de audiencias. Sin "always-on" de bajo costo, el negocio cae cuando la pauta baja.</div>
+      </div>
+
+      <div style="margin-bottom:28px; position:relative;">
+        <div style="position:absolute; left:-26px; top:0; width:14px; height:14px; border-radius:50%; background:#f97316; border:2px solid #fdba74;"></div>
+        <div style="font-size:13px; color: var(--orange); font-weight:700; margin-bottom:4px;">Nov 2025 — Cambio de Gestor & Rebote</div>
+        <div style="font-size:14px; color: var(--white); font-weight:600;">$21.8M → $40.9M · +88% en 1 mes</div>
+        <div style="font-size:13px; color: var(--muted);">El gestor externo implementa 2x1 masivos, activa Derseb y usa estructura CBO+ABO. El piso se establece inmediatamente en $32M+.</div>
+      </div>
+
+      <div style="margin-bottom:28px; position:relative;">
+        <div style="position:absolute; left:-26px; top:0; width:14px; height:14px; border-radius:50%; background:#f97316; border:2px solid #fdba74;"></div>
+        <div style="font-size:13px; color: var(--orange); font-weight:700; margin-bottom:4px;">Dic 2025 – Mar 2026 — Meseta</div>
+        <div style="font-size:14px; color: var(--white); font-weight:600;">Promedio $36.9M/mes · Sin escalar</div>
+        <div style="font-size:13px; color: var(--muted);">El volumen se mantiene estable pero no crece. Devoluciones escalan de $0 a $989K/mes. El remarketing se satura a 22.5× de frecuencia.</div>
+      </div>
+
+      <div style="position:relative;">
+        <div style="position:absolute; left:-26px; top:0; width:14px; height:14px; border-radius:50%; background:#22c55e; border:2px solid #86efac;"></div>
+        <div style="font-size:13px; color: var(--green); font-weight:700; margin-bottom:4px;">YTD 2026 — Mejor Inicio de Año</div>
+        <div style="font-size:14px; color: var(--white); font-weight:600;">$122.8M bruto en 96 días · +84% vs 2025</div>
+        <div style="font-size:13px; color: var(--muted);">Marzo 2026 fue el mes más fuerte con 211 pedidos. La base está construida — el momento de escalar responsablemente es ahora.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Promedios por fase -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon orange">📊</div>
+      <div><div class="card-title">Evolución por Fase de Negocio</div><div class="card-sub">Ingresos promedio mensual por período</div></div>
+    </div>
+    <div class="chart-wrap short">
+      <canvas id="faseChart"></canvas>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 3: META ADS
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="metaads">
+  <div class="section-title">Meta Ads — La Inversión Publicitaria</div>
+  <p class="section-desc">Análisis comparativo de los dos períodos de gestión en la misma cuenta (act=459839867927034). 152 campañas totales. Datos al 6 Abr 2026.</p>
+
+  <div class="alert warning">
+    <span class="alert-icon">⚠️</span>
+    <div><strong>Nota sobre datos de inversión:</strong> Los presupuestos exactos invertidos en Meta Ads no están disponibles en el análisis. Los datos reflejan alcance, frecuencia y compras registradas en el Ads Manager. El ROAS real no se puede calcular con precisión sin los datos de gasto.</div>
+  </div>
+
+  <!-- Comparativa de períodos -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">🆚</div>
+      <div><div class="card-title">Comparativa Directa: Juanda vs Gestor Externo</div><div class="card-sub">Normalizado por mes para comparación justa</div></div>
+    </div>
+    <div class="vs-row">
+      <div class="vs-left"><div class="vs-val" style="color:#6366f1;">~41,700</div><div class="vs-metric">Alcance/mes</div></div>
+      <div class="vs-center">ALCANCE</div>
+      <div class="vs-right"><div class="vs-val" style="color:#f97316;">~145,800</div><div class="vs-metric">Alcance/mes</div></div>
+    </div>
+    <div class="vs-row">
+      <div class="vs-left"><div class="vs-val" style="color:#ef4444;">7.57×</div><div class="vs-metric">Frecuencia prom.</div></div>
+      <div class="vs-center">FRECUENCIA</div>
+      <div class="vs-right"><div class="vs-val" style="color:#22c55e;">4.76×</div><div class="vs-metric">Frecuencia prom.</div></div>
+    </div>
+    <div class="vs-row">
+      <div class="vs-left"><div class="vs-val" style="color:#8892a4;">N/D</div><div class="vs-metric">Compras registradas</div></div>
+      <div class="vs-center">COMPRAS</div>
+      <div class="vs-right"><div class="vs-val" style="color:#22c55e;">234+</div><div class="vs-metric">Compras web</div></div>
+    </div>
+    <div class="vs-row">
+      <div class="vs-left"><div class="vs-val" style="color:#6366f1;">22 meses</div><div class="vs-metric">Duración</div></div>
+      <div class="vs-center">PERÍODO</div>
+      <div class="vs-right"><div class="vs-val" style="color:#f97316;">5 meses</div><div class="vs-metric">Duración</div></div>
+    </div>
+    <div class="vs-row">
+      <div class="vs-left"><div class="vs-val" style="color:#6366f1;">Mixto</div><div class="vs-metric">Tráfico · Conv · Int</div></div>
+      <div class="vs-center">OBJETIVO</div>
+      <div class="vs-right"><div class="vs-val" style="color:#f97316;">Ventas</div><div class="vs-metric">Solo ventas web</div></div>
+    </div>
+    <div class="vs-row">
+      <div class="vs-left"><div class="vs-val" style="color:#8892a4;">Sin estructura</div><div class="vs-metric">Naming numérico</div></div>
+      <div class="vs-center">ESTRUCTURA</div>
+      <div class="vs-right"><div class="vs-val" style="color:#22c55e;">CBO+ABO</div><div class="vs-metric">Naming sistemático</div></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Campañas activas -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">🟢</div>
+        <div><div class="card-title">Campañas Activas — 6 Abr 2026</div><div class="card-sub">Estado actual de la pauta</div></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Campaña</th><th>Tipo</th><th>Compras</th><th>Frec.</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr>
+            <td style="font-size:12px;">FM 04/12 | CBO | Remarketing</td>
+            <td><span class="badge purple">Remktg</span></td>
+            <td><strong>88</strong></td>
+            <td><strong style="color:var(--red);">22.5×</strong></td>
+            <td><span class="badge red">Saturada</span></td>
+          </tr>
+          <tr>
+            <td style="font-size:12px;">FM 04/12 | ABO | Pres. 2.0</td>
+            <td><span class="badge blue">Prosp.</span></td>
+            <td><strong>67</strong></td>
+            <td style="color:var(--green);">3.15×</td>
+            <td><span class="badge green">Saludable</span></td>
+          </tr>
+          <tr>
+            <td style="font-size:12px;">FM 30/03 | ABO | NEWDERM</td>
+            <td><span class="badge blue">Prosp.</span></td>
+            <td>—</td>
+            <td style="color:var(--green);">1.58×</td>
+            <td><span class="badge green">Nueva</span></td>
+          </tr>
+          <tr>
+            <td style="font-size:12px;">FM 30/03 | CBO | Rmktg | Promo</td>
+            <td><span class="badge purple">Remktg</span></td>
+            <td>—</td>
+            <td style="color:var(--green);">1.89×</td>
+            <td><span class="badge green">Nueva</span></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="alert critical" style="margin-top:16px; margin-bottom:0;">
+        <span class="alert-icon">🔥</span>
+        <div>FM 04/12 CBO Remarketing a frecuencia <strong>22.51×</strong> — los mismos usuarios han visto el anuncio más de 22 veces. Audiencia completamente saturada. Acción urgente requerida.</div>
+      </div>
+    </div>
+
+    <!-- Compras por campaña -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">🛍️</div>
+        <div><div class="card-title">Compras por Campaña — Período Externo</div><div class="card-sub">Total: 234+ compras atribuidas en Ads Manager</div></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="compraschart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- El problema de atribución explicado -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon red">🔍</div>
+      <div><div class="card-title">El Problema de Atribución: Meta vs GA4</div><div class="card-sub">Por qué los datos no cuadran — y qué significa realmente</div></div>
+    </div>
+    <div class="attribution-grid">
+      <div class="attribution-card">
+        <div class="logo">📊</div>
+        <div class="source">Ads Manager de Meta dice:</div>
+        <div class="metric">Compras atribuidas</div>
+        <div class="value" style="color:var(--green);">234+</div>
+        <div class="note">Período Nov 2025 – Mar 2026<br>Atribución 7-day click, 1-day view</div>
+      </div>
+      <div class="attribution-card">
+        <div class="logo">📈</div>
+        <div class="source">GA4 dice sobre Paid Social:</div>
+        <div class="metric">Ingresos atribuidos (2+ años)</div>
+        <div class="value" style="color:var(--red);">$46.66</div>
+        <div class="note">27,089 sesiones de Meta Ads<br>$0.0017 revenue por sesión</div>
+      </div>
+    </div>
+    <div style="margin-top:20px; padding:20px; background:var(--card2); border-radius:12px; border:1px solid var(--border);">
+      <div style="font-size:14px; font-weight:700; color:var(--white); margin-bottom:12px;">¿Por qué existe esta brecha? — Explicación técnica</div>
+      <div class="insight fail">
+        <span class="insight-icon">🍎</span>
+        <div class="insight-body">
+          <strong>iOS 14.5+ (el principal culpable)</strong>
+          <p>Desde abril 2021, Apple requiere que los usuarios acepten explícitamente el seguimiento. La mayoría rechaza. Esto rompe el píxel de Meta en dispositivos iPhone (~55% del tráfico de Saderma). Las compras ocurren pero Meta no puede registrarlas en GA4.</p>
+        </div>
+      </div>
+      <div class="insight fail">
+        <span class="insight-icon">🌐</span>
+        <div class="insight-body">
+          <strong>Navegador in-app de Instagram/Facebook</strong>
+          <p>El 31% del tráfico viene de Instagram. El navegador in-app de Meta bloquea cookies de terceros, lo que hace que GA4 no pueda rastrear correctamente la sesión. La compra se ve en GA4 como "directo" o sin atribuir.</p>
+        </div>
+      </div>
+      <div class="insight warn">
+        <span class="insight-icon">🔗</span>
+        <div class="insight-body">
+          <strong>UTMs perdidos o mal configurados</strong>
+          <p>7.64% del tráfico en GA4 está "Unassigned" sin canal. Parte de este tráfico podría ser de Meta Ads con UTMs mal configurados o perdidos en redirecciones.</p>
+        </div>
+      </div>
+      <div class="insight opp">
+        <span class="insight-icon">✅</span>
+        <div class="insight-body">
+          <strong>La solución: Conversions API (CAPI)</strong>
+          <p>Implementar la Conversions API de Meta en el servidor de WooCommerce recupera la atribución perdida por iOS. Complementar con UTMs estrictos en todos los anuncios y activar GA4 Enhanced Ecommerce. Esta acción sola puede cambiar completamente la lectura del ROAS.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Frecuencias visualizadas -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">📡</div>
+      <div><div class="card-title">Alcance vs Frecuencia — Análisis de Saturación</div><div class="card-sub">Período 2: frecuencias por campaña</div></div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="frecChart"></canvas>
+    </div>
+    <div style="margin-top:16px; padding:14px; background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.2); border-radius:10px; font-size:13px; color:#fcd34d;">
+      <strong>Zona óptima de frecuencia: 3–5×.</strong> Por debajo es baja exposición, por encima empieza la fatiga. A partir de 8×, el costo por resultado sube significativamente y la respuesta emocional al anuncio se vuelve negativa.
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 4: ECOMMERCE
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="ecommerce">
+  <div class="section-title">Ecommerce — saderma.co (WooCommerce)</div>
+  <p class="section-desc">Análisis completo de las ventas en la tienda online. Dos períodos de gestión y el YTD 2026 más fuerte de la historia.</p>
+
+  <!-- YTD 2026 KPIs -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon green">📅</div>
+      <div><div class="card-title">YTD 2026 — Ene 1 a Abr 6 (96 días)</div><div class="card-sub">vs mismo período 2025</div></div>
+    </div>
+    <div class="grid-4">
+      <div class="stat-box green">
+        <div class="stat-val green">$122.8M</div>
+        <div class="stat-label">Ventas Totales</div>
+        <div class="stat-delta up">↑ +84% vs $66.7M (2025)</div>
+      </div>
+      <div class="stat-box blue">
+        <div class="stat-val blue">650</div>
+        <div class="stat-label">Pedidos</div>
+        <div class="stat-delta up">↑ +80% vs 2025</div>
+      </div>
+      <div class="stat-box yellow">
+        <div class="stat-val yellow">$175K</div>
+        <div class="stat-label">AOV Promedio</div>
+        <div class="stat-delta down">↓ -22% vs 2025</div>
+      </div>
+      <div class="stat-box red">
+        <div class="stat-val red">$2.47M</div>
+        <div class="stat-label">Devoluciones</div>
+        <div class="stat-delta down">↑ +90% vs 2025</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Comparativa períodos -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon purple">📊</div>
+        <div><div class="card-title">Comparativa de Períodos</div><div class="card-sub">Normalizado por mes para justicia comparativa</div></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="periodoChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Top productos Mar 2026 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon orange">🏆</div>
+        <div><div class="card-title">Top Productos — Marzo 2026</div><div class="card-sub">Mes más fuerte de la historia</div></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="productosChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Devoluciones trend -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon red">↩️</div>
+      <div><div class="card-title">Evolución de Devoluciones — Señal de Alerta</div><div class="card-sub">Nov 2025 – Mar 2026</div></div>
+    </div>
+    <div class="chart-wrap short">
+      <canvas id="devolucionesChart"></canvas>
+    </div>
+    <div class="alert critical" style="margin-top:16px; margin-bottom:0;">
+      <span class="alert-icon">📈</span>
+      <div>Las devoluciones escalan de <strong>$0 (Nov)</strong> a <strong>$989K (Mar)</strong> en solo 5 meses. Tasa del 3% de las ventas brutas. Si llega al 5%, empieza a erosionar seriamente el margen neto. El 76% de las devoluciones de marzo se concentraron en solo 2 días.</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Clientes & Retención -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">👥</div>
+        <div><div class="card-title">Base de Clientes & Retención</div><div class="card-sub">El problema más subestimado del negocio</div></div>
+      </div>
+      <div class="grid-2" style="margin-bottom:20px;">
+        <div style="background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:var(--white);">2,154</div>
+          <div style="font-size:12px; color:var(--muted);">Clientes totales BD</div>
+        </div>
+        <div style="background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:var(--red);">1.71</div>
+          <div style="font-size:12px; color:var(--muted);">Pedidos/cliente promedio</div>
+        </div>
+        <div style="background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:var(--yellow);">$311K</div>
+          <div style="font-size:12px; color:var(--muted);">LTV promedio histórico</div>
+        </div>
+        <div style="background:var(--card2); border:1px solid var(--border); border-radius:10px; padding:16px; text-align:center;">
+          <div style="font-size:28px; font-weight:800; color:var(--red);">1.2</div>
+          <div style="font-size:12px; color:var(--muted);">Artículos por pedido</div>
+        </div>
+      </div>
+      <div style="background:rgba(94,159,255,0.08); border:1px solid rgba(94,159,255,0.2); border-radius:12px; padding:16px;">
+        <div style="font-size:13px; font-weight:700; color:var(--accent2); margin-bottom:8px;">💡 Potencial sin explotar</div>
+        <div style="font-size:13px; color:var(--muted);">Si el promedio sube de 1.71 a 2.5 pedidos/cliente (posible con email marketing), los ingresos adicionales sin adquirir un solo cliente nuevo serían: <strong style="color:var(--white);">2,154 × 0.79 pedidos × $175K = ~$297M COP adicionales</strong></div>
+      </div>
+    </div>
+
+    <!-- Geografía -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">📍</div>
+        <div><div class="card-title">Distribución Geográfica</div><div class="card-sub">Marzo 2026 — atribución de tráfico</div></div>
+      </div>
+      <div class="chart-wrap short">
+        <canvas id="geoChart"></canvas>
+      </div>
+      <div class="alert info" style="margin-top:16px; margin-bottom:0;">
+        <span class="alert-icon">🗺️</span>
+        <div>Bogotá (11K usuarios) y Medellín (6.3K usuarios) tienen 10× más población que Cali con mayor poder adquisitivo. Son mercados completamente sin desarrollar.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fuentes de tráfico ecommerce -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">🔍</div>
+      <div><div class="card-title">Fuentes de Tráfico / Atribución — Marzo 2026</div><div class="card-sub">Por dónde llegan los clientes que compran</div></div>
+    </div>
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(52,168,83,0.15);">🔍</div>
+      <div style="flex:1;">
+        <div class="channel-name">Google Orgánico</div>
+        <div class="channel-sessions">~42% de pedidos · Canal principal</div>
+        <div class="channel-bar-track" style="margin-top:6px;"><div class="channel-bar-fill" style="width:42%; background:var(--green);"></div></div>
+      </div>
+      <div class="channel-revenue"><div class="val" style="color:var(--green);">42%</div><div class="pct">⭐ Estrella</div></div>
+    </div>
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(225,48,108,0.15);">📸</div>
+      <div style="flex:1;">
+        <div class="channel-name">Instagram</div>
+        <div class="channel-sessions">~31% de pedidos · Supera a Facebook en conversión</div>
+        <div class="channel-bar-track" style="margin-top:6px;"><div class="channel-bar-fill" style="width:31%; background:#e1306c;"></div></div>
+      </div>
+      <div class="channel-revenue"><div class="val">31%</div><div class="pct">Creciendo</div></div>
+    </div>
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(24,119,242,0.15);">👍</div>
+      <div style="flex:1;">
+        <div class="channel-name">Facebook</div>
+        <div class="channel-sessions">~15% de pedidos</div>
+        <div class="channel-bar-track" style="margin-top:6px;"><div class="channel-bar-fill" style="width:15%; background:#1877f2;"></div></div>
+      </div>
+      <div class="channel-revenue"><div class="val">15%</div><div class="pct">Regular</div></div>
+    </div>
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(100,100,100,0.15);">🎯</div>
+      <div style="flex:1;">
+        <div class="channel-name">Tráfico Directo</div>
+        <div class="channel-sessions">~10% de pedidos · Marca + WhatsApp</div>
+        <div class="channel-bar-track" style="margin-top:6px;"><div class="channel-bar-fill" style="width:10%; background:var(--muted);"></div></div>
+      </div>
+      <div class="channel-revenue"><div class="val">10%</div><div class="pct">Estable</div></div>
+    </div>
+    <div class="channel-row">
+      <div class="channel-icon" style="background:rgba(16,163,127,0.15);">🤖</div>
+      <div style="flex:1;">
+        <div class="channel-name">ChatGPT / AI Search</div>
+        <div class="channel-sessions">~1% · Canal emergente</div>
+        <div class="channel-bar-track" style="margin-top:6px;"><div class="channel-bar-fill" style="width:1%; background:#10a37f;"></div></div>
+      </div>
+      <div class="channel-revenue"><div class="val" style="color:var(--accent2);">1%</div><div class="pct">Crecerá</div></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 5: GA4
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="ga4">
+  <div class="section-title">Google Analytics 4 — Comportamiento Web</div>
+  <p class="section-desc">115,040 sesiones totales entre Enero 2024 y Abril 2026. El SEO es el canal rey. El tráfico de pago no convierte. El checkout frena las ventas.</p>
+
+  <div class="grid-4" style="margin-bottom:24px;">
+    <div class="stat-box purple">
+      <div class="stat-val">115K</div>
+      <div class="stat-label">Sesiones Totales</div>
+      <div class="stat-delta neutral">Ene 2024 – Abr 2026</div>
+    </div>
+    <div class="stat-box yellow">
+      <div class="stat-val yellow">0.41%</div>
+      <div class="stat-label">Tasa de Conversión</div>
+      <div class="stat-delta down">↓ Industria: 1–4%</div>
+    </div>
+    <div class="stat-box green">
+      <div class="stat-val green">55.4%</div>
+      <div class="stat-label">Revenue de Orgánico</div>
+      <div class="stat-delta up">↑ Solo 25% del tráfico</div>
+    </div>
+    <div class="stat-box red">
+      <div class="stat-val red">0.32%</div>
+      <div class="stat-label">Revenue de Meta Ads</div>
+      <div class="stat-delta down">↓ Con 23.5% del tráfico</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon blue">📡</div>
+      <div><div class="card-title">Sesiones vs Ingresos por Canal</div><div class="card-sub">La brecha que lo explica todo</div></div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="canalChart"></canvas>
+    </div>
+    <div class="alert critical" style="margin-top:16px; margin-bottom:0;">
+      <span class="alert-icon">📊</span>
+      <div><strong>La paradoja más importante:</strong> Organic Search tiene 25% del tráfico pero genera 55.4% de los ingresos. Paid Social tiene 23.5% del tráfico y genera 0.32% de ingresos. El ROI de SEO es <strong>162 veces superior</strong> al de Meta Ads según GA4 (aunque parte de esto es el problema de atribución iOS14).</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <!-- Tabla canales detallada -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">📋</div>
+        <div><div class="card-title">Detalle por Canal</div><div class="card-sub">Revenue per session — la métrica clave</div></div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Canal</th><th>Sesiones</th><th>Rev/Sesión</th><th>Estado</th></tr></thead>
+        <tbody>
+          <tr><td>🔍 Organic Search</td><td>28,860</td><td style="color:var(--green); font-weight:700;">$0.278</td><td><span class="badge green">Estrella</span></td></tr>
+          <tr><td>🎯 Direct</td><td>23,227</td><td>$0.098</td><td><span class="badge blue">Bueno</span></td></tr>
+          <tr><td>🌐 Organic Social</td><td>18,972</td><td>$0.095</td><td><span class="badge yellow">Regular</span></td></tr>
+          <tr><td>❓ Unassigned</td><td>8,790</td><td>$0.180</td><td><span class="badge yellow">Sin atribuir</span></td></tr>
+          <tr><td>🔗 Referral</td><td>1,197</td><td>$0.558</td><td><span class="badge green">Eficiente</span></td></tr>
+          <tr><td>📢 Paid Social</td><td>27,089</td><td style="color:var(--red); font-weight:700;">$0.0017</td><td><span class="badge red">Crítico</span></td></tr>
+          <tr><td>💰 Paid Other</td><td>6,011</td><td style="color:var(--red); font-weight:700;">$0.00</td><td><span class="badge red">Sin retorno</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Audiencia demográfica -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon orange">👥</div>
+        <div><div class="card-title">Audiencia — Segmentos que Más Convierten</div><div class="card-sub">~15.4% de usuarios identificados por GA4</div></div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="audienciaChart"></canvas>
+      </div>
+      <div style="font-size:12px; color:var(--muted); margin-top:12px; padding:10px; background:var(--card2); border-radius:8px;">
+        💡 <strong style="color:var(--white);">Hallazgo:</strong> Femenino 18–24 tiene la mayor tasa de conversión (1.28%) entre mujeres. Masculino 18–24 lidera todos los segmentos (1.56%). La audiencia antiaging (F 45–64) aporta $1,014 USD.
+      </div>
+    </div>
+  </div>
+
+  <!-- Páginas críticas -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">📄</div>
+      <div><div class="card-title">Páginas Críticas — Tiempo vs Tráfico</div><div class="card-sub">Dónde se queda el usuario y dónde se pierde</div></div>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Página</th><th>Vistas</th><th>Tiempo Prom.</th><th>Señal</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>/ (Inicio)</td><td>42,654</td>
+          <td><span style="color:var(--yellow);">19s</span></td>
+          <td><span class="badge yellow">Tiempo bajo</span></td>
+          <td style="font-size:12px; color:var(--muted);">Mejorar propuesta de valor en hero</td>
+        </tr>
+        <tr>
+          <td>/producto/sandet-gel-té-verde</td><td>17,862</td>
+          <td><span style="color:var(--green);">20s</span></td>
+          <td><span class="badge green">Producto #1</span></td>
+          <td style="font-size:12px; color:var(--muted);">Optimizar CTA y cross-sell</td>
+        </tr>
+        <tr>
+          <td>/producto/hyderm-face-emulgel</td><td>17,360</td>
+          <td><span style="color:var(--green);">21s</span></td>
+          <td><span class="badge green">Producto #2</span></td>
+          <td style="font-size:12px; color:var(--muted);">Bundle con Sandet</td>
+        </tr>
+        <tr>
+          <td style="color:var(--red);">/finalizar-compra/ ⚠️</td><td>11,564</td>
+          <td><span style="color:var(--red); font-weight:700;">1m 34s</span></td>
+          <td><span class="badge red">Alta fricción</span></td>
+          <td style="font-size:12px; color:var(--muted);">Simplificar — mayor impacto posible</td>
+        </tr>
+        <tr>
+          <td>/ofertas/ ✅</td><td>9,842</td>
+          <td><span style="color:var(--green); font-weight:700;">52s</span></td>
+          <td><span class="badge green">Alto engagement</span></td>
+          <td style="font-size:12px; color:var(--muted);">Mantener activa siempre</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="alert critical" style="margin-top:16px; margin-bottom:0;">
+      <span class="alert-icon">🛒</span>
+      <div><strong>/finalizar-compra/ — La fuga más grande:</strong> 11,564 usuarios llegan al último paso y tardan 1 minuto 34 segundos. Si la mitad abandona aquí, se están perdiendo ~5,700 compras potenciales solo en este período. Simplificar el checkout es probablemente la acción de mayor impacto en toda la estrategia.</div>
+    </div>
+  </div>
+
+  <!-- Dispositivos -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">📱</div>
+      <div><div class="card-title">Dispositivos — El Sitio es Mobile-First en Realidad</div><div class="card-sub">86.9% del tráfico llega desde celular</div></div>
+    </div>
+    <div class="grid-3">
+      <div style="text-align:center; padding:20px;">
+        <div style="font-size:48px; font-weight:900; color:var(--red);">87%</div>
+        <div style="font-size:14px; color:var(--white); font-weight:600;">Tráfico Móvil</div>
+        <div style="font-size:12px; color:var(--muted);">iOS 55% · Android 44%</div>
+      </div>
+      <div style="text-align:center; padding:20px;">
+        <div style="font-size:48px; font-weight:900; color:var(--muted);">13%</div>
+        <div style="font-size:14px; color:var(--white); font-weight:600;">Desktop</div>
+        <div style="font-size:12px; color:var(--muted);">~9,200 usuarios</div>
+      </div>
+      <div style="text-align:center; padding:20px;">
+        <div style="font-size:48px; font-weight:900; color:var(--muted);">0.4%</div>
+        <div style="font-size:14px; color:var(--white); font-weight:600;">Tablet</div>
+        <div style="font-size:12px; color:var(--muted);">321 usuarios</div>
+      </div>
+    </div>
+    <div class="alert warning" style="margin-bottom:0;">
+      <span class="alert-icon">📱</span>
+      <div>Con 87% de tráfico móvil y una tasa de conversión del 0.41%, cada segundo extra de carga reduce las conversiones ~20%. El checkout, las fichas de producto y los botones de compra deben estar completamente optimizados para pantalla pequeña. Alta presencia de Safari in-app (Instagram) que limita cookies.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 6: EMBUDO COMPLETO
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="funnel">
+  <div class="section-title">Embudo Completo — De la Pauta a la Compra</div>
+  <p class="section-desc">Cómo se mueve la audiencia desde que ve un anuncio hasta que completa una compra. Dónde se pierde el dinero y por qué.</p>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">🔄</div>
+      <div><div class="card-title">Funnel de Conversión — Vista 360°</div><div class="card-sub">Nov 2025 – Mar 2026 · Datos combinados Meta Ads + GA4 + Ecommerce</div></div>
+    </div>
+
+    <div class="funnel-step">
+      <div class="funnel-bar" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); width:100%;">
+        <div><div class="funnel-label">🎯 CONCIENCIA — Meta Ads Reach</div><div class="funnel-sub">Personas que vieron los anuncios</div></div>
+        <div style="text-align:right;"><div class="funnel-val">729,072</div><div class="funnel-sub">Total alcance · 5 meses</div></div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓ <span class="funnel-pct">Solo el 3.7% hizo clic y llegó al sitio</span></div>
+
+    <div class="funnel-step">
+      <div class="funnel-bar" style="background: linear-gradient(135deg, #3b82f6, #2563eb); width:85%;">
+        <div><div class="funnel-label">🌐 VISITAS AL SITIO — Paid Social GA4</div><div class="funnel-sub">Sesiones atribuidas a Meta Ads</div></div>
+        <div style="text-align:right;"><div class="funnel-val">27,089</div><div class="funnel-sub">sesiones · 17s tiempo prom.</div></div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓ <span class="funnel-pct">42.6% llega a página de producto</span></div>
+
+    <div class="funnel-step">
+      <div class="funnel-bar" style="background: linear-gradient(135deg, #0891b2, #0e7490); width:65%;">
+        <div><div class="funnel-label">📄 PÁGINAS DE PRODUCTO</div><div class="funnel-sub">Sandet + Hyderm + Otros top</div></div>
+        <div style="text-align:right;"><div class="funnel-val">~47K</div><div class="funnel-sub">vistas combinadas top productos</div></div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓ <span class="funnel-pct">24.6% llega al checkout</span></div>
+
+    <div class="funnel-step">
+      <div class="funnel-bar" style="background: linear-gradient(135deg, #d97706, #b45309); width:45%;">
+        <div><div class="funnel-label">🛒 CHECKOUT — Alta Fricción</div><div class="funnel-sub">Usuarios en /finalizar-compra/ · 1m 34s promedio</div></div>
+        <div style="text-align:right;"><div class="funnel-val">11,564</div><div class="funnel-sub">visitas · muchos abandonan aquí</div></div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓ <span class="funnel-pct" style="color:var(--red);">Solo 4.1% completa la compra</span></div>
+
+    <div class="funnel-step">
+      <div class="funnel-bar" style="background: linear-gradient(135deg, #16a34a, #15803d); width:25%;">
+        <div><div class="funnel-label">✅ COMPRAS COMPLETADAS</div><div class="funnel-sub">Meta Ads Manager · Conversiones reales</div></div>
+        <div style="text-align:right;"><div class="funnel-val">234+</div><div class="funnel-sub">compras · Nov 2025–Mar 2026</div></div>
+      </div>
+    </div>
+    <div class="funnel-arrow">↓ <span class="funnel-pct">1.71 pedidos promedio por cliente</span></div>
+
+    <div class="funnel-step">
+      <div class="funnel-bar" style="background: linear-gradient(135deg, #be185d, #9d174d); width:12%;">
+        <div><div class="funnel-label">🔁 RECOMPRA</div><div class="funnel-sub">Clientes que repiten sin pauta adicional</div></div>
+        <div style="text-align:right;"><div class="funnel-val">1.71×</div><div class="funnel-sub">pedidos/cliente · meta: 2.5×</div></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px; padding:20px; background:var(--card2); border-radius:12px; border:1px solid var(--border);">
+      <div style="font-size:14px; font-weight:700; color:var(--white); margin-bottom:12px;">🔍 Las 3 fugas principales del embudo</div>
+      <div class="grid-3">
+        <div>
+          <div style="font-size:13px; font-weight:700; color:var(--yellow);">Fuga 1 — Tráfico que Rebota</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:6px;">El tráfico de Meta Ads llega y se va en 17 segundos (vs 1m03s del SEO orgánico). La landing page no está alineada con el mensaje del anuncio o la propuesta de valor no es clara.</div>
+        </div>
+        <div>
+          <div style="font-size:13px; font-weight:700; color:var(--red);">Fuga 2 — Checkout Abandonado</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:6px;">11,564 usuarios llegan al checkout y solo un pequeño porcentaje completa. El tiempo de 1m34s indica confusión, fricción técnica o falta de opciones de pago visibles. Esta es la mayor palanca de conversión.</div>
+        </div>
+        <div>
+          <div style="font-size:13px; font-weight:700; color:var(--orange);">Fuga 3 — Sin Recompra</div>
+          <div style="font-size:12px; color:var(--muted); margin-top:6px;">Con 2,154 clientes y 1.71 pedidos promedio, la mayoría compra una vez y no regresa. Sin email marketing de reactivación, este activo (la base de clientes) se está dejando dormido.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CPC estimado y eficiencia -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">⚡</div>
+      <div><div class="card-title">Eficiencia por Canal — Comparativa Real</div><div class="card-sub">Revenue por cada 1,000 sesiones (GA4)</div></div>
+    </div>
+    <div class="chart-wrap short">
+      <canvas id="efficiencyChart"></canvas>
+    </div>
+    <div style="margin-top:16px;">
+      <div class="progress-row">
+        <span class="progress-label">SEO Orgánico</span>
+        <div class="progress-track"><div class="progress-fill" style="width:100%; background:var(--green);"></div></div>
+        <span class="progress-val" style="color:var(--green);">$278</span>
+      </div>
+      <div class="progress-row">
+        <span class="progress-label">Referral</span>
+        <div class="progress-track"><div class="progress-fill" style="width:100%; background:var(--accent2);"></div></div>
+        <span class="progress-val" style="color:var(--accent2);">$558</span>
+      </div>
+      <div class="progress-row">
+        <span class="progress-label">Directo</span>
+        <div class="progress-track"><div class="progress-fill" style="width:35%; background:var(--accent);"></div></div>
+        <span class="progress-val" style="color:var(--accent);">$97</span>
+      </div>
+      <div class="progress-row">
+        <span class="progress-label">Orgánico Social</span>
+        <div class="progress-track"><div class="progress-fill" style="width:34%; background:var(--yellow);"></div></div>
+        <span class="progress-val" style="color:var(--yellow);">$94</span>
+      </div>
+      <div class="progress-row">
+        <span class="progress-label">Meta Ads (Paid)</span>
+        <div class="progress-track"><div class="progress-fill" style="width:0.7%; background:var(--red);"></div></div>
+        <span class="progress-val" style="color:var(--red);">$1.72</span>
+      </div>
+      <div style="font-size:12px; color:var(--muted); margin-top:12px;">* Referral genera más por sesión pero tiene muy bajo volumen. SEO es el mejor balance volumen + eficiencia. Los valores de Meta Ads en GA4 están distorsionados por el problema de atribución iOS14.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 7: LO QUE FUNCIONÓ / NO FUNCIONÓ
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="analisis">
+  <div class="section-title">Lo que Funcionó vs Lo que No Funcionó</div>
+  <p class="section-desc">Diagnóstico honesto basado en datos. Sin sesgos. Los hallazgos que definen la estrategia de los próximos meses.</p>
+
+  <div class="grid-2">
+    <!-- Funcionó -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">✅</div>
+        <div><div class="card-title">Lo que Funcionó</div><div class="card-sub">Palancas reales de crecimiento</div></div>
+      </div>
+
+      <div class="insight win">
+        <span class="insight-icon">🌿</span>
+        <div class="insight-body">
+          <strong>Estrategia 2x1 como Driver de Conversión</strong>
+          <p>Las ofertas 2x1 fueron el catalizador del +88% MoM en noviembre 2025. Sandet Té Verde 2x1 lidera con 77 unidades en marzo. La percepción de valor supera al descuento en porcentaje para esta audiencia.</p>
+        </div>
+      </div>
+
+      <div class="insight win">
+        <span class="insight-icon">🔍</span>
+        <div class="insight-body">
+          <strong>SEO Orgánico — La Mina de Oro Construida</strong>
+          <p>Organic Search genera $0.278 por sesión vs $0.0017 de Meta Ads. 55.4% de todos los ingresos web. 15 meses de construcción acumulada. Este activo crece mientras se duerme — nadie lo está explotando al máximo.</p>
+        </div>
+      </div>
+
+      <div class="insight win">
+        <span class="insight-icon">🏗️</span>
+        <div class="insight-body">
+          <strong>Estructura CBO+ABO en Meta Ads</strong>
+          <p>Pasar de campañas sin estructura a prospecting (ABO) + remarketing (CBO) separados permitió rastrear 234 compras reales. El alcance mensual subió 3.5× con la misma o menor inversión.</p>
+        </div>
+      </div>
+
+      <div class="insight win">
+        <span class="insight-icon">🧴</span>
+        <div class="insight-body">
+          <strong>Derseb Capilar — Producto Dormido Activado</strong>
+          <p>No era un producto nuevo — existía pero no se promovía. Al activarlo, se convirtió en el 4to más vendido: 138 unidades y $13M COP en 5 meses. Existe un playbook para repetir esto con otros SKUs dormidos (Newkpil, Perfectinol).</p>
+        </div>
+      </div>
+
+      <div class="insight win">
+        <span class="insight-icon">📅</span>
+        <div class="insight-body">
+          <strong>Campañas Estacionales (Solo Juanda)</strong>
+          <p>Black Friday Saderma, Amor y Amistad — campañas que aprovechan el calendario de consumo. El gestor externo NO utilizó fechas especiales en su período. Reactivar este playbook puede crear picos de venta predecibles.</p>
+        </div>
+      </div>
+
+      <div class="insight win">
+        <span class="insight-icon">📍</span>
+        <div class="insight-body">
+          <strong>Estabilización del Piso de Ventas</strong>
+          <p>El gestor externo logró que el peor mes fuera $32.9M. Bajo Juanda hubo meses de $11.2M. El coeficiente de variación bajó de 42% a 9%. La consistencia es tan valiosa como los picos.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- No funcionó -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red">❌</div>
+        <div><div class="card-title">Lo que No Funcionó / Problemas Activos</div><div class="card-sub">Lo que frena el crecimiento y quema presupuesto</div></div>
+      </div>
+
+      <div class="insight fail">
+        <span class="insight-icon">🔥</span>
+        <div class="insight-body">
+          <strong>Saturación del Remarketing (22.5× de Frecuencia)</strong>
+          <p>La campaña FM 04/12 CBO Remarketing tiene frecuencia 22.51×. Los mismos usuarios han visto el anuncio 22+ veces. Esta audiencia está quemada, los CPMs suben y la respuesta emocional se vuelve negativa. Acción urgente.</p>
+        </div>
+      </div>
+
+      <div class="insight fail">
+        <span class="insight-icon">📉</span>
+        <div class="insight-body">
+          <strong>Caída de -46% en 3 Meses (Ago–Oct 2025)</strong>
+          <p>Sin un canal "always-on" de bajo costo (SEO + email automático), el negocio cae cuando la pauta baja o se fatiga. Juanda no tenía sistema de retención que sostuviera el volumen base.</p>
+        </div>
+      </div>
+
+      <div class="insight fail">
+        <span class="insight-icon">🛒</span>
+        <div class="insight-body">
+          <strong>Checkout con 1m 34s de Fricción</strong>
+          <p>La página de finalizar compra registra el tiempo más alto de todo el sitio. Los usuarios se atascan. Esta es probablemente la mayor pérdida de ingresos que existe — clientes que ya decidieron comprar pero no completan.</p>
+        </div>
+      </div>
+
+      <div class="insight fail">
+        <span class="insight-icon">📊</span>
+        <div class="insight-body">
+          <strong>Atribución Rota — Paid Other con $0 en Ventas</strong>
+          <p>6,011 sesiones de "Paid Other" generaron exactamente $0 en ingresos con 31.94% de interacción. Esto es dinero literalmente tirado. Nadie identificó ni detuvo esta fuente. También: 7.6% del tráfico sin atribuir.</p>
+        </div>
+      </div>
+
+      <div class="insight fail">
+        <span class="insight-icon">🔁</span>
+        <div class="insight-body">
+          <strong>Email Marketing Inactivo con Mailchimp Conectado</strong>
+          <p>WooCommerce tiene Mailchimp integrado. Hay 2,154 clientes con email. No hay secuencias activas de recompra, reactivación ni post-compra. Este es el canal de mayor ROI posible y está completamente desaprovechado.</p>
+        </div>
+      </div>
+
+      <div class="insight fail">
+        <span class="insight-icon">↩️</span>
+        <div class="insight-body">
+          <strong>Devoluciones Escalando +90% YoY</strong>
+          <p>De $0 en noviembre a $989K en marzo 2026. El 76% concentrado en 2 días. Puede indicar sobreventas por WhatsApp, problema de calidad en un lote o fraude. Sin investigar la causa, la tendencia seguirá subiendo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Veredicto de los dos períodos -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">⚖️</div>
+      <div><div class="card-title">Veredicto Final — Los Dos Períodos</div><div class="card-sub">Una visión honesta sin favoritismos</div></div>
+    </div>
+    <div class="grid-2">
+      <div style="padding:20px; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.25); border-radius:12px;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+          <div style="width:48px; height:48px; background:rgba(99,102,241,0.15); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px;">🔵</div>
+          <div>
+            <div style="font-size:16px; font-weight:700; color:#a89df8;">Juanda (Ago 2024–Oct 2025)</div>
+            <div style="font-size:12px; color:var(--muted);">15 meses · $367.5M bruto · 1,841 pedidos</div>
+          </div>
+        </div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:12px;"><strong style="color:var(--white);">Fortalezas:</strong> Construyó la tienda desde $0. Estableció el SEO que hoy genera 55% de los ingresos. Diversidad de objetivos (embudo completo). Campañas estacionales. Menor tasa de devolución (1.5%). Mix más diverso de productos premium.</div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.7;"><strong style="color:var(--white);">Debilidades:</strong> Alta variabilidad (CV 42%). Frecuencia 7.57× — fatiga. Sin separación clara prospecting/remarketing. Sin datos de conversión medibles. Peor mes: $11.2M.</div>
+        <div style="margin-top:16px; text-align:center;">
+          <span style="font-size:28px; font-weight:900; color:#a89df8;">7.2</span>
+          <span style="font-size:14px; color:var(--muted);">/10</span>
+        </div>
+      </div>
+      <div style="padding:20px; background:rgba(249,115,22,0.08); border:1px solid rgba(249,115,22,0.25); border-radius:12px;">
+        <div style="display:flex; align-items:center; gap:12px; margin-bottom:16px;">
+          <div style="width:48px; height:48px; background:rgba(249,115,22,0.15); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:22px;">🟠</div>
+          <div>
+            <div style="font-size:16px; font-weight:700; color:#fdba74;">Gestor Externo (Nov 2025–Mar 2026)</div>
+            <div style="font-size:12px; color:var(--muted);">5 meses · $184.6M bruto · 1,052 pedidos</div>
+          </div>
+        </div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:12px;"><strong style="color:var(--white);">Fortalezas:</strong> Estabilización del piso ($32.9M mínimo). Volumen +71% más pedidos/mes. Estructura técnica CBO+ABO. Nomenclatura sistemática. 234 compras rastreadas. Activó Derseb. Alcance mensual 3.5× mayor.</div>
+        <div style="font-size:13px; color:var(--muted); line-height:1.7;"><strong style="color:var(--white);">Debilidades:</strong> Remarketing saturado (22.5×). Sin estrategia de tope de funnel. Devoluciones escalando (+80%). Sin campañas estacionales. Sin email/retención. Meseta: no escala.</div>
+        <div style="margin-top:16px; text-align:center;">
+          <span style="font-size:28px; font-weight:900; color:#fdba74;">7.8</span>
+          <span style="font-size:14px; color:var(--muted);">/10</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:20px; padding:20px; background:var(--card2); border-radius:12px; border:1px solid var(--border); text-align:center;">
+      <div style="font-size:15px; font-weight:700; color:var(--white); margin-bottom:8px;">🏆 La Estrategia Ideal = Fusión de Ambos Enfoques</div>
+      <div style="font-size:13px; color:var(--muted);">El gestor externo llevó estructura técnica, volumen y estabilidad. Juanda aporta conocimiento de producto, diversidad de objetivos, campañas estacionales y menor tasa de devolución. <strong style="color:var(--white);">Ninguno es el enemigo del otro — son complementarios.</strong></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 8: OPORTUNIDADES
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="oportunidades">
+  <div class="section-title">Oportunidades Identificadas</div>
+  <p class="section-desc">Con los datos encima de la mesa, estas son las oportunidades más grandes y concretas que tiene Saderma ahora mismo.</p>
+
+  <div class="grid-3">
+    <div style="padding:20px; background:rgba(62,207,142,0.06); border:1px solid rgba(62,207,142,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">📧</div>
+      <div style="font-size:14px; font-weight:700; color:var(--green); margin-bottom:8px;">Email Marketing — Canal 0 Activado</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">Mailchimp conectado, 2,154 clientes con email, <strong style="color:var(--white);">$0 invertido en este canal</strong>. Una secuencia básica de recompra (15 días post-compra) + reactivación (60 días) podría agregar $221M+ COP sin pauta.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--green); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Implementación: 1-2 semanas</div>
+    </div>
+    <div style="padding:20px; background:rgba(94,159,255,0.06); border:1px solid rgba(94,159,255,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">🛒</div>
+      <div style="font-size:14px; font-weight:700; color:var(--accent2); margin-bottom:8px;">Checkout Simplificado</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">La tasa de conversión es 0.41% vs 1-4% de la industria. Si se mejora a solo 1%, los pedidos mensuales se doblarían <strong style="color:var(--white);">sin invertir más en tráfico</strong>. El impacto en ingresos sería de +$36M/mes adicionales.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--accent2); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Impacto: el mayor de todos</div>
+    </div>
+    <div style="padding:20px; background:rgba(249,115,22,0.06); border:1px solid rgba(249,115,22,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">📦</div>
+      <div style="font-size:14px; font-weight:700; color:var(--orange); margin-bottom:8px;">Kits & Bundles para Subir AOV</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">AOV actual: $175K con 1.2 artículos/pedido. Crear kits en WooCommerce (Sandet + Hyderm + Newderm) puede subir el AOV a $220K+. Con 211 pedidos/mes, eso es <strong style="color:var(--white);">+$9.5M COP adicionales al mes</strong>.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--orange); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Implementación: 1 semana</div>
+    </div>
+    <div style="padding:20px; background:rgba(124,111,247,0.06); border:1px solid rgba(124,111,247,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">📍</div>
+      <div style="font-size:14px; font-weight:700; color:var(--accent); margin-bottom:8px;">Bogotá y Medellín sin Desarrollar</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">75% de clientes viene del Valle del Cauca. Bogotá (11K usuarios en GA4) y Medellín (6.3K) tienen demanda latente y mayor poder adquisitivo. Campañas geo-segmentadas con Addi son la estrategia para <strong style="color:var(--white);">abrir un segundo motor de crecimiento</strong>.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Potencial: mercado 10× más grande</div>
+    </div>
+    <div style="padding:20px; background:rgba(62,207,142,0.06); border:1px solid rgba(62,207,142,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">🌿</div>
+      <div style="font-size:14px; font-weight:700; color:var(--green); margin-bottom:8px;">Newkpil & Perfectinol Dormidos</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">El caso de Derseb demostró que activar un producto dormido puede crear un top 4 en ventas. Newkpil y Perfectinol son candidatos similares con demanda sin explotar. <strong style="color:var(--white);">Un reel educativo + campaña = nuevo motor de ventas</strong>.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--green); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Probado con Derseb</div>
+    </div>
+    <div style="padding:20px; background:rgba(245,166,35,0.06); border:1px solid rgba(245,166,35,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">🤖</div>
+      <div style="font-size:14px; font-weight:700; color:var(--yellow); margin-bottom:8px;">AI Search (ChatGPT, Perplexity)</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">Ya hay un pedido atribuido a ChatGPT.com. Es una señal temprana de un canal que crecerá exponencialmente. Quien llegue primero con FAQ estructurada y contenido comparativo de ingredientes <strong style="color:var(--white);">tendrá ventaja duradera</strong>.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--yellow); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Canal del futuro — primero mover</div>
+    </div>
+    <div style="padding:20px; background:rgba(94,159,255,0.06); border:1px solid rgba(94,159,255,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">📅</div>
+      <div style="font-size:14px; font-weight:700; color:var(--accent2); margin-bottom:8px;">Campañas Estacionales Planeadas</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">El gestor externo no usó fechas especiales. Saderma tiene historial de Black Friday, Amor y Amistad. Un <strong style="color:var(--white);">calendario de 12 campañas estacionales</strong> crea picos de venta predecibles y puede ampliar los $40M+ del mes pico.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--accent2); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Demostrado históricamente</div>
+    </div>
+    <div style="padding:20px; background:rgba(249,115,22,0.06); border:1px solid rgba(249,115,22,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">🎯</div>
+      <div style="font-size:14px; font-weight:700; color:var(--orange); margin-bottom:8px;">Conversions API (CAPI) para Meta</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">Implementar CAPI en el servidor de WooCommerce recupera la atribución perdida por iOS 14.5+. Esto permite optimizar las campañas de Meta Ads con datos reales, <strong style="color:var(--white);">potencialmente mejorando el ROAS 30-50%</strong>.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--orange); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">Técnico — máx. impacto en Meta Ads</div>
+    </div>
+    <div style="padding:20px; background:rgba(124,111,247,0.06); border:1px solid rgba(124,111,247,0.2); border-radius:14px;">
+      <div style="font-size:28px; margin-bottom:10px;">🔍</div>
+      <div style="font-size:14px; font-weight:700; color:var(--accent); margin-bottom:8px;">Escalar el SEO — Contenido Educativo</div>
+      <div style="font-size:13px; color:var(--muted); line-height:1.6;">SEO genera $278 por cada 1,000 sesiones. Crear artículos sobre "cómo quitar manchas", "rutina antiedad 40+", "ingredientes para acné" puede multiplicar ese tráfico de alta calidad <strong style="color:var(--white);">sin gasto publicitario recurrente</strong>.</div>
+      <div style="margin-top:12px; font-size:11px; color:var(--accent); font-weight:700; text-transform:uppercase; letter-spacing:0.5px;">ROI 162× vs Meta Ads (GA4)</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     SECTION 9: HOJA DE RUTA
+═══════════════════════════════════════════════════════════ -->
+<section class="section" id="hoja-ruta">
+  <div class="section-title">Hoja de Ruta Estratégica</div>
+  <p class="section-desc">Las acciones ordenadas por impacto y urgencia. Priorizadas con base en los datos, no en intuición.</p>
+
+  <div class="alert success">
+    <span class="alert-icon">📌</span>
+    <div>Esta hoja de ruta asume que Juanda retoma la gestión integrando lo mejor de ambos períodos. Las acciones están ordenadas para maximizar el impacto en los primeros 90 días.</div>
+  </div>
+
+  <div class="grid-3" style="margin-bottom:24px;">
+    <div style="text-align:center; padding:16px; background:rgba(240,82,82,0.08); border:1px solid rgba(240,82,82,0.25); border-radius:12px;">
+      <div style="font-size:22px; font-weight:800; color:var(--red);">🔴 Urgente</div>
+      <div style="font-size:13px; color:var(--muted); margin-top:6px;">Esta semana · No puede esperar</div>
+    </div>
+    <div style="text-align:center; padding:16px; background:rgba(245,166,35,0.08); border:1px solid rgba(245,166,35,0.25); border-radius:12px;">
+      <div style="font-size:22px; font-weight:800; color:var(--yellow);">🟡 Mes 1–2</div>
+      <div style="font-size:13px; color:var(--muted); margin-top:6px;">Abril–Mayo · Alto impacto</div>
+    </div>
+    <div style="text-align:center; padding:16px; background:rgba(62,207,142,0.08); border:1px solid rgba(62,207,142,0.25); border-radius:12px;">
+      <div style="font-size:22px; font-weight:800; color:var(--green);">🟢 Mes 3–6</div>
+      <div style="font-size:13px; color:var(--muted); margin-top:6px;">Mayo–Sep · Crecimiento</div>
+    </div>
+  </div>
+
+  <!-- Acciones urgentes -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon red">🔴</div>
+      <div><div class="card-title">Acciones URGENTES — Esta Semana</div><div class="card-sub">Problemas activos que están quemando dinero ahora mismo</div></div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-1">1</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Desactivar / Reestructurar FM 04/12 CBO Remarketing</div>
+        <div class="roadmap-desc">La campaña tiene frecuencia 22.51×. Esta audiencia está saturada por completo. Opciones: (1) ampliar la ventana de remarketing de 30 a 90 días para refrescar la audiencia, (2) rotar los creativos inmediatamente, (3) bajar el presupuesto y activar la nueva campaña del 30/03. La audiencia caliente está quemada — cada impresión adicional sube el CPM y baja la efectividad.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Meta Ads</span>
+          <span class="roadmap-tag">Remarketing</span>
+          <span class="roadmap-tag" style="color:var(--red); border-color:rgba(240,82,82,0.3);">Urgente</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-1">2</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Identificar y Detener "Paid Other" ($0 en ventas)</div>
+        <div class="roadmap-desc">6,011 sesiones de una fuente de pago sin ningún ingreso. Revisar en Google Analytics qué fuente específica es esto (probablemente redes de display, tráfico de baja calidad o un canal mal configurado). Desactivar inmediatamente y redirigir ese presupuesto a SEO o retargeting real.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">GA4</span>
+          <span class="roadmap-tag">Analytics</span>
+          <span class="roadmap-tag" style="color:var(--red); border-color:rgba(240,82,82,0.3);">Dinero perdido</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-1">3</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Investigar Devoluciones Concentradas en 2 Días (Mar 19 y 23)</div>
+        <div class="roadmap-desc">$989K en devoluciones en marzo, con el 76% en 2 días. Revisar qué pedidos específicos generaron esas devoluciones, qué canal los trajo y qué productos estaban involucrados. Si hay un cliente o canal recurrente, actuar antes de que escale. Meta: bajar tasa de 3% a <1.8% en 90 días.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Ecommerce</span>
+          <span class="roadmap-tag">WooCommerce</span>
+          <span class="roadmap-tag" style="color:var(--red); border-color:rgba(240,82,82,0.3);">Margen en riesgo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mes 1-2 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon yellow">🟡</div>
+      <div><div class="card-title">Mes 1–2 — Abril y Mayo 2026</div><div class="card-sub">Las acciones de mayor impacto en conversión y retención</div></div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-2">4</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Simplificar el Checkout de saderma.co</div>
+        <div class="roadmap-desc">11,564 usuarios llegaron al checkout con 1m34s de tiempo promedio. Metas: reducir a menos de 40 segundos, activar autocompletar de dirección, destacar Addi (cuotas sin intereses) en el primer paso, reducir campos obligatorios, optimizar para móvil. Esta sola acción puede doblar la tasa de conversión de 0.41% a 0.8%+.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">UX/UI</span>
+          <span class="roadmap-tag">WooCommerce</span>
+          <span class="roadmap-tag" style="color:var(--yellow); border-color:rgba(245,166,35,0.3);">Mayor impacto en conversión</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-2">5</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Activar Secuencias de Email con Mailchimp</div>
+        <div class="roadmap-desc">Mailchimp está conectado pero inactivo. Implementar: (a) Email de seguimiento a 15 días post-compra con reseña + cross-sell de producto complementario, (b) Email de reactivación a 60 días con descuento exclusivo "te extrañamos", (c) Email "tu rutina te espera" a 90 días. Con 2,154 clientes, esto puede generar ingresos recurrentes sin inversión publicitaria.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Email Marketing</span>
+          <span class="roadmap-tag">Mailchimp</span>
+          <span class="roadmap-tag" style="color:var(--green); border-color:rgba(62,207,142,0.3);">ROI > 400%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-2">6</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Implementar Conversions API (CAPI) en WooCommerce</div>
+        <div class="roadmap-desc">El gap de atribución entre Meta Ads (234 compras) y GA4 ($46 USD) se resuelve con CAPI. Hay un plugin oficial de Meta para WooCommerce que se instala en menos de 2 horas. Una vez activo, el Ads Manager tendrá datos reales de conversión que permiten optimizar correctamente y potencialmente mejorar el ROAS 30-50%.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Meta Ads</span>
+          <span class="roadmap-tag">Atribución</span>
+          <span class="roadmap-tag" style="color:var(--accent2); border-color:rgba(94,159,255,0.3);">Técnico — 2 horas</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-2">7</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Crear 3 Kits de Productos en la Tienda</div>
+        <div class="roadmap-desc">AOV actual: $175K con 1.2 artículos/pedido. Crear: (1) "Kit Rutina Básica Acné" — Sandet Té Verde + Newderm Emulgel (~$130K), (2) "Kit Antiedad Completo" — Lign-D + Tensoderm Contorno + Hylum-C (~$220K), (3) "Kit Capilar" — Derseb + Newkpil (~$120K). Promover con descuento del 10% para incentivar el bundle. Meta: subir AOV a $220K+ en 60 días.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Ecommerce</span>
+          <span class="roadmap-tag">AOV</span>
+          <span class="roadmap-tag" style="color:var(--orange); border-color:rgba(249,115,22,0.3);">+$9.5M/mes potencial</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-2">8</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Reactivar Capa de Awareness en Meta Ads</div>
+        <div class="roadmap-desc">El gestor externo solo usó objetivo "Ventas Web" — esto erosiona el tope del funnel lentamente. Agregar una campaña de contenido/interacción con bajo presupuesto ($500K-$1M COP/mes) que nutra el remarketing con audiencias frescas. Reels educativos sobre ingredientes funcionan mejor que anuncios de venta para awareness. Audiencia fría → interacción → remarketing → venta.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Meta Ads</span>
+          <span class="roadmap-tag">Awareness</span>
+          <span class="roadmap-tag">Embudo Completo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mes 3-6 -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon green">🟢</div>
+      <div><div class="card-title">Mes 3–6 — Mayo a Septiembre 2026</div><div class="card-sub">Escalar el negocio desde una base sólida</div></div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-3">9</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Campañas Geo-Segmentadas: Bogotá y Medellín</div>
+        <div class="roadmap-desc">Con el checkout optimizado y CAPI activo, lanzar campañas de Meta Ads geo-segmentadas en Bogotá (~11K usuarios potenciales) y Medellín (~6.3K). Mensaje diferenciado: "Marca colombiana, fórmula dermatológica, envío rápido, paga en cuotas con Addi". Empezar con presupuesto test de $500K/semana por ciudad y evaluar CPL vs Valle del Cauca.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Meta Ads</span>
+          <span class="roadmap-tag">Expansión Geo</span>
+          <span class="roadmap-tag" style="color:var(--green); border-color:rgba(62,207,142,0.3);">Nuevo mercado</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-3">10</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Escalar el SEO — 10 Artículos de Alto Intención</div>
+        <div class="roadmap-desc">SEO genera $278/1,000 sesiones — el canal más rentable. Crear artículos como: "Cómo quitar manchas en la piel", "Rutina de noche para piel con acné", "Los mejores ingredientes antiedad después de los 40", "Caspa: qué la causa y cómo tratarla". Cada artículo posicionado puede traer 200-500 sesiones/mes de forma permanente. Estos son activos digitales que generan ROI por años.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">SEO</span>
+          <span class="roadmap-tag">Content Marketing</span>
+          <span class="roadmap-tag" style="color:var(--accent); border-color:rgba(124,111,247,0.3);">ROI acumulativo</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-3">11</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Activar Campaña de Producto: Newderm + Perfectinol</div>
+        <div class="roadmap-desc">El modelo de Derseb (reel educativo + campaña) probó que un producto dormido puede convertirse en top 4. Aplicar el mismo playbook a Newderm Advanced (el más caro: $35 USD promedio) y Perfectinol. Un video mostrando el mecanismo de acción + ingrediente clave + testimonio, seguido de una campaña ABO de prospecting, puede crear una nueva palanca de ingresos de $8-12M/mes.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Meta Ads</span>
+          <span class="roadmap-tag">Producto</span>
+          <span class="roadmap-tag" style="color:var(--orange); border-color:rgba(249,115,22,0.3);">Playbook probado</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="roadmap-item">
+      <div class="roadmap-num priority-3">12</div>
+      <div class="roadmap-content">
+        <div class="roadmap-title">Calendario de Campañas Estacionales — 2do Semestre 2026</div>
+        <div class="roadmap-desc">Crear el calendario completo con: Día de la Madre (mayo), Aniversario Saderma (si aplica), Amor y Amistad (septiembre), Halloween Skin (octubre), Black Friday (noviembre), Navidad (diciembre). Cada fecha debe tener: concepto creativo, oferta definida, presupuesto asignado y creatividades listas con 2 semanas de anticipación. El objetivo es crear picos de venta predecibles de $45M+.</div>
+        <div class="roadmap-tags">
+          <span class="roadmap-tag">Estrategia</span>
+          <span class="roadmap-tag">Campañas</span>
+          <span class="roadmap-tag" style="color:var(--green); border-color:rgba(62,207,142,0.3);">Picos predecibles</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen del impacto potencial -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-icon purple">💰</div>
+      <div><div class="card-title">Potencial de Impacto Financiero Estimado</div><div class="card-sub">Si se ejecutan las acciones correctamente en 6 meses</div></div>
+    </div>
+    <div class="chart-wrap short">
+      <canvas id="impactoChart"></canvas>
+    </div>
+    <table class="data-table" style="margin-top:20px;">
+      <thead><tr><th>Acción</th><th>Impacto Mensual Estimado</th><th>Costo de Implementación</th><th>Timeframe</th></tr></thead>
+      <tbody>
+        <tr><td>✅ Checkout simplificado (+0.6% conversión)</td><td style="color:var(--green); font-weight:700;">+$20-36M COP/mes</td><td>Técnico (WooCommerce)</td><td>Sem 2-4</td></tr>
+        <tr><td>📧 Email marketing activado (2,154 clientes)</td><td style="color:var(--green); font-weight:700;">+$15-25M COP/mes</td><td>$0 (Mailchimp ya conectado)</td><td>Mes 1</td></tr>
+        <tr><td>📦 Kits & Bundles (+AOV $175K → $220K)</td><td style="color:var(--green); font-weight:700;">+$9.5M COP/mes</td><td>Config WooCommerce — 1 sem</td><td>Mes 1</td></tr>
+        <tr><td>🎯 CAPI + optimización Meta Ads</td><td style="color:var(--yellow); font-weight:700;">+10-30% ROAS</td><td>Plugin WooCommerce — 2h</td><td>Sem 1-2</td></tr>
+        <tr><td>📍 Campañas Bogotá/Medellín</td><td style="color:var(--accent2); font-weight:700;">+$8-20M COP/mes</td><td>Inversión pauta ~$3-5M/mes</td><td>Mes 2-3</td></tr>
+        <tr><td>🔍 SEO — 10 artículos nuevos</td><td style="color:var(--accent); font-weight:700;">+$3-8M COP/mes (cumulativo)</td><td>Contenido (~20h trabajo)</td><td>Mes 2-4</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:16px; padding:16px; background:rgba(62,207,142,0.08); border:1px solid rgba(62,207,142,0.2); border-radius:12px; text-align:center;">
+      <div style="font-size:14px; color:var(--muted);">Potencial total en 6 meses (si se ejecuta correctamente)</div>
+      <div style="font-size:36px; font-weight:900; color:var(--green);">$55–100M COP/mes</div>
+      <div style="font-size:13px; color:var(--muted);">vs $36.9M promedio actual — sin necesariamente aumentar el presupuesto de pauta</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<div class="footer">
+  🔬 Saderma · Análisis 360° Digital · 2025–Mar 2026<br>
+  Meta Ads · GA4 · WooCommerce · Datos al 6 Abr 2026<br>
+  <span style="color:var(--border);">Generado con datos reales de la cuenta · Análisis estratégico para uso interno</span>
+</div>
+
+<script>
+// ── NAVIGATION ──
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  // init charts for this section
+  setTimeout(() => initChartsForSection(id), 50);
+}
+
+const chartDefaults = {
+  color: '#8892a4',
+  borderColor: '#252a42',
+};
+Chart.defaults.color = '#8892a4';
+Chart.defaults.borderColor = '#252a42';
+Chart.defaults.font.family = "'Segoe UI', system-ui, sans-serif";
+
+const chartInstances = {};
+
+function destroyChart(id) {
+  if (chartInstances[id]) { chartInstances[id].destroy(); delete chartInstances[id]; }
+}
+
+function initChartsForSection(section) {
+  if (section === 'resumen') { /* no charts */ }
+  if (section === 'timeline') { initTimelineCharts(); }
+  if (section === 'metaads') { initMetaCharts(); }
+  if (section === 'ecommerce') { initEcommerceCharts(); }
+  if (section === 'ga4') { initGA4Charts(); }
+  if (section === 'funnel') { initFunnelCharts(); }
+  if (section === 'hoja-ruta') { initRoadmapCharts(); }
+}
+
+// ── MONTHLY DATA ──
+const labels = ['Jul\'24','Ago\'24','Sep\'24','Oct\'24','Nov\'24','Dic\'24',
+                 'Ene\'25','Feb\'25','Mar\'25','Abr\'25','May\'25','Jun\'25',
+                 'Jul\'25','Ago\'25','Sep\'25','Oct\'25',
+                 'Nov\'25','Dic\'25','Ene\'26','Feb\'26','Mar\'26'];
+const revenue = [6.5, 12, 19, 21, 23, 22, 16, 11.2, 28, 26, 31, 35, 40.3, 30.2, 25.9, 21.8, 40.9, 36.7, 33.4, 44.5, 34.9];
+const orders  = [32, 125, 95, 100, 110, 115, 90, 61, 130, 135, 150, 175, 233, 175, 150, 110, 230, 200, 190, 206, 211];
+const aovData = [203, 160, 200, 210, 209, 191, 178, 184, 215, 193, 207, 200, 173, 173, 173, 198, 178, 184, 176, 216, 165];
+const returns = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 429, 855, 483, 989];
+
+// Background bands
+const juandaBg = { id: 'juandaBg', beforeDraw(chart) {
+  const { ctx, chartArea: { left, right, top, bottom }, scales: { x } } = chart;
+  if (!x) return;
+  const x1 = x.getPixelForValue(1);
+  const x2 = x.getPixelForValue(15);
+  ctx.save();
+  ctx.fillStyle = 'rgba(99,102,241,0.06)';
+  ctx.fillRect(x1, top, x2 - x1, bottom - top);
+  ctx.restore();
+}};
+
+function getGradient(ctx, color1, color2) {
+  const g = ctx.createLinearGradient(0, 0, 0, 400);
+  g.addColorStop(0, color1);
+  g.addColorStop(1, color2);
+  return g;
+}
+
+// ── TIMELINE CHARTS ──
+function initTimelineCharts() {
+  // Revenue chart
+  destroyChart('timelineChart');
+  const tCtx = document.getElementById('timelineChart').getContext('2d');
+  chartInstances['timelineChart'] = new Chart(tCtx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Ingresos Brutos (M COP)',
+        data: revenue,
+        borderColor: '#a89df8',
+        backgroundColor: (ctx) => {
+          const g = ctx.chart.ctx.createLinearGradient(0, 0, 0, 380);
+          g.addColorStop(0, 'rgba(124,111,247,0.25)');
+          g.addColorStop(1, 'rgba(124,111,247,0)');
+          return g;
+        },
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        pointBackgroundColor: (ctx) => {
+          const i = ctx.dataIndex;
+          if (i === 6)  return '#f59e0b'; // Feb 25 dip
+          if (i === 12) return '#22c55e'; // Jul 25 peak
+          if (i === 16) return '#f97316'; // Nov 25 bounce
+          if (i === 19) return '#22c55e'; // Feb 26 high
+          return '#a89df8';
+        },
+        segment: {
+          borderColor: (ctx) => ctx.p0DataIndex < 16 ? '#6366f1' : '#f97316'
+        }
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: (ctx) => ` $${ctx.raw}M COP`
+          }
+        },
+        annotation: {
+          annotations: {
+            peakJuanda: {
+              type: 'point', xValue: 'Jul\'25', yValue: 40.3,
+              backgroundColor: '#22c55e', radius: 7, borderWidth: 0
+            }
+          }
+        }
+      },
+      scales: {
+        x: { grid: { color: 'rgba(37,42,66,0.5)' } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, ticks: { callback: v => `$${v}M` } }
+      }
+    }
+  });
+
+  // Orders chart
+  destroyChart('ordersChart');
+  const oCtx = document.getElementById('ordersChart').getContext('2d');
+  chartInstances['ordersChart'] = new Chart(oCtx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Pedidos',
+        data: orders,
+        backgroundColor: labels.map((_, i) => i < 16 ? 'rgba(99,102,241,0.7)' : 'rgba(249,115,22,0.7)'),
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(37,42,66,0.5)' } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' } }
+      }
+    }
+  });
+
+  // AOV chart
+  destroyChart('aovChart');
+  const aCtx = document.getElementById('aovChart').getContext('2d');
+  chartInstances['aovChart'] = new Chart(aCtx, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [{
+        label: 'AOV (K COP)',
+        data: aovData,
+        borderColor: '#f5a623',
+        backgroundColor: 'rgba(245,166,35,0.1)',
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2,
+        pointRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(37,42,66,0.5)' } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, ticks: { callback: v => `$${v}K` } }
+      }
+    }
+  });
+
+  // Fase chart
+  destroyChart('faseChart');
+  const fCtx = document.getElementById('faseChart').getContext('2d');
+  chartInstances['faseChart'] = new Chart(fCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Lanzamiento\n(Jul\'24)','Juanda Q4\'24','Juanda Q1\'25','Juanda Q2\'25','Juanda Q3\'25','Juanda Oct\'25','Ext. Nov\'25–Mar\'26'],
+      datasets: [{
+        label: 'Ingreso Promedio Mensual (M COP)',
+        data: [6.5, 18.2, 18.2, 31.5, 32.1, 21.8, 36.9],
+        backgroundColor: ['rgba(99,102,241,0.5)','rgba(99,102,241,0.6)','rgba(99,102,241,0.6)','rgba(99,102,241,0.7)','rgba(99,102,241,0.7)','rgba(240,82,82,0.6)','rgba(249,115,22,0.8)'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, ticks: { callback: v => `$${v}M` } }
+      }
+    }
+  });
+}
+
+// ── META ADS CHARTS ──
+function initMetaCharts() {
+  destroyChart('compraschart');
+  const ctx = document.getElementById('compraschart').getContext('2d');
+  chartInstances['compraschart'] = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['FM 04/12 CBO Rmktg','FM 04/12 ABO 2.0','FM 11/02 Cali','FM 04/12 Rmktg Promo','FM 26/02 Cali x1','FM 30/03 NEWDERM'],
+      datasets: [{
+        label: 'Compras',
+        data: [88, 67, 39, 37, 2, 0],
+        backgroundColor: ['rgba(240,82,82,0.7)','rgba(62,207,142,0.7)','rgba(94,159,255,0.7)','rgba(245,166,35,0.7)','rgba(124,111,247,0.5)','rgba(124,111,247,0.3)'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(37,42,66,0.5)' } },
+        y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+      }
+    }
+  });
+
+  destroyChart('frecChart');
+  const fCtx = document.getElementById('frecChart').getContext('2d');
+  chartInstances['frecChart'] = new Chart(fCtx, {
+    type: 'bar',
+    data: {
+      labels: ['FM 04/12\nCBO Rmktg','FM 11/02\nCali','FM 30/03\nCBO Promo','FM 04/12\nABO 2.0','FM 04/12\nRmktg Promo','FM 26/02\nCali x1','FM 30/03\nNEWDERM'],
+      datasets: [{
+        label: 'Frecuencia',
+        data: [22.51, 16.93, 6.86, 3.15, 2.26, 1.89, 1.58],
+        backgroundColor: (ctx) => {
+          const v = ctx.raw;
+          if (v > 10) return 'rgba(240,82,82,0.8)';
+          if (v > 5) return 'rgba(245,166,35,0.8)';
+          return 'rgba(62,207,142,0.8)';
+        },
+        borderRadius: 6,
+      }, {
+        label: 'Zona Óptima (5×)',
+        data: [5, 5, 5, 5, 5, 5, 5],
+        type: 'line',
+        borderColor: 'rgba(245,166,35,0.6)',
+        borderDash: [5, 5],
+        pointRadius: 0,
+        fill: false,
+        borderWidth: 2,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, max: 25 }
+      }
+    }
+  });
+}
+
+// ── ECOMMERCE CHARTS ──
+function initEcommerceCharts() {
+  destroyChart('periodoChart');
+  const pCtx = document.getElementById('periodoChart').getContext('2d');
+  chartInstances['periodoChart'] = new Chart(pCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Pedidos/mes','Ingresos/mes (M)','Clientes/mes','Dev/mes (M)'],
+      datasets: [{
+        label: 'Juanda (últimos 6 meses)',
+        data: [173, 30.5, 113, 0.383],
+        backgroundColor: 'rgba(99,102,241,0.7)',
+        borderRadius: 4,
+      }, {
+        label: 'Gestor Externo (5 meses)',
+        data: [210, 36.9, 204, 0.552],
+        backgroundColor: 'rgba(249,115,22,0.7)',
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16 } } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' } }
+      }
+    }
+  });
+
+  destroyChart('productosChart');
+  const prCtx = document.getElementById('productosChart').getContext('2d');
+  chartInstances['productosChart'] = new Chart(prCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Sandet TéV 2x1','Hyderm','Sandet ES 2x1','Derseb','Tensoderm 2x1','Newderm Adv'],
+      datasets: [{
+        label: 'Unidades — Mar 2026',
+        data: [77, 55, 50, 42, 38, 22],
+        backgroundColor: ['rgba(62,207,142,0.8)','rgba(94,159,255,0.8)','rgba(62,207,142,0.6)','rgba(249,115,22,0.8)','rgba(124,111,247,0.8)','rgba(245,166,35,0.8)'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(37,42,66,0.5)' } },
+        y: { grid: { display: false } }
+      }
+    }
+  });
+
+  destroyChart('devolucionesChart');
+  const dCtx = document.getElementById('devolucionesChart').getContext('2d');
+  chartInstances['devolucionesChart'] = new Chart(dCtx, {
+    type: 'line',
+    data: {
+      labels: ['Nov\'25','Dic\'25','Ene\'26','Feb\'26','Mar\'26'],
+      datasets: [{
+        label: 'Devoluciones (K COP)',
+        data: [0, 429, 855, 483, 989],
+        borderColor: '#f05252',
+        backgroundColor: 'rgba(240,82,82,0.15)',
+        fill: true,
+        tension: 0.4,
+        borderWidth: 2.5,
+        pointRadius: 5,
+        pointBackgroundColor: '#f05252',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { color: 'rgba(37,42,66,0.5)' } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, ticks: { callback: v => `$${v}K` } }
+      }
+    }
+  });
+
+  destroyChart('geoChart');
+  const gCtx = document.getElementById('geoChart').getContext('2d');
+  chartInstances['geoChart'] = new Chart(gCtx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Cali','Valle (otros)','Popayán','Medellín','Otras'],
+      datasets: [{
+        data: [55, 20, 10, 6, 9],
+        backgroundColor: ['rgba(124,111,247,0.8)','rgba(94,159,255,0.8)','rgba(62,207,142,0.8)','rgba(245,166,35,0.8)','rgba(100,100,120,0.5)'],
+        borderWidth: 0,
+        hoverOffset: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'right', labels: { usePointStyle: true, padding: 14, font: { size: 12 } } }
+      },
+      cutout: '60%'
+    }
+  });
+}
+
+// ── GA4 CHARTS ──
+function initGA4Charts() {
+  destroyChart('canalChart');
+  const cCtx = document.getElementById('canalChart').getContext('2d');
+  chartInstances['canalChart'] = new Chart(cCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Organic\nSearch','Paid Social\n(Meta)','Direct','Organic\nSocial','Unassigned','Paid Other','Referral'],
+      datasets: [{
+        label: '% Sesiones',
+        data: [25.09, 23.55, 20.19, 16.49, 7.64, 5.23, 1.04],
+        backgroundColor: 'rgba(94,159,255,0.7)',
+        borderRadius: 4,
+        yAxisID: 'y',
+      }, {
+        label: '% Revenue',
+        data: [55.42, 0.32, 15.65, 12.40, 10.93, 0, 4.61],
+        backgroundColor: 'rgba(62,207,142,0.7)',
+        borderRadius: 4,
+        yAxisID: 'y',
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16 } } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, ticks: { callback: v => `${v}%` } }
+      }
+    }
+  });
+
+  destroyChart('audienciaChart');
+  const aCtx = document.getElementById('audienciaChart').getContext('2d');
+  chartInstances['audienciaChart'] = new Chart(aCtx, {
+    type: 'bar',
+    data: {
+      labels: ['F 18-24','F 25-34','F 35-44','F 45-54','F 55-64','M 18-24','M 25-34'],
+      datasets: [{
+        label: 'Tasa Conv. (%)',
+        data: [1.28, 0.82, 0.61, 0.80, 0.39, 1.56, 1.35],
+        backgroundColor: ['rgba(62,207,142,0.7)','rgba(94,159,255,0.7)','rgba(94,159,255,0.6)','rgba(94,159,255,0.7)','rgba(100,100,120,0.5)','rgba(249,115,22,0.8)','rgba(249,115,22,0.7)'],
+        borderRadius: 4,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, ticks: { callback: v => `${v}%` }, max: 2 }
+      }
+    }
+  });
+}
+
+// ── FUNNEL CHARTS ──
+function initFunnelCharts() {
+  destroyChart('efficiencyChart');
+  const eCtx = document.getElementById('efficiencyChart').getContext('2d');
+  chartInstances['efficiencyChart'] = new Chart(eCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Referral','Organic Search','Direct','Organic Social','Paid Social\n(Meta)'],
+      datasets: [{
+        label: 'Revenue / 1,000 sesiones (USD)',
+        data: [558, 278, 98, 95, 1.72],
+        backgroundColor: (ctx) => {
+          const v = ctx.raw;
+          if (v > 200) return 'rgba(62,207,142,0.8)';
+          if (v > 50) return 'rgba(94,159,255,0.7)';
+          if (v > 5) return 'rgba(245,166,35,0.7)';
+          return 'rgba(240,82,82,0.8)';
+        },
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, ticks: { callback: v => `$${v}` } }
+      }
+    }
+  });
+}
+
+// ── ROADMAP CHARTS ──
+function initRoadmapCharts() {
+  destroyChart('impactoChart');
+  const iCtx = document.getElementById('impactoChart').getContext('2d');
+  chartInstances['impactoChart'] = new Chart(iCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Base Actual','+ Checkout','+ Email Mktg','+ Kits/Bundles','+ Meta CAPI','+ Geo Bogotá/Med','+ SEO Artículos'],
+      datasets: [{
+        label: 'Ingresos Mensual Estimado (M COP)',
+        data: [36.9, 56.9, 71.9, 81.4, 89.6, 104.6, 112.6],
+        backgroundColor: ['rgba(100,100,120,0.5)','rgba(94,159,255,0.7)','rgba(62,207,142,0.7)','rgba(249,115,22,0.7)','rgba(124,111,247,0.7)','rgba(245,166,35,0.7)','rgba(62,207,142,0.9)'],
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` $${ctx.raw}M COP/mes estimado` } }
+      },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(37,42,66,0.5)' }, ticks: { callback: v => `$${v}M` } }
+      }
+    }
+  });
+}
+
+// ── INIT ──
+document.addEventListener('DOMContentLoaded', () => {
+  // no charts on resumen, pre-init timeline after brief delay
+});
+</script>
+</body>
+</html>

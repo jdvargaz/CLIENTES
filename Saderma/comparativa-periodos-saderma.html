@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Saderma — Análisis Comparativo de Períodos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root {
+  --juanda: #3498db;
+  --juanda-light: #d6eaf8;
+  --otra: #e67e22;
+  --otra-light: #fdebd0;
+  --verde: #27ae60;
+  --verde-light: #d5f5e3;
+  --rojo: #e74c3c;
+  --rojo-light: #fdecea;
+  --morado: #8e44ad;
+  --gris: #ecf0f1;
+  --gris-mid: #bdc3c7;
+  --gris-dark: #7f8c8d;
+  --negro: #2c3e50;
+  --bg: #f0f3f7;
+  --white: #fff;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',system-ui,sans-serif}
+body{background:var(--bg);color:var(--negro);font-size:14px}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#1a2a4a 0%,#2c3e6a 60%,#3498db 100%);
+  color:white;padding:22px 32px;display:flex;justify-content:space-between;align-items:center;
+  box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.header h1{font-size:20px;font-weight:800;letter-spacing:-0.3px}
+.header p{font-size:12px;opacity:.8;margin-top:3px}
+.header-badges{display:flex;gap:10px;flex-wrap:wrap}
+.hbadge{padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700}
+.hbadge.juanda{background:var(--juanda);color:white}
+.hbadge.otra{background:var(--otra);color:white}
+.hbadge.verde{background:var(--verde);color:white}
+
+/* TABS */
+.tabs{background:var(--white);padding:0 28px;display:flex;gap:2px;
+  border-bottom:2px solid var(--gris);position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 8px rgba(0,0,0,.07);overflow-x:auto}
+.tab{padding:13px 18px;cursor:pointer;font-size:13px;font-weight:600;
+  border-bottom:3px solid transparent;margin-bottom:-2px;color:var(--gris-dark);
+  transition:all .2s;white-space:nowrap}
+.tab:hover{color:var(--juanda)}
+.tab.active{color:var(--negro);border-bottom-color:var(--juanda)}
+
+/* MAIN */
+.main{padding:24px 28px;max-width:1440px;margin:0 auto}
+.section{display:none}
+.section.active{display:block}
+
+/* PERIOD LEGEND */
+.legend-bar{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:8px;padding:8px 16px;
+  border-radius:20px;font-size:13px;font-weight:700}
+.legend-item.juanda{background:var(--juanda-light);color:#1a5276;border:2px solid var(--juanda)}
+.legend-item.otra{background:var(--otra-light);color:#784212;border:2px solid var(--otra)}
+.legend-item.launch{background:#f5eef8;color:#6c3483;border:2px solid var(--morado)}
+.legend-dot{width:12px;height:12px;border-radius:50%}
+
+/* CARDS */
+.card{background:var(--white);border-radius:16px;padding:20px;
+  box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.8px;color:var(--gris-dark);margin-bottom:14px}
+
+/* GRID */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:20px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.mb{margin-bottom:20px}
+
+/* KPI COMPARISON CARD */
+.kpi-cmp{background:var(--white);border-radius:16px;padding:18px;
+  box-shadow:0 2px 12px rgba(0,0,0,.06);text-align:center}
+.kpi-cmp-label{font-size:10px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.7px;color:var(--gris-dark);margin-bottom:12px}
+.kpi-cmp-row{display:flex;justify-content:space-around;gap:8px}
+.kpi-side{flex:1;padding:10px 6px;border-radius:10px}
+.kpi-side.juanda{background:var(--juanda-light)}
+.kpi-side.otra{background:var(--otra-light)}
+.kpi-side-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;opacity:.7}
+.kpi-side-val{font-size:18px;font-weight:900;line-height:1.1;margin:4px 0}
+.kpi-side-sub{font-size:10px;opacity:.75}
+.kpi-delta{background:var(--gris);border-radius:8px;padding:5px 8px;
+  font-size:11px;font-weight:700;margin-top:10px;text-align:center}
+.kpi-delta.up{background:#d5f5e3;color:#1a6e35}
+.kpi-delta.down{background:#fdecea;color:#a93226}
+.kpi-delta.mixed{background:#fef9e7;color:#7d6608}
+
+/* TIMELINE ROW */
+.timeline-wrap{position:relative;margin-bottom:24px}
+.timeline-row{display:flex;gap:4px;align-items:stretch;padding:8px 0;flex-wrap:wrap}
+.month-block{flex:1;min-width:52px;border-radius:8px;padding:7px 5px;text-align:center;
+  cursor:pointer;transition:transform .15s,box-shadow .15s;position:relative}
+.month-block:hover{transform:translateY(-3px);box-shadow:0 6px 16px rgba(0,0,0,.12)}
+.month-block.juanda-block{background:var(--juanda-light);border:2px solid var(--juanda)}
+.month-block.otra-block{background:var(--otra-light);border:2px solid var(--otra)}
+.month-block.launch-block{background:#f5eef8;border:2px solid var(--morado)}
+.month-block .mb-label{font-size:9px;font-weight:700;color:var(--gris-dark)}
+.month-block .mb-orders{font-size:13px;font-weight:900}
+.month-block .mb-gross{font-size:9px;margin-top:2px}
+.month-block.juanda-block .mb-orders{color:var(--juanda)}
+.month-block.otra-block .mb-orders{color:var(--otra)}
+.month-block.launch-block .mb-orders{color:var(--morado)}
+
+/* SECTION TITLE */
+.stitle{font-size:17px;font-weight:800;color:var(--negro);
+  margin-bottom:18px;display:flex;align-items:center;gap:10px}
+.stitle-sub{font-size:12px;color:var(--gris-dark);font-weight:400}
+
+/* CHART */
+.chart-wrap{position:relative}
+.chart-wrap.h260{height:260px}
+.chart-wrap.h300{height:300px}
+.chart-wrap.h340{height:340px}
+.chart-wrap.h400{height:400px}
+
+/* INSIGHT BOX */
+.insight{border-radius:12px;padding:14px 16px;margin-bottom:12px;
+  display:flex;gap:12px;align-items:flex-start;line-height:1.55}
+.insight-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.insight-title{font-weight:700;font-size:14px;margin-bottom:3px}
+.insight-body{font-size:13px;color:#444}
+.insight.pos{background:var(--verde-light);border-left:4px solid var(--verde)}
+.insight.neg{background:var(--rojo-light);border-left:4px solid var(--rojo)}
+.insight.warn{background:#fef9e7;border-left:4px solid #f0b429}
+.insight.info{background:#eaf4fd;border-left:4px solid var(--juanda)}
+.insight.neutral{background:#f5eef8;border-left:4px solid var(--morado)}
+
+/* VERDICT CARD */
+.verdict{border-radius:16px;padding:22px;margin-bottom:20px}
+.verdict.juanda-wins{background:linear-gradient(135deg,#d6eaf8,#ebf5fb);border:2px solid var(--juanda)}
+.verdict.otra-wins{background:linear-gradient(135deg,#fdebd0,#fef5ec);border:2px solid var(--otra)}
+.verdict.tie{background:linear-gradient(135deg,#d5f5e3,#eafaf1);border:2px solid var(--verde)}
+.verdict h3{font-size:15px;font-weight:800;margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.verdict p{font-size:13px;color:#444;line-height:1.6}
+
+/* TABLE */
+.dtable{width:100%;border-collapse:collapse;font-size:12px}
+.dtable th{background:var(--bg);padding:9px 10px;text-align:left;font-weight:700;
+  font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--gris-dark)}
+.dtable td{padding:9px 10px;border-bottom:1px solid var(--gris);vertical-align:middle}
+.dtable tr.juanda-row{background:linear-gradient(90deg,rgba(52,152,219,.06),transparent)}
+.dtable tr.otra-row{background:linear-gradient(90deg,rgba(230,126,34,.06),transparent)}
+.dtable tr:hover td{background:#f8f9fa}
+.dtable tr:last-child td{border-bottom:none}
+.period-pill{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;white-space:nowrap}
+.period-pill.j{background:var(--juanda-light);color:#1a5276}
+.period-pill.o{background:var(--otra-light);color:#784212}
+.period-pill.l{background:#f5eef8;color:#6c3483}
+
+/* METRIC BARS */
+.mbar-wrap{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--gris)}
+.mbar-wrap:last-child{border-bottom:none}
+.mbar-label{width:180px;font-size:12px;font-weight:600;flex-shrink:0}
+.mbar-track{flex:1;height:10px;background:var(--gris);border-radius:5px;overflow:visible;position:relative}
+.mbar-fill{height:100%;border-radius:5px;transition:width 1s ease}
+.mbar-val{font-size:12px;font-weight:700;min-width:60px;text-align:right}
+
+/* SCORE CARD */
+.score-area{display:flex;gap:20px;margin-bottom:24px;justify-content:center}
+.score-card{flex:1;max-width:280px;background:var(--white);border-radius:20px;
+  padding:24px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.score-label{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  margin-bottom:10px}
+.score-number{font-size:52px;font-weight:900;line-height:1}
+.score-sub{font-size:12px;color:var(--gris-dark);margin-top:6px}
+.score-card.juanda-score{border:3px solid var(--juanda)}
+.score-card.otra-score{border:3px solid var(--otra)}
+.score-card.juanda-score .score-number{color:var(--juanda)}
+.score-card.otra-score .score-number{color:var(--otra)}
+.vs-badge{align-self:center;font-size:22px;font-weight:900;color:var(--gris-mid);
+  padding:16px;background:var(--white);border-radius:50%;box-shadow:0 2px 10px rgba(0,0,0,.1)}
+
+/* PRODUCT COMPARE TABLE */
+.prod-cmp-row{display:flex;align-items:center;gap:6px;padding:8px 0;
+  border-bottom:1px solid var(--gris)}
+.prod-cmp-row:last-child{border-bottom:none}
+.prod-cmp-name{flex:1;font-size:12px;font-weight:600}
+.prod-cmp-bar-j{height:8px;background:var(--juanda);border-radius:4px;opacity:.8}
+.prod-cmp-bar-o{height:8px;background:var(--otra);border-radius:4px;opacity:.8}
+.prod-cmp-num{font-size:12px;font-weight:700;min-width:30px;text-align:center}
+
+@media(max-width:768px){
+  .main{padding:14px}
+  .grid-2,.grid-3,.grid-4{grid-template-columns:1fr}
+  .header{flex-direction:column;gap:12px}
+  .score-area{flex-direction:column;align-items:center}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>Saderma — Análisis Comparativo de Gestión</h1>
+    <p>Ecommerce saderma.co · Julio 2024 → Abril 2026 · Comparativa por períodos de gestión</p>
+  </div>
+  <div class="header-badges">
+    <span class="hbadge juanda">🙋 Juanda: Jul 2024 – Oct 2025</span>
+    <span class="hbadge otra">👤 Otra persona: Nov 2025 – Mar 2026</span>
+    <span class="hbadge verde">📅 Abr 2026: MTD</span>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="showTab('timeline')">📅 Línea de tiempo</div>
+  <div class="tab" onclick="showTab('kpis')">📊 KPIs Comparativos</div>
+  <div class="tab" onclick="showTab('tendencias')">📈 Tendencias</div>
+  <div class="tab" onclick="showTab('productos')">📦 Productos por período</div>
+  <div class="tab" onclick="showTab('eficiencia')">⚡ Eficiencia & Calidad</div>
+  <div class="tab" onclick="showTab('veredicto')">🏆 Veredicto & Recomendaciones</div>
+</div>
+
+<div class="main">
+
+<!-- ===== TIMELINE ===== -->
+<div id="sec-timeline" class="section active">
+  <div class="stitle">📅 Línea de Tiempo Completa <span class="stitle-sub">Jul 2024 → Abr 2026 · pedidos por mes</span></div>
+  <div class="legend-bar">
+    <div class="legend-item launch"><div class="legend-dot" style="background:#8e44ad"></div>🚀 Lanzamiento (Jul 2024)</div>
+    <div class="legend-item juanda"><div class="legend-dot" style="background:var(--juanda)"></div>👤 Juanda (Ago 2024 – Oct 2025)</div>
+    <div class="legend-item otra"><div class="legend-dot" style="background:var(--otra)"></div>👤 Otra Persona (Nov 2025 – Mar 2026)</div>
+  </div>
+
+  <div class="card mb" style="padding:24px">
+    <div class="card-title">Pedidos por mes — toda la historia</div>
+    <div id="timeline-blocks" class="timeline-row"></div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">Ingresos brutos mensuales (COP) — evolución completa</div>
+    <div class="chart-wrap h300"><canvas id="chartTimeline"></canvas></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Pedidos mensuales</div>
+      <div class="chart-wrap h260"><canvas id="chartOrders"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">AOV (Valor medio del pedido) mensual — COP</div>
+      <div class="chart-wrap h260"><canvas id="chartAOV"></canvas></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Tabla completa mes a mes</div>
+    <div style="overflow-x:auto">
+    <table class="dtable" id="fullTable"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== KPIs COMPARATIVOS ===== -->
+<div id="sec-kpis" class="section">
+  <div class="stitle">📊 KPIs Comparativos por Período</div>
+
+  <div class="score-area">
+    <div class="score-card juanda-score">
+      <div class="score-label" style="color:var(--juanda)">👤 Juanda</div>
+      <div class="score-number">15</div>
+      <div class="score-sub">meses activos (Ago 2024 – Oct 2025)</div>
+      <div style="margin-top:12px;font-size:13px;color:var(--gris-dark)">
+        Total: <strong>$367.5M COP</strong> bruto<br>
+        Total: <strong>1,841 pedidos</strong>
+      </div>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="score-card otra-score">
+      <div class="score-label" style="color:var(--otra)">👤 Otra Persona</div>
+      <div class="score-number">5</div>
+      <div class="score-sub">meses (Nov 2025 – Mar 2026)</div>
+      <div style="margin-top:12px;font-size:13px;color:var(--gris-dark)">
+        Total: <strong>$184.6M COP</strong> bruto<br>
+        Total: <strong>1,052 pedidos</strong>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-4">
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Promedio Pedidos/Mes</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">123</div><div class="kpi-side-sub">pedidos/mes</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--otra)">210</div><div class="kpi-side-sub">pedidos/mes</div></div>
+      </div>
+      <div class="kpi-delta up">▲ +71% más pedidos/mes</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Ingresos Brutos Promedio/Mes</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">$24.5M</div><div class="kpi-side-sub">promedio mensual</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--otra)">$36.9M</div><div class="kpi-side-sub">promedio mensual</div></div>
+      </div>
+      <div class="kpi-delta up">▲ +51% más ingresos/mes</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">AOV Promedio</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">$172K</div><div class="kpi-side-sub">por pedido</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--otra)">$176K</div><div class="kpi-side-sub">por pedido</div></div>
+      </div>
+      <div class="kpi-delta mixed">≈ Similares (+2%)</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Clientes Nuevos Promedio/Mes</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">113</div><div class="kpi-side-sub">clientes/mes</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--otra)">204</div><div class="kpi-side-sub">clientes/mes</div></div>
+      </div>
+      <div class="kpi-delta up">▲ +81% más clientes/mes</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Devoluciones Promedio/Mes</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">$262K</div><div class="kpi-side-sub">refunds/mes</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--otra)">$552K</div><div class="kpi-side-sub">refunds/mes</div></div>
+      </div>
+      <div class="kpi-delta down">▼ +111% más devoluciones</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Uso de Cupones/Mes</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">$278K</div><div class="kpi-side-sub">desc/mes prom</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--otra)">$7K</div><div class="kpi-side-sub">desc/mes prom</div></div>
+      </div>
+      <div class="kpi-delta up">Otra persona eliminó cupones</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Mejor Mes (ingresos brutos)</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">$40.3M</div><div class="kpi-side-sub">Jul 2025</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--otra)">$40.9M</div><div class="kpi-side-sub">Nov 2025</div></div>
+      </div>
+      <div class="kpi-delta mixed">≈ Pico similar</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Menor Mes (ingresos brutos)</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">$11.2M</div><div class="kpi-side-sub">Feb 2025</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--otra)">$32.9M</div><div class="kpi-side-sub">Mar 2026</div></div>
+      </div>
+      <div class="kpi-delta up">Floor mucho más alto</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Comparativa directa: últimos 6 meses de Juanda vs 5 meses otra persona (contexto equivalente)</div>
+    <div style="padding:8px 0;">
+      <div class="mbar-wrap">
+        <div class="mbar-label">📊 Pedidos prom/mes</div>
+        <div class="mbar-track">
+          <div style="display:flex;gap:4px;height:10px;">
+            <div class="mbar-fill" style="width:55%;background:var(--juanda)" title="173"></div>
+            <div class="mbar-fill" style="width:64%;background:var(--otra)" title="210"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;min-width:120px;text-align:right;font-size:12px;font-weight:700">
+          <span style="color:var(--juanda)">173 J</span>
+          <span style="color:var(--otra)">210 O</span>
+        </div>
+      </div>
+      <div class="mbar-wrap">
+        <div class="mbar-label">💰 Ingresos brutos prom/mes</div>
+        <div class="mbar-track">
+          <div style="display:flex;gap:4px;height:10px;">
+            <div class="mbar-fill" style="width:47%;background:var(--juanda)"></div>
+            <div class="mbar-fill" style="width:57%;background:var(--otra)"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;min-width:120px;text-align:right;font-size:12px;font-weight:700">
+          <span style="color:var(--juanda)">$30.5M J</span>
+          <span style="color:var(--otra)">$36.9M O</span>
+        </div>
+      </div>
+      <div class="mbar-wrap">
+        <div class="mbar-label">💳 AOV promedio</div>
+        <div class="mbar-track">
+          <div style="display:flex;gap:4px;height:10px;">
+            <div class="mbar-fill" style="width:59%;background:var(--juanda)"></div>
+            <div class="mbar-fill" style="width:54%;background:var(--otra)"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;min-width:120px;text-align:right;font-size:12px;font-weight:700">
+          <span style="color:var(--juanda)">$176K J</span>
+          <span style="color:var(--otra)">$176K O</span>
+        </div>
+      </div>
+      <div class="mbar-wrap">
+        <div class="mbar-label">↩️ Devoluciones prom/mes</div>
+        <div class="mbar-track">
+          <div style="display:flex;gap:4px;height:10px;">
+            <div class="mbar-fill" style="width:28%;background:var(--juanda)"></div>
+            <div class="mbar-fill" style="width:60%;background:var(--rojo)"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;min-width:120px;text-align:right;font-size:12px;font-weight:700">
+          <span style="color:var(--juanda)">$383K J</span>
+          <span style="color:var(--rojo)">$552K O</span>
+        </div>
+      </div>
+      <div class="mbar-wrap">
+        <div class="mbar-label">📦 Variabilidad (desviación)</div>
+        <div class="mbar-track">
+          <div style="display:flex;gap:4px;height:10px;">
+            <div class="mbar-fill" style="width:72%;background:var(--juanda)"></div>
+            <div class="mbar-fill" style="width:30%;background:var(--otra)"></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;min-width:120px;text-align:right;font-size:12px;font-weight:700">
+          <span style="color:var(--juanda)">Alta J</span>
+          <span style="color:var(--otra)">Baja O</span>
+        </div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--gris-dark);margin-top:8px;padding:8px;background:var(--bg);border-radius:8px">
+      * "Juanda últimos 6 meses" = May–Oct 2025 (período más maduro para comparación justa)
+    </div>
+  </div>
+</div>
+
+<!-- ===== TENDENCIAS ===== -->
+<div id="sec-tendencias" class="section">
+  <div class="stitle">📈 Tendencias & Análisis de Momentum</div>
+
+  <div class="card mb">
+    <div class="card-title">Evolución de ingresos brutos mensuales (COP) — con zonas de período</div>
+    <div class="chart-wrap h340"><canvas id="chartTendencias"></canvas></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">Crecimiento mes a mes (MoM %)</div>
+      <div class="chart-wrap h280"><canvas id="chartMoM"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Devoluciones vs Ventas brutas (%)</div>
+      <div class="chart-wrap h280"><canvas id="chartRefunds"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="stitle" style="font-size:14px">🔍 Hallazgos de Tendencia</div>
+      <div class="insight pos">
+        <div class="insight-icon">🚀</div>
+        <div>
+          <div class="insight-title">Lanzamiento sólido (Jul–Ago 2024)</div>
+          <div class="insight-body">De 32 pedidos en julio a 125 en agosto — crecimiento inicial de +290%. La tienda arrancó rápido bajo Juanda.</div>
+        </div>
+      </div>
+      <div class="insight warn">
+        <div class="insight-icon">📉</div>
+        <div>
+          <div class="insight-title">Caída pronunciada: Jul → Oct 2025 (Juanda)</div>
+          <div class="insight-body">Desde el pico de julio 2025 (233 pedidos, $40.3M), hubo 3 meses consecutivos de caída: Ago $30.2M → Sep $25.9M → Oct $21.8M. <strong>−46% en ingresos en 3 meses.</strong> Posible fatiga de campaña o reducción de inversión publicitaria.</div>
+        </div>
+      </div>
+      <div class="insight pos">
+        <div class="insight-icon">⚡</div>
+        <div>
+          <div class="insight-title">Rebote inmediato con cambio de gestor (Nov 2025)</div>
+          <div class="insight-body">La otra persona tomó el relevo con Oct en $21.8M y lo llevó a $40.9M en noviembre. <strong>+88% MoM.</strong> La estrategia de 2x1 masiva y empuje en nuevos productos (Derseb) fue clave.</div>
+        </div>
+      </div>
+      <div class="insight warn">
+        <div class="insight-icon">⚠️</div>
+        <div>
+          <div class="insight-title">Meseta y ligero descenso: Dic 2025 → Mar 2026</div>
+          <div class="insight-body">Tras el pico de noviembre, los meses siguientes se estabilizan: $36.7M → $35.1M → $38.9M → $32.9M. Sin crecimiento sostenido — el volumen se mantiene pero no escala.</div>
+        </div>
+      </div>
+      <div class="insight neg">
+        <div class="insight-icon">📈</div>
+        <div>
+          <div class="insight-title">Devoluciones en tendencia alcista bajo otra persona</div>
+          <div class="insight-body">Nov: $0 → Dic: $429K → Ene: $855K → Feb: $483K → Mar: $989K. El volumen alto de ventas sin suficiente control de calidad o promesas sobrevendidas podría estar generando esta escalada.</div>
+        </div>
+      </div>
+      <div class="insight info">
+        <div class="insight-icon">🗓️</div>
+        <div>
+          <div class="insight-title">Febrero siempre cae (efecto estacional)</div>
+          <div class="insight-body">Feb 2025 fue el peor mes de Juanda (61 pedidos, $11.2M). Feb 2026 con otra persona: 206 pedidos, $38.9M. Misma época del año, resultado radicalmente distinto — indica mejora real en inversión/estrategia de medios.</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="stitle" style="font-size:14px">📊 Contexto: ¿Cuánto creció la tienda?</div>
+      <div class="card" style="margin-bottom:14px;">
+        <div class="card-title">Promedio mensual por fase</div>
+        <div style="margin-top:8px">
+          <div class="mbar-wrap">
+            <div class="mbar-label" style="width:150px;font-size:11px">🟣 Lanzamiento (Jul 24)</div>
+            <div class="mbar-track"><div class="mbar-fill" style="width:9%;background:var(--morado)"></div></div>
+            <div class="mbar-val" style="color:var(--morado)">$6.5M</div>
+          </div>
+          <div class="mbar-wrap">
+            <div class="mbar-label" style="width:150px;font-size:11px">🔵 Juanda Q4-24 prom</div>
+            <div class="mbar-track"><div class="mbar-fill" style="width:50%;background:var(--juanda)"></div></div>
+            <div class="mbar-val" style="color:var(--juanda)">$18.2M</div>
+          </div>
+          <div class="mbar-wrap">
+            <div class="mbar-label" style="width:150px;font-size:11px">🔵 Juanda Q1-25 prom</div>
+            <div class="mbar-track"><div class="mbar-fill" style="width:33%;background:var(--juanda)"></div></div>
+            <div class="mbar-val" style="color:var(--juanda)">$18.2M</div>
+          </div>
+          <div class="mbar-wrap">
+            <div class="mbar-label" style="width:150px;font-size:11px">🔵 Juanda Q2-25 prom</div>
+            <div class="mbar-track"><div class="mbar-fill" style="width:62%;background:var(--juanda)"></div></div>
+            <div class="mbar-val" style="color:var(--juanda)">$31.5M</div>
+          </div>
+          <div class="mbar-wrap">
+            <div class="mbar-label" style="width:150px;font-size:11px">🔵 Juanda Q3-25 prom</div>
+            <div class="mbar-track"><div class="mbar-fill" style="width:67%;background:var(--juanda)"></div></div>
+            <div class="mbar-val" style="color:var(--juanda)">$32.1M</div>
+          </div>
+          <div class="mbar-wrap">
+            <div class="mbar-label" style="width:150px;font-size:11px">🔵 Juanda Q4-25 prom (Oct)</div>
+            <div class="mbar-track"><div class="mbar-fill" style="width:43%;background:var(--juanda)"></div></div>
+            <div class="mbar-val" style="color:var(--juanda)">$21.8M</div>
+          </div>
+          <div class="mbar-wrap">
+            <div class="mbar-label" style="width:150px;font-size:11px">🟠 Otra persona prom</div>
+            <div class="mbar-track"><div class="mbar-fill" style="width:73%;background:var(--otra)"></div></div>
+            <div class="mbar-val" style="color:var(--otra)">$36.9M</div>
+          </div>
+        </div>
+      </div>
+      <div class="insight neutral">
+        <div class="insight-icon">🏗️</div>
+        <div>
+          <div class="insight-title">Juanda construyó la base; la otra persona escaló sobre ella</div>
+          <div class="insight-body">Juanda llevó la tienda de $0 a un promedio de $32M/mes en el pico (Q2-Q3 2025). La otra persona entró con esa base y aplicó una estrategia de mayor volumen con más ofertas 2x1 y más SKUs activos, superando ese piso. El piso que se dejó no era bajo — era $21.8M (Oct 2025).</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PRODUCTOS ===== -->
+<div id="sec-productos" class="section">
+  <div class="stitle">📦 Análisis de Productos por Período</div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-title">🔵 Juanda — Top productos (Jul–Oct 2025 · 4 meses)</div>
+      <div id="prodsJuanda"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">🟠 Otra Persona — Top productos (Nov 2025–Mar 2026 · 5 meses)</div>
+      <div id="prodsOtra"></div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">Comparativa head-to-head por producto (unidades vendidas)</div>
+    <div class="chart-wrap h340"><canvas id="chartProdsCmp"></canvas></div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="stitle" style="font-size:14px">🔍 Insights de Productos</div>
+      <div class="insight pos">
+        <div class="insight-icon">🌿</div>
+        <div>
+          <div class="insight-title">Derseb: producto ignorado por Juanda, motor bajo otra persona</div>
+          <div class="insight-body">En Jul–Oct 2025 (Juanda), Derseb no apareció en top 15. En Nov 2025–Mar 2026 (otra persona), Derseb fue el <strong>4to producto más vendido con 138 unidades y $13M COP</strong>. Un producto que ya existía en el catálogo y no se estaba activando.</div>
+        </div>
+      </div>
+      <div class="insight warn">
+        <div class="insight-icon">📦</div>
+        <div>
+          <div class="insight-title">Explosión de ofertas 2x1: la estrategia de la otra persona</div>
+          <div class="insight-body">Bajo Juanda: ~14% de items vendidos eran 2x1. Bajo otra persona: ~34% eran 2x1. Más volumen, pero ¿a qué costo de margen? Las 2x1 tienen un AOV aparente más alto (2 productos) pero un ingreso neto por unidad más bajo.</div>
+        </div>
+      </div>
+      <div class="insight info">
+        <div class="insight-icon">💧</div>
+        <div>
+          <div class="insight-title">Hyderm emulgel: producto estrella consistente en ambos períodos</div>
+          <div class="insight-body">Aparece en top 3 de ambos períodos. Juanda: 135 unidades/4 meses = 33.8/mes. Otra persona: 167 unidades/5 meses = 33.4/mes. <strong>Rendimiento casi idéntico</strong> — es un ancla del negocio independiente del gestor.</div>
+        </div>
+      </div>
+      <div class="insight pos">
+        <div class="insight-icon">🧴</div>
+        <div>
+          <div class="insight-title">Sandet té verde: crecimiento sostenido en ambos períodos</div>
+          <div class="insight-body">La combinación Sandet regular + 2x1 domina siempre. Juanda: 249 unidades/4 meses (reg+2x1). Otra persona: 383 unidades/5 meses. Normalizado: 62/mes Juanda → 77/mes otra persona. <strong>+24% más ventas normalizadas.</strong></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Productos nuevos introducidos por período</div>
+      <div style="padding:8px 0">
+        <div style="margin-bottom:16px">
+          <div style="font-size:11px;font-weight:700;color:var(--juanda);text-transform:uppercase;margin-bottom:8px">🔵 Activados bajo Juanda</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span style="background:var(--juanda-light);color:#1a5276;padding:4px 10px;border-radius:10px;font-size:12px">Sandet TéVerde Regular</span>
+            <span style="background:var(--juanda-light);color:#1a5276;padding:4px 10px;border-radius:10px;font-size:12px">Hyderm Emulgel</span>
+            <span style="background:var(--juanda-light);color:#1a5276;padding:4px 10px;border-radius:10px;font-size:12px">Newderm Advanced</span>
+            <span style="background:var(--juanda-light);color:#1a5276;padding:4px 10px;border-radius:10px;font-size:12px">Tensoderm Ojos</span>
+            <span style="background:var(--juanda-light);color:#1a5276;padding:4px 10px;border-radius:10px;font-size:12px">Hyderm Advanced</span>
+            <span style="background:var(--juanda-light);color:#1a5276;padding:4px 10px;border-radius:10px;font-size:12px">Hylum-C / Antiglicación</span>
+            <span style="background:var(--juanda-light);color:#1a5276;padding:4px 10px;border-radius:10px;font-size:12px">Newkpil (Liso)</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:700;color:var(--otra);text-transform:uppercase;margin-bottom:8px">🟠 Escalados / Nuevos bajo Otra Persona</div>
+          <div style="display:flex;flex-wrap:wrap;gap:6px">
+            <span style="background:var(--otra-light);color:#784212;padding:4px 10px;border-radius:10px;font-size:12px">⭐ Derseb Capilar (nuevo top 4)</span>
+            <span style="background:var(--otra-light);color:#784212;padding:4px 10px;border-radius:10px;font-size:12px">Sandet ES 2x1 (nuevo)</span>
+            <span style="background:var(--otra-light);color:#784212;padding:4px 10px;border-radius:10px;font-size:12px">Tensoderm 2x1 (escalado)</span>
+            <span style="background:var(--otra-light);color:#784212;padding:4px 10px;border-radius:10px;font-size:12px">Hylum-C 2x1 (nuevo)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== EFICIENCIA ===== -->
+<div id="sec-eficiencia" class="section">
+  <div class="stitle">⚡ Eficiencia & Calidad de Ventas</div>
+
+  <div class="grid-3">
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Tasa de Devolución</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">1.5%</div><div class="kpi-side-sub">de ventas brutas</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--rojo)">2.7%</div><div class="kpi-side-sub">de ventas brutas</div></div>
+      </div>
+      <div class="kpi-delta down">▼ +80% más devoluciones relativas</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Consistencia Mensual (CV)</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">42%</div><div class="kpi-side-sub">coef. variación</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--verde)">9%</div><div class="kpi-side-sub">coef. variación</div></div>
+      </div>
+      <div class="kpi-delta up">Otra persona: mucho más estable</div>
+    </div>
+    <div class="kpi-cmp">
+      <div class="kpi-cmp-label">Coupons vs Ventas</div>
+      <div class="kpi-cmp-row">
+        <div class="kpi-side juanda"><div class="kpi-side-label">Juanda</div><div class="kpi-side-val" style="color:var(--juanda)">1.1%</div><div class="kpi-side-sub">de ventas = cupones</div></div>
+        <div class="kpi-side otra"><div class="kpi-side-label">Otra</div><div class="kpi-side-val" style="color:var(--verde)">0.02%</div><div class="kpi-side-sub">de ventas = cupones</div></div>
+      </div>
+      <div class="kpi-delta up">Otra: menos erosión de margen</div>
+    </div>
+  </div>
+
+  <div class="card mb">
+    <div class="card-title">AOV mensual — evolución detallada (¿quién vendió más caro?)</div>
+    <div class="chart-wrap h280"><canvas id="chartAOVFull"></canvas></div>
+  </div>
+
+  <div class="grid-2">
+    <div>
+      <div class="stitle" style="font-size:14px">⚡ Análisis de Eficiencia</div>
+      <div class="insight pos">
+        <div class="insight-icon">📐</div>
+        <div>
+          <div class="insight-title">Otra persona: mucho más consistente mes a mes</div>
+          <div class="insight-body">Bajo Juanda, los ingresos oscilaban entre $11.2M y $40.3M — una variación enorme. Bajo otra persona: entre $32.9M y $40.9M. <strong>El "piso" subió dramáticamente</strong>, lo que indica una campaña más estable y un canal de ventas más maduro.</div>
+        </div>
+      </div>
+      <div class="insight neg">
+        <div class="insight-icon">↩️</div>
+        <div>
+          <div class="insight-title">Las devoluciones son la señal de alerta más crítica</div>
+          <div class="insight-body">La tasa de devolución bajo otra persona (2.7%) es el doble que bajo Juanda (1.5%). En marzo 2026, las devoluciones alcanzaron $989K — el 3% del bruto. Si esto crece al 4-5%, empieza a erosionar seriamente el margen neto.</div>
+        </div>
+      </div>
+      <div class="insight warn">
+        <div class="insight-icon">💳</div>
+        <div>
+          <div class="insight-title">Juanda usó cupones como herramienta, otra persona no</div>
+          <div class="insight-body">En Oct–Dic 2024, Juanda usó $3.2M en cupones (posiblemente para activar volumen en período de inicio). Después de enero 2025, Juanda también los eliminó. La otra persona prácticamente no los usó. Ambos coinciden en que las ofertas 2x1 son mejor herramienta que los cupones.</div>
+        </div>
+      </div>
+      <div class="insight info">
+        <div class="insight-icon">📦</div>
+        <div>
+          <div class="insight-title">AOV similar pero composición diferente</div>
+          <div class="insight-body">Ambos promedian ~$175K de AOV pero llegan de manera distinta: Juanda vendía más productos premium individuales (Newderm Advanced, Hylum Antiglicación). La otra persona vende más volumen con combos 2x1 que suben el valor del carrito artificialmente.</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Devoluciones mensuales COP — tendencia</div>
+      <div class="chart-wrap h260"><canvas id="chartRefundsFull"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VEREDICTO ===== -->
+<div id="sec-veredicto" class="section">
+  <div class="stitle">🏆 Veredicto & Recomendaciones para Juanda</div>
+
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="verdict tie">
+      <h3><span>📊</span> Veredicto General: Ambos períodos aportaron valor</h3>
+      <p>No hay un ganador absoluto. <strong>Juanda construyó la tienda desde cero</strong>, estableció los productos ancla, validó el mercado y logró picos de $40.3M. <strong>La otra persona tomó esa base y la estabilizó en un piso más alto</strong> (~$36.9M promedio vs $30.5M en el mejor período de Juanda), eliminando las caídas profundas. Son estrategias complementarias, no opuestas.</p>
+    </div>
+    <div class="verdict juanda-wins">
+      <h3><span>🔵</span> Donde Juanda fue superior</h3>
+      <p>
+        <strong>Calidad de ventas:</strong> Menor tasa de devolución (1.5% vs 2.7%)<br>
+        <strong>Diversidad de mix:</strong> Más productos premium en el top (Newderm Adv., Hylum, Perfectinol)<br>
+        <strong>Crecimiento orgánico:</strong> Llevó la tienda de $0 a $40M — logró el mayor salto porcentual<br>
+        <strong>AOV de productos individuales:</strong> Cuando vendía sin 2x1, el ticket unitario era más alto
+      </p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:24px">
+    <div class="verdict otra-wins">
+      <h3><span>🟠</span> Donde la Otra Persona fue superior</h3>
+      <p>
+        <strong>Consistencia:</strong> Coef. variación 9% vs 42% — mucho más estable mes a mes<br>
+        <strong>Volumen:</strong> +21% más pedidos en el período comparable<br>
+        <strong>Floor alto:</strong> Peor mes fue $32.9M — Juanda tuvo meses de $11.2M y $21.8M<br>
+        <strong>Activación de productos:</strong> Derseb Capilar desbloqueado como top 4<br>
+        <strong>Ingresos totales:</strong> $36.9M promedio mensual vs $30.5M (Juanda últimos 6 meses)
+      </p>
+    </div>
+    <div class="verdict tie" style="background:linear-gradient(135deg,#fde8e8,#fef5ec);border-color:var(--rojo)">
+      <h3><span>⚠️</span> La señal de alerta que Juanda debe monitorear si retoma</h3>
+      <p>
+        Las devoluciones crecen: $0 (Nov) → $989K (Mar). Si esta tendencia continúa, el negocio en 6 meses podría tener un 5% de tasa de devolución, lo que erosiona el margen neto significativamente. <strong>La primera prioridad al retomar debería ser diagnosticar y frenar esta tendencia.</strong>
+      </p>
+    </div>
+  </div>
+
+  <div class="stitle" style="font-size:16px">🚀 Recomendaciones Estratégicas para Juanda al Retomar</div>
+
+  <div class="insight pos" style="margin-bottom:12px">
+    <div class="insight-icon">1️⃣</div>
+    <div>
+      <div class="insight-title">Mantén lo que funcionó bajo la otra persona — no lo deshagas</div>
+      <div class="insight-body">Las ofertas 2x1 masivas, el empuje de Derseb Capilar, y los $36M+ de piso mensual son logros reales. Tu objetivo es <strong>conservar ese volumen</strong> mientras añades tu sello: calidad de ventas, menor devolución, y mix más diverso de productos premium. No reinventes, evoluciona.</div>
+    </div>
+  </div>
+  <div class="insight pos">
+    <div class="insight-icon">2️⃣</div>
+    <div>
+      <div class="insight-title">Diagnostica urgente las devoluciones antes de escalar</div>
+      <div class="insight-body">Identifica qué productos o qué canales generan más devoluciones. Si el 80% viene de 1-2 SKUs o de un canal de ventas específico (ej. vendedores por WhatsApp que sobrevendan), puedes frenar la tendencia sin sacrificar volumen. Meta: bajar de 2.7% a &lt;1.8% en 3 meses.</div>
+    </div>
+  </div>
+  <div class="insight info">
+    <div class="insight-icon">3️⃣</div>
+    <div>
+      <div class="insight-title">Reactiva Newderm Advanced, Hylum y productos premium que caíste</div>
+      <div class="insight-body">Bajo Juanda, Newderm Advanced (63 unidades/4 meses), Hylum Antiglicación y Hylum-C eran top sellers. Bajo otra persona cayeron. Estos productos tienen mejor margen unitario y posicionan la marca científicamente. Una campaña educativa (reel + email) puede reactivarlos sin sacrificar el volumen de Sandet.</div>
+    </div>
+  </div>
+  <div class="insight warn">
+    <div class="insight-icon">4️⃣</div>
+    <div>
+      <div class="insight-title">El problema de Juanda fue la inconsistencia, no el nivel máximo</div>
+      <div class="insight-body">Tu pico fue igual que el de la otra persona ($40M+), pero tu mínimo era $11.2M. Eso se soluciona con: (a) no depender de una sola campaña por mes, (b) tener un canal "always-on" de bajo costo (SEO + email automático), y (c) activar retargeting para mantener el volumen base sin requerir presupuesto fresco cada mes.</div>
+    </div>
+  </div>
+  <div class="insight neutral">
+    <div class="insight-icon">5️⃣</div>
+    <div>
+      <div class="insight-title">Activa Derseb Capilar como tu nueva palanca — es tuya ahora</div>
+      <div class="insight-body">La otra persona descubrió que Derseb funciona (138 unidades, $13M en 5 meses). Es un hallazgo que puedes usar. Lanzar una campaña específica para Derseb + Newkpil orientada a problema de caspa/caída debería ser uno de tus primeros movimientos. Existe demanda probada.</div>
+    </div>
+  </div>
+  <div class="insight pos">
+    <div class="insight-icon">6️⃣</div>
+    <div>
+      <div class="insight-title">Tú tienes algo que la otra persona no construyó: el SEO y la reputación</div>
+      <div class="insight-body">Google orgánico es la fuente #1 de pedidos (42%). Eso es acumulativo — se construyó durante los 15 meses de gestión. El email list de Mailchimp, la base de 2,154 clientes, y el posicionamiento SEO son activos que maduraron bajo tu gestión. La estrategia de la otra persona funcionó encima de esa base — no la creó.</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:8px">
+    <div class="card-title">Resumen ejecutivo: ¿qué le dice el dato a Juanda?</div>
+    <div style="padding:12px 0;font-size:14px;line-height:1.8;color:#333">
+      La tienda creció <strong>+51% en ingresos promedio/mes</strong> durante el período de otra persona vs el promedio de tu gestión completa. Pero si comparas contra tus mejores 6 meses (May–Oct 2025), la diferencia baja a <strong>+21%</strong>. Ese 21% se explica principalmente por: (1) más 2x1, (2) Derseb activado, y (3) mayor inversión en medios.
+      <br><br>
+      Lo que tú construiste — la arquitectura SEO, los productos validados, la base de clientes, el ticket promedio saludable y la baja tasa de devolución — es lo que hizo posible que otro llegara y escalara con menos riesgo.
+      <br><br>
+      <strong>Tu reto al retomar: mantener el piso de $35M+/mes que se estableció, mientras solucionas las devoluciones, reactivás los productos premium caídos, y añades consistencia con canales always-on.</strong>
+    </div>
+  </div>
+</div>
+
+</div><!-- /main -->
+
+<script>
+// ===== DATA =====
+const months = [
+  {m:'Jul 24', orders:32, gross:6510326, net:6388821, aov:203448, cu:33, ref:121505, coupons:0, per:'launch'},
+  {m:'Ago 24', orders:125, gross:19547954, net:18986374, aov:156384, cu:126, ref:561580, coupons:0, per:'juanda'},
+  {m:'Sep 24', orders:95, gross:19347351, net:19347351, aov:203656, cu:94, ref:0, coupons:0, per:'juanda'},
+  {m:'Oct 24', orders:136, gross:18377838, net:16313625, aov:121097, cu:130, ref:155530, coupons:1908683, per:'juanda'},
+  {m:'Nov 24', orders:108, gross:17560593, net:16783377, aov:155402, cu:106, ref:0, coupons:777216, per:'juanda'},
+  {m:'Dic 24', orders:115, gross:19569619, net:18994362, aov:165983, cu:112, ref:93628, coupons:481629, per:'juanda'},
+  {m:'Ene 25', orders:139, gross:22742206, net:22642206, aov:163613, cu:140, ref:100000, coupons:0, per:'juanda'},
+  {m:'Feb 25', orders:61, gross:11157284, net:10911920, aov:182906, cu:63, ref:245364, coupons:0, per:'juanda'},
+  {m:'Mar 25', orders:103, gross:20629523, net:20035774, aov:200287, cu:103, ref:593749, coupons:0, per:'juanda'},
+  {m:'Abr 25', orders:165, gross:29492123, net:28941344, aov:178740, cu:158, ref:550779, coupons:0, per:'juanda'},
+  {m:'May 25', orders:208, gross:35417691, net:35069056, aov:170277, cu:195, ref:348635, coupons:0, per:'juanda'},
+  {m:'Jun 25', orders:157, gross:29498985, net:29245999, aov:187892, cu:153, ref:252986, coupons:0, per:'juanda'},
+  {m:'Jul 25', orders:233, gross:40333688, net:39723509, aov:173106, cu:216, ref:610179, coupons:0, per:'juanda'},
+  {m:'Ago 25', orders:161, gross:30191194, net:30028212, aov:187523, cu:154, ref:162982, coupons:0, per:'juanda'},
+  {m:'Sep 25', orders:153, gross:25900073, net:25371438, aov:169282, cu:152, ref:528635, coupons:0, per:'juanda'},
+  {m:'Oct 25', orders:126, gross:21800679, net:21559827, aov:173021, cu:121, ref:240852, coupons:0, per:'juanda'},
+  {m:'Nov 25', orders:233, gross:40951255, net:40951255, aov:175756, cu:222, ref:0, coupons:0, per:'otra'},
+  {m:'Dic 25', orders:220, gross:36730568, net:36301584, aov:166957, cu:214, ref:428984, coupons:0, per:'otra'},
+  {m:'Ene 26', orders:182, gross:35113762, net:34258442, aov:192933, cu:173, ref:855320, coupons:0, per:'otra'},
+  {m:'Feb 26', orders:206, gross:38947592, net:38432210, aov:188908, cu:202, ref:482867, coupons:32515, per:'otra'},
+  {m:'Mar 26', orders:211, gross:32954258, net:31965109, aov:156181, cu:208, ref:989149, coupons:0, per:'otra'},
+];
+
+const colors = {launch:'#8e44ad', juanda:'#3498db', otra:'#e67e22'};
+const bgLight = {launch:'rgba(142,68,173,.12)', juanda:'rgba(52,152,219,.12)', otra:'rgba(230,126,34,.12)'};
+
+// ===== BUILD TIMELINE BLOCKS =====
+const container = document.getElementById('timeline-blocks');
+months.forEach(d => {
+  const maxOrders = 233;
+  const heightPct = Math.max(20, Math.round(d.orders / maxOrders * 100));
+  const div = document.createElement('div');
+  div.className = 'month-block ' + d.per + '-block';
+  div.title = `${d.m}: ${d.orders} pedidos · $${(d.gross/1e6).toFixed(1)}M`;
+  div.innerHTML = `<div class="mb-label">${d.m}</div><div class="mb-orders">${d.orders}</div><div class="mb-gross">$${(d.gross/1e6).toFixed(0)}M</div>`;
+  div.style.minHeight = (heightPct * 0.8 + 40) + 'px';
+  div.style.display = 'flex';
+  div.style.flexDirection = 'column';
+  div.style.justifyContent = 'flex-end';
+  container.appendChild(div);
+});
+
+// Build full table
+const tbl = document.getElementById('fullTable');
+tbl.innerHTML = `<thead><tr>
+  <th>Mes</th><th>Período</th><th>Pedidos</th><th>Ingresos Brutos</th>
+  <th>Ingresos Netos</th><th>AOV</th><th>Clientes</th>
+  <th>Devoluciones</th><th>Cupones</th><th>MoM %</th>
+</tr></thead><tbody id="fullTableBody"></tbody>`;
+const tbody = document.getElementById('fullTableBody');
+months.forEach((d,i) => {
+  const mom = i > 0 ? ((d.gross - months[i-1].gross)/months[i-1].gross*100).toFixed(1) : '-';
+  const momColor = mom === '-' ? '' : (parseFloat(mom) >= 0 ? 'color:#27ae60;font-weight:700' : 'color:#e74c3c;font-weight:700');
+  const rowClass = d.per === 'juanda' ? 'juanda-row' : (d.per === 'otra' ? 'otra-row' : '');
+  tbody.innerHTML += `<tr class="${rowClass}">
+    <td><strong>${d.m}</strong></td>
+    <td><span class="period-pill ${d.per === 'juanda'?'j':d.per==='otra'?'o':'l'}">${d.per === 'juanda'?'Juanda':d.per==='otra'?'Otra':'Lanzamiento'}</span></td>
+    <td>${d.orders}</td>
+    <td>$${(d.gross/1e6).toFixed(2)}M</td>
+    <td>$${(d.net/1e6).toFixed(2)}M</td>
+    <td>$${(d.aov/1000).toFixed(0)}K</td>
+    <td>${d.cu}</td>
+    <td style="color:${d.ref>500000?'#e74c3c':'#e67e22'}">$${(d.ref/1000).toFixed(0)}K</td>
+    <td>$${(d.coupons/1000).toFixed(0)}K</td>
+    <td style="${momColor}">${mom !== '-' ? (parseFloat(mom)>=0?'▲ +':'▼ ') + mom + '%' : '-'}</td>
+  </tr>`;
+});
+
+// ===== CHARTS =====
+const labels = months.map(d => d.m);
+const grossData = months.map(d => d.gross);
+const ordersData = months.map(d => d.orders);
+const aovData = months.map(d => d.aov);
+const refData = months.map(d => d.ref);
+
+function getBarColors(field) {
+  return months.map(d => colors[d.per]);
+}
+function getBarBgs(field) {
+  return months.map(d => bgLight[d.per]);
+}
+
+// Background plugin for period zones
+const zoneBg = {
+  id: 'zoneBg',
+  beforeDraw(chart) {
+    const {ctx, chartArea: {left, right, top, bottom, width}, scales} = chart;
+    if (!scales.x) return;
+    ctx.save();
+    // Juanda zone: indices 1-15
+    const xJ1 = scales.x.getPixelForValue(1);
+    const xJ2 = scales.x.getPixelForValue(15);
+    ctx.fillStyle = 'rgba(52,152,219,.06)';
+    ctx.fillRect(xJ1, top, xJ2 - xJ1, bottom - top);
+    // Otra zone: 16-20
+    const xO1 = scales.x.getPixelForValue(16);
+    const xO2 = scales.x.getPixelForValue(20);
+    ctx.fillStyle = 'rgba(230,126,34,.08)';
+    ctx.fillRect(xO1, top, xO2 - xO1, bottom - top);
+    ctx.restore();
+  }
+};
+
+let chartsRendered = {};
+
+function renderTimeline() {
+  if (chartsRendered.timeline) return;
+  chartsRendered.timeline = true;
+
+  new Chart(document.getElementById('chartTimeline'), {
+    type: 'line',
+    plugins: [zoneBg],
+    data: {
+      labels,
+      datasets: [{
+        label: 'Ingresos brutos (COP)',
+        data: grossData,
+        borderColor: months.map(d => colors[d.per]),
+        backgroundColor: months.map(d => bgLight[d.per]),
+        pointBackgroundColor: months.map(d => colors[d.per]),
+        pointRadius: 6, pointHoverRadius: 9,
+        segment: {
+          borderColor: ctx => {
+            const i = ctx.p0DataIndex;
+            return months[i] ? colors[months[i].per] : '#ccc';
+          }
+        },
+        tension: 0.35, fill: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: {display: false},
+        tooltip: { callbacks: {label: c => ` $${(c.parsed.y/1e6).toFixed(2)}M COP`} }
+      },
+      scales: {y: {beginAtZero: true, ticks: {callback: v => '$'+(v/1e6).toFixed(0)+'M'}}}
+    }
+  });
+
+  new Chart(document.getElementById('chartOrders'), {
+    type: 'bar',
+    plugins: [zoneBg],
+    data: {
+      labels,
+      datasets: [{label:'Pedidos', data: ordersData, backgroundColor: months.map(d => colors[d.per]), borderRadius: 5}]
+    },
+    options: {responsive: true, maintainAspectRatio: false, plugins: {legend:{display:false}}, scales: {y:{beginAtZero:true}}}
+  });
+
+  new Chart(document.getElementById('chartAOV'), {
+    type: 'line',
+    plugins: [zoneBg],
+    data: {
+      labels,
+      datasets: [{
+        label: 'AOV (COP)',
+        data: aovData,
+        borderColor: '#8e44ad',
+        pointBackgroundColor: months.map(d => colors[d.per]),
+        pointRadius: 5, tension: 0.3, fill: false
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {legend:{display:false}, tooltip:{callbacks:{label:c=>` $${(c.parsed.y/1000).toFixed(0)}K`}}},
+      scales: {y:{beginAtZero:false, ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'K'}}}
+    }
+  });
+}
+
+function renderTendencias() {
+  if (chartsRendered.tend) return;
+  chartsRendered.tend = true;
+
+  new Chart(document.getElementById('chartTendencias'), {
+    type: 'bar',
+    plugins: [zoneBg],
+    data: {
+      labels,
+      datasets: [
+        {label:'Ventas brutas', data: grossData, backgroundColor: months.map(d => colors[d.per]+'cc'), borderRadius: 5, order: 2},
+        {type:'line', label:'Tendencia', data: grossData, borderColor:'#2c3e50', borderWidth:2, pointRadius:0, tension:0.4, fill:false, order:1}
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {tooltip:{callbacks:{label:c=>` $${(c.parsed.y/1e6).toFixed(2)}M`}}},
+      scales: {y:{beginAtZero:true, ticks:{callback:v=>'$'+(v/1e6).toFixed(0)+'M'}}}
+    }
+  });
+
+  // MoM growth
+  const momData = months.map((d,i) => i===0 ? null : +((d.gross-months[i-1].gross)/months[i-1].gross*100).toFixed(1));
+  new Chart(document.getElementById('chartMoM'), {
+    type: 'bar',
+    plugins: [zoneBg],
+    data: {
+      labels,
+      datasets: [{
+        label: 'Crecimiento MoM %',
+        data: momData,
+        backgroundColor: momData.map(v => v===null?'#eee': v>=0?'rgba(39,174,96,.7)':'rgba(231,76,60,.7)'),
+        borderRadius: 4
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y>0?'+':''}${c.parsed.y}%`}}},
+      scales: {y:{ticks:{callback:v=>v+'%'}}}
+    }
+  });
+
+  // Refund rate
+  const refRate = months.map(d => d.gross > 0 ? +(d.ref/d.gross*100).toFixed(2) : 0);
+  new Chart(document.getElementById('chartRefunds'), {
+    type: 'line',
+    plugins: [zoneBg],
+    data: {
+      labels,
+      datasets: [{
+        label: 'Tasa devolución %',
+        data: refRate,
+        borderColor: '#e74c3c',
+        backgroundColor: 'rgba(231,76,60,.1)',
+        pointBackgroundColor: months.map(d => colors[d.per]),
+        pointRadius: 5, tension: 0.3, fill: true
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {legend:{display:false}, tooltip:{callbacks:{label:c=>` ${c.parsed.y}%`}}},
+      scales: {y:{beginAtZero:true, ticks:{callback:v=>v+'%'}}}
+    }
+  });
+}
+
+function renderProductos() {
+  if (chartsRendered.prods) return;
+  chartsRendered.prods = true;
+
+  // Product names short
+  const pnames = {
+    246:'Sandet TéVerde',
+    250:'Hyderm Emulgel',
+    248:'Sandet ExtraSuave',
+    238:'Newderm Advanced',
+    7176:'Hyderm 2x1',
+    6778:'Sandet TéV 2x1',
+    7135:'Tensoderm 2x1',
+    7145:'Newkpil Liso',
+    735:'Tensoderm',
+    228:'Hyderm Advanced',
+    230:'Hylum Antiglicación',
+    232:'Hylum-C',
+    7154:'Derseb Capilar',
+    7151:'Newkpil Ondulado',
+    240:'Perfectinol',
+    9469:'Sandet ES 2x1',
+    7816:'Hylum-C 2x1'
+  };
+
+  const prodsJ = [
+    {id:246,items:199,net:18354016,orders:177},
+    {id:250,items:135,net:15360462,orders:124},
+    {id:248,items:86,net:7755711,orders:73},
+    {id:238,items:63,net:10597896,orders:61},
+    {id:7176,items:58,net:8582956,orders:56},
+    {id:6778,items:50,net:6021300,orders:39},
+    {id:7135,items:49,net:7221473,orders:49},
+    {id:7145,items:49,net:4071000,orders:44},
+    {id:735,items:45,net:4959213,orders:43},
+    {id:228,items:33,net:5119011,orders:32},
+    {id:230,items:29,net:3527895,orders:28},
+    {id:232,items:28,net:4604288,orders:27},
+    {id:7154,items:28,net:2254000,orders:28},
+    {id:7151,items:25,net:2012500,orders:24},
+    {id:240,items:22,net:3957990,orders:22},
+  ];
+  const prodsO = [
+    {id:246,items:214,net:21299113,orders:188},
+    {id:6778,items:169,net:21411734,orders:152},
+    {id:250,items:167,net:20404852,orders:147},
+    {id:7154,items:138,net:13021220,orders:130},
+    {id:9469,items:94,net:12193125,orders:88},
+    {id:7135,items:87,net:12939699,orders:83},
+    {id:248,items:85,net:8375241,orders:78},
+    {id:7176,items:54,net:8180436,orders:52},
+    {id:735,items:53,net:6475121,orders:51},
+    {id:238,items:50,net:8375036,orders:49},
+    {id:228,items:38,net:6426599,orders:36},
+    {id:7145,items:37,net:3507040,orders:32},
+    {id:232,items:24,net:4188631,orders:23},
+    {id:7816,items:22,net:5248862,orders:21},
+    {id:7151,items:21,net:1934300,orders:21},
+  ];
+
+  const maxJ = Math.max(...prodsJ.map(p=>p.items));
+  const maxO = Math.max(...prodsO.map(p=>p.items));
+
+  const elJ = document.getElementById('prodsJuanda');
+  prodsJ.forEach((p,i) => {
+    elJ.innerHTML += `<div class="prod-cmp-row">
+      <div class="prod-cmp-name">${i+1}. ${pnames[p.id]||'ID:'+p.id}</div>
+      <div class="prod-cmp-bar-j" style="width:${Math.round(p.items/maxJ*80)}px;min-width:4px"></div>
+      <div class="prod-cmp-num" style="color:var(--juanda)">${p.items}</div>
+      <div style="font-size:10px;color:var(--gris-dark);min-width:55px">$${(p.net/1e6).toFixed(1)}M</div>
+    </div>`;
+  });
+
+  const elO = document.getElementById('prodsOtra');
+  prodsO.forEach((p,i) => {
+    const isNew = !prodsJ.find(pj => pj.id === p.id) || (p.id === 7154 && i <= 3);
+    elO.innerHTML += `<div class="prod-cmp-row">
+      <div class="prod-cmp-name">${i+1}. ${pnames[p.id]||'ID:'+p.id}${p.id===7154?'<span style="color:#27ae60;font-size:10px;font-weight:700;margin-left:4px">⭐ NUEVO TOP</span>':''}</div>
+      <div class="prod-cmp-bar-o" style="width:${Math.round(p.items/maxO*80)}px;min-width:4px"></div>
+      <div class="prod-cmp-num" style="color:var(--otra)">${p.items}</div>
+      <div style="font-size:10px;color:var(--gris-dark);min-width:55px">$${(p.net/1e6).toFixed(1)}M</div>
+    </div>`;
+  });
+
+  // Compare chart - shared products
+  const shared = [246,250,248,238,6778,7135,7145,735,228,7154];
+  const sharedNames = shared.map(id => pnames[id]||'ID:'+id);
+  const jItems = shared.map(id => {const p=prodsJ.find(x=>x.id===id); return p?+(p.items/4).toFixed(1):0});
+  const oItems = shared.map(id => {const p=prodsO.find(x=>x.id===id); return p?+(p.items/5).toFixed(1):0});
+
+  new Chart(document.getElementById('chartProdsCmp'), {
+    type: 'bar',
+    data: {
+      labels: sharedNames,
+      datasets: [
+        {label:'Juanda (promedio/mes)', data: jItems, backgroundColor:'rgba(52,152,219,.75)', borderRadius:4},
+        {label:'Otra persona (promedio/mes)', data: oItems, backgroundColor:'rgba(230,126,34,.75)', borderRadius:4}
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {legend:{position:'top'}},
+      scales: {y:{beginAtZero:true, title:{display:true,text:'Unidades/mes (promedio)'}}}
+    }
+  });
+}
+
+function renderEficiencia() {
+  if (chartsRendered.efic) return;
+  chartsRendered.efic = true;
+
+  new Chart(document.getElementById('chartAOVFull'), {
+    type: 'line',
+    plugins: [zoneBg],
+    data: {
+      labels,
+      datasets: [
+        {label:'AOV (COP)', data: aovData, borderColor:'#9b59b6',
+         pointBackgroundColor: months.map(d=>colors[d.per]),
+         pointRadius:6, tension:0.35, fill:false}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` $${(c.parsed.y/1000).toFixed(0)}K COP`}}},
+      scales:{y:{beginAtZero:false,ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'K'}}}
+    }
+  });
+
+  new Chart(document.getElementById('chartRefundsFull'), {
+    type: 'bar',
+    plugins: [zoneBg],
+    data: {
+      labels,
+      datasets: [
+        {label:'Devoluciones COP', data: refData,
+         backgroundColor: months.map(d=>d.ref>500000?'rgba(231,76,60,.8)':'rgba(231,76,60,.35)'),
+         borderRadius:4}
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>` $${(c.parsed.y/1000).toFixed(0)}K`}}},
+      scales:{y:{beginAtZero:true, ticks:{callback:v=>'$'+(v/1000).toFixed(0)+'K'}}}
+    }
+  });
+}
+
+// ===== TAB LOGIC =====
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  event.target.classList.add('active');
+  if(id==='timeline') renderTimeline();
+  if(id==='tendencias') renderTendencias();
+  if(id==='productos') renderProductos();
+  if(id==='eficiencia') renderEficiencia();
+}
+
+window.addEventListener('load', () => setTimeout(renderTimeline, 150));
+</script>
+</body>
+</html>
