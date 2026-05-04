@@ -5,6 +5,7 @@ Dashboards, propuestas y reportes para clientes JDVARGAZ.
 ## Estructura
 
 - **DonEli/** — Propuesta y dashboards para Don Elí Café
+- **Saderma/** — Hub de dashboards y análisis digital para Laboratorio Dermatológico Saderma (Meta Ads, GA4, e-commerce, ROAS, brand)
 
 ## Cómo agregar un cliente
 

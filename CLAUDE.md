@@ -51,3 +51,9 @@ Netlify desplegará automáticamente en ~30 segundos.
 | Cliente | Carpeta | URL |
 |---|---|---|
 | Don Elí Café | `DonEli/` | [/DonEli/](https://jdvargaz-clientes.netlify.app/DonEli/) |
+| Laboratorio Dermatológico Saderma | `Saderma/` | [/Saderma/](https://jdvargaz-clientes.netlify.app/Saderma/) |
+
+## Notas por cliente
+
+### Saderma
+La carpeta `Saderma/` no sigue la convención de un solo `index.html` autocontenido. Contiene un hub `index.html` que enlaza 7 dashboards independientes (análisis 360, Meta Ads, comparativa períodos, e-commerce, GA4, retorno/ROAS, infografía de marca). Cada dashboard es autocontenido y usa Chart.js vía CDN cuando aplica.
