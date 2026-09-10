@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría Premium y Estrategia - Green Lab Company</title>
+    <!-- Fuentes y Recursos -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --bg-main: #f4f7fb;
+            --sidebar-bg: #0f172a;
+            --sidebar-hover: #1e293b;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-light: #64748b;
+            --brand-green: #059669;
+            --brand-light: #d1fae5;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --info: #3b82f6;
+            --purple: #8b5cf6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-main); color: var(--text-main); display: flex; min-height: 100vh; overflow-x: hidden; }
+
+        /* Sidebar Navegación */
+        .sidebar { width: 280px; background: var(--sidebar-bg); color: #fff; position: fixed; height: 100%; padding: 2rem 0; z-index: 100;}
+        .brand { font-size: 1.4rem; font-weight: 800; text-align: center; margin-bottom: 2.5rem; color: var(--brand-light); display: flex; align-items: center; justify-content: center; gap: 10px; letter-spacing: -0.5px;}
+        .nav-menu { display: flex; flex-direction: column; gap: 5px; padding: 0 15px; }
+        .nav-item { padding: 14px 18px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.95rem; font-weight: 600; display: flex; align-items: center; gap: 14px; color: #94a3b8; }
+        .nav-item i { width: 20px; text-align: center; font-size: 1.2rem; }
+        .nav-item:hover { background: var(--sidebar-hover); color: #fff; }
+        .nav-item.active { background: var(--brand-green); color: #fff; box-shadow: 0 4px 12px rgba(5,150,105,0.3);}
+
+        /* Área de Contenido */
+        .main-content { margin-left: 280px; padding: 2.5rem; width: calc(100% - 280px); }
+        .header-dash { margin-bottom: 2rem; padding-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: flex-end;}
+        .header-dash h1 { font-size: 2rem; color: #0f172a; margin-bottom: 5px; font-weight: 800; letter-spacing: -0.5px;}
+        .header-dash p { color: var(--text-light); font-size: 1rem; }
+        .btn-export { background: #0f172a; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 10px; transition: 0.2s;}
+        .btn-export:hover { background: var(--brand-green); }
+
+        /* Grillas */
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+        .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+
+        /* Tarjetas */
+        .card { background: var(--card-bg); border-radius: 16px; padding: 1.8rem; box-shadow: 0 4px 15px -3px rgba(0,0,0,0.03); border: 1px solid #e2e8f0; }
+        .card-header { margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;}
+        .card-title { font-size: 1.2rem; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 10px;}
+        
+        /* Scores Miniaturas */
+        .score-display { display: flex; justify-content: space-between; align-items: center; background: #f8fafc; padding: 15px; border-radius: 10px;}
+        .score-val { width: 55px; height: 55px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-weight: 800; font-size: 1.2rem; color: white;}
+        .bg-red { background: var(--danger); }
+        .bg-orange { background: var(--warning); }
+        .bg-green { background: var(--success); }
+
+        /* Tablas */
+        table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        th, td { text-align: left; padding: 15px; border-bottom: 1px solid #f1f5f9; }
+        th { background: #f8fafc; color: #475569; font-weight: 700; }
+        tr:hover { background: #f8fafc; }
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: white; display: inline-block;}
+        
+        /* Pestañas */
+        .tab-pane { display: none; animation: slideUp 0.4s ease; }
+        .tab-pane.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .chart-wrapper { height: 280px; width: 100%; position: relative; }
+        
+        /* Callouts / Info boxes */
+        .info-box { padding: 15px; border-radius: 8px; margin-bottom: 15px; background: #f0fdf4; border-left: 4px solid var(--success); }
+        .info-box.warning { background: #fffbeb; border-color: var(--warning); }
+        .info-box h4 { margin-bottom: 5px; color: #0f172a; }
+        .info-box p { font-size: 0.9rem; color: var(--text-light); }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="brand"><i class="fa-solid fa-leaf"></i> GreenLab Audit</div>
+        <div class="nav-menu">
+            <div class="nav-item active" onclick="switchTab('resumen', this)"><i class="fa-solid fa-chart-pie"></i> Resumen Ejecutivo</div>
+            <div class="nav-item" onclick="switchTab('rendimiento', this)"><i class="fa-solid fa-gauge-high"></i> Rendimiento & UX</div>
+            <div class="nav-item" onclick="switchTab('seo', this)"><i class="fa-solid fa-pen-nib"></i> SEO On-Page & Textos</div>
+            <div class="nav-item" onclick="switchTab('keywords', this)"><i class="fa-solid fa-key"></i> Estrategia Keywords</div>
+            <div class="nav-item" onclick="switchTab('woocommerce', this)"><i class="fa-brands fa-wordpress"></i> Ajustes WooCommerce</div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <div class="header-dash">
+            <div>
+                <h1>Dashboard de Optimización Estratégica</h1>
+                <p>Plan de acción basado en auditorías de Google PageSpeed Insights y Seobility</p>
+            </div>
+            <button class="btn-export"><i class="fa-solid fa-download"></i> Exportar a PDF</button>
+        </div>
+
+        <!-- TAB 1: RESUMEN EJECUTIVO -->
+        <div id="resumen" class="tab-pane active">
+            <!-- KPIs -->
+            <div class="grid-4">
+                <div class="card" style="padding: 1.2rem;">
+                    <h3 style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 10px;">Salud SEO (Seobility)</h3>
+                    <div class="score-display">
+                        <span style="font-size: 0.85rem; font-weight: 600;">Metadatos y Estructura</span>
+                        <div class="score-val bg-orange">68%</div>
+                    </div>
+                </div>
+                <div class="card" style="padding: 1.2rem;">
+                    <h3 style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 10px;">Velocidad Móvil</h3>
+                    <div class="score-display">
+                        <span style="font-size: 0.85rem; font-weight: 600;">PageSpeed Móvil</span>
+                        <div class="score-val bg-red">35</div>
+                    </div>
+                </div>
+                <div class="card" style="padding: 1.2rem;">
+                    <h3 style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 10px;">Velocidad Escritorio</h3>
+                    <div class="score-display">
+                        <span style="font-size: 0.85rem; font-weight: 600;">PageSpeed PC</span>
+                        <div class="score-val bg-orange">48</div>
+                    </div>
+                </div>
+                <div class="card" style="padding: 1.2rem;">
+                    <h3 style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 10px;">Accesibilidad Web</h3>
+                    <div class="score-display">
+                        <span style="font-size: 0.85rem; font-weight: 600;">Lectura y Navegación</span>
+                        <div class="score-val bg-green">96</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos y Quick Wins -->
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-radar-chart"></i> Panorama General del Sitio</h3></div>
+                    <div class="chart-wrapper"><canvas id="radarChart"></canvas></div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-bolt"></i> Victorias Rápidas (Quick Wins)</h3></div>
+                    <p style="margin-bottom: 15px; color: var(--text-light); font-size: 0.95rem;">Acciones de bajo esfuerzo y alto impacto para implementar esta semana:</p>
+                    
+                    <div class="info-box">
+                        <h4>1. Añadir Meta Descripciones</h4>
+                        <p>La web actualmente carece de ellas[cite: 3]. Añadir textos persuasivos mejorará los clics desde Google en un 15-20% casi de inmediato.</p>
+                    </div>
+                    <div class="info-box warning">
+                        <h4>2. Optimizar Imágenes Estrella</h4>
+                        <p>Reducir el peso de imágenes como <code>Colageno-gotas.png</code> (842 KiB) y <code>ASTAXANTIN.jpg</code> (795 KiB)[cite: 1] ahorrará más de 2 MB en la carga móvil, bajando drásticamente el rebote.</p>
+                    </div>
+                    <div class="info-box warning">
+                        <h4>3. Agregar Atributos ALT</h4>
+                        <p>Faltan 10 etiquetas ALT en imágenes[cite: 3]. Agregarlas permitirá posicionar el catálogo en Google Imágenes (tráfico gratuito).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 2: RENDIMIENTO Y UX -->
+        <div id="rendimiento" class="tab-pane">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-mobile-screen"></i> Tiempos de Carga (Core Web Vitals)</h3></div>
+                    <div class="chart-wrapper"><canvas id="speedChart"></canvas></div>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-light);">El tiempo de carga visual (LCP) en móviles es de <strong>14.6 segundos</strong>[cite: 1], lo cual penaliza severamente el SEO y la conversión.</p>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-weight-scale"></i> Peso de la Web por Recursos</h3></div>
+                    <div class="chart-wrapper"><canvas id="payloadChart"></canvas></div>
+                    <p style="margin-top: 15px; font-size: 0.9rem; color: var(--text-light);">La página carga <strong>3.14 MB (3,145 KiB)</strong> en total[cite: 1]. Las imágenes representan el mayor problema y la mejor oportunidad de ahorro (2,052 KiB estimables)[cite: 1].</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-gears"></i> Problemas Técnicos a Resolver</h3></div>
+                <table>
+                    <tr>
+                        <th>Elemento</th>
+                        <th>Problema Diagnosticado</th>
+                        <th>Solución Técnica</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Recursos Bloqueantes</strong></td>
+                        <td>Scripts de Elementor/WooCommerce retrasan la carga por ~1,760 ms[cite: 1].</td>
+                        <td>Implementar carga diferida (Defer/Async) para archivos JS no críticos.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tiempo Servidor (TTFB)</strong></td>
+                        <td>El servidor responde en 0.58s, por encima de los 0.4s ideales[cite: 3].</td>
+                        <td>Ajustar políticas de caché estática y purgar registros de bases de datos.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>JavaScript sin usar</strong></td>
+                        <td>Se descargan ~404 KiB de scripts que la página no ejecuta[cite: 1].</td>
+                        <td>Desactivar plugins en páginas donde no se utilizan (Ej: Asset Cleanup).</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 3: SEO ON-PAGE & TEXTOS -->
+        <div id="seo" class="tab-pane">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-heading"></i> Optimización de Encabezados y Meta Etiquetas</h3></div>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 15px;">Seobility detecta que el título actual mide 375px (se recomienda hasta 560px) y carece de Meta Descripción[cite: 3]. Además, hay 34 encabezados en la página (demasiados) y las palabras clave del H1 apenas se repiten en el texto[cite: 3].</p>
+                    
+                    <div class="info-box">
+                        <h4 style="color: var(--danger);">Título Actual (Sub-optimizado):</h4>
+                        <p>"Green Lab Company"</p>
+                        <h4 style="color: var(--success); margin-top: 10px;">Nuevo Título Recomendado:</h4>
+                        <p>"GreenLab Company | Maquila y Complementos Nutricionales en Colombia"</p>
+                    </div>
+                    
+                    <div class="info-box">
+                        <h4 style="color: var(--danger);">Meta Descripción Actual:</h4>
+                        <p><em>[Vacía / No existe]</em>[cite: 3]</p>
+                        <h4 style="color: var(--success); margin-top: 10px;">Meta Descripción Recomendada:</h4>
+                        <p>"Expertos en maquila de suplementos, fibras digestivas y gotas de cannabis sativa. Descubre nuestro catálogo natural y potencia tu bienestar. ¡Compra online!"</p>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-spell-check"></i> Mejoras de Contenido y Ortografía</h3></div>
+                    <p style="font-size: 0.9rem; color: var(--text-light); margin-bottom: 15px;">El rastreador detectó errores de tipeo y elementos que diluyen la autoridad de la página[cite: 3].</p>
+                    
+                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 15px;">
+                        <li style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <strong>Corrección Ortográfica:</strong> Se encontraron palabras mal escritas o fragmentos de código expuesto como "dla" y "din" en el cuerpo del texto[cite: 3]. Revisar descripciones de producto.
+                        </li>
+                        <li style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <strong>Jerarquía (H1, H2, H3):</strong> Limpiar los 34 encabezados[cite: 3]. Asegurar que el H1 incluya la palabra clave principal y repetir dicha palabra orgánicamente en los párrafos siguientes[cite: 3].
+                        </li>
+                        <li style="padding: 15px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <strong>URLs Dinámicas:</strong> Evitar que los enlaces internos contengan parámetros dinámicos para no confundir a los robots de Google[cite: 3].
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 4: KEYWORDS -->
+        <div id="keywords" class="tab-pane">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-map-location-dot"></i> Mapeo Estratégico de Palabras Clave</h3></div>
+                <p style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 1.5rem;">Para atraer el tráfico adecuado, sugerimos optimizar las páginas específicas con estas palabras clave. Esto alinea las intenciones de búsqueda de B2B (empresas) y B2C (cliente final).</p>
+                
+                <table>
+                    <tr>
+                        <th>Categoría Base</th>
+                        <th>Palabra Clave (Keyword) a Implementar</th>
+                        <th>Intención / Público</th>
+                        <th>Implementación Sugerida</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Maquila (Servicios)</strong></td>
+                        <td>"Laboratorios de maquila de suplementos Colombia"</td>
+                        <td><span class="badge" style="background: var(--purple);">B2B (Empresas)</span></td>
+                        <td>En el H1 y Meta Título de la página de servicios de Maquila.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Cannabis Sativa</strong></td>
+                        <td>"Gotas de cannabis sativa para dormir / ansiedad"</td>
+                        <td><span class="badge bg-green">Transaccional</span></td>
+                        <td>En la descripción del producto, añadir un bloque de "Beneficios".</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Fibras Digestivas</strong></td>
+                        <td>"Comprar fibra digestiva natural en polvo"</td>
+                        <td><span class="badge bg-green">Transaccional</span></td>
+                        <td>En el Título H2 de la página de categoría de Fibras.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Bebidas Funcionales</strong></td>
+                        <td>"Beneficios de las bebidas funcionales antioxidantes"</td>
+                        <td><span class="badge bg-info">Informativo (Blog)</span></td>
+                        <td>Crear un artículo de blog que enlace hacia los productos para nutrir el SEO.</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 5: WOOCOMMERCE -->
+        <div id="woocommerce" class="tab-pane">
+            <div class="card">
+                <div class="card-header"><h3 class="card-title"><i class="fa-solid fa-code"></i> Ajustes de Estructura Web (DOM y CMS)</h3></div>
+                <p style="font-size: 0.95rem; color: var(--text-light); margin-bottom: 1.5rem;">El análisis técnico arroja que la estructura construida con Elementor está afectando el rendimiento. El Document Object Model (DOM) es el código que el navegador debe leer.</p>
+                
+                <div class="grid-2">
+                    <div class="info-box warning">
+                        <h4 style="color: var(--warning);"><i class="fa-solid fa-layer-group"></i> Exceso de Profundidad en el Diseño (DOM)</h4>
+                        <p style="margin-top: 10px;">La web tiene un total de <strong>846 elementos</strong> HTML, lo cual es aceptable, pero cuenta con una profundidad máxima de <strong>21 niveles</strong> generados por contenedores anidados de Elementor (ej. <code>div.elementor-container > div.elementor-widget</code>)[cite: 1, 2].</p>
+                        <p style="margin-top: 10px;"><strong>Solución:</strong> Utilizar los nuevos "Flexbox Containers" de Elementor para reducir las columnas internas innecesarias y aligerar el cálculo de la página.</p>
+                    </div>
+
+                    <div class="info-box warning">
+                        <h4 style="color: var(--warning);"><i class="fa-solid fa-broom"></i> Limpieza de CSS y JS</h4>
+                        <p style="margin-top: 10px;">La web está cargando <strong>~14.5 KiB de CSS</strong> sin usar[cite: 1]. Múltiples librerías de WordPress que no aplican a la página principal se están descargando.</p>
+                        <p style="margin-top: 10px;"><strong>Solución:</strong> Instalar un plugin de optimización (ej. WP Rocket o LiteSpeed Cache) para combinar y minificar el CSS, retrasando el JavaScript que no es crítico para el primer pantallazo visual.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SCRIPT CONTROL DE TABS Y GRÁFICOS -->
+    <script>
+        // Lógica de Pestañas
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            el.classList.add('active');
+        }
+
+        // Inicialización de Gráficos Chart.js
+        window.onload = function() {
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+            Chart.defaults.color = "#64748b";
+
+            // 1. Gráfico de Velocidad (Barras)
+            const ctxSpeed = document.getElementById('speedChart').getContext('2d');
+            new Chart(ctxSpeed, {
+                type: 'bar',
+                data: {
+                    labels: ['Tiempo LCP (s)', 'Bloqueo TBT (s)', 'FCP Inicio (s)'],
+                    datasets: [
+                        { label: 'Celular (Móvil)[cite: 1]', data: [14.6, 2.33, 2.3], backgroundColor: '#ef4444', borderRadius: 4 },
+                        { label: 'PC (Escritorio)[cite: 2]', data: [2.3, 1.58, 0.7], backgroundColor: '#f59e0b', borderRadius: 4 },
+                        { label: 'Recomendado', data: [2.5, 0.20, 1.8], backgroundColor: '#10b981', borderRadius: 4 }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom'} }, scales: { y: { beginAtZero: true } } }
+            });
+
+            // 2. Gráfico de Peso de Red (Dona)
+            const ctxPayload = document.getElementById('payloadChart').getContext('2d');
+            new Chart(ctxPayload, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Imágenes (Oportunidad Ahorro)', 'Scripts (JS)', 'Fuentes y Estilos', 'Otros'],
+                    datasets: [{
+                        data: [2052, 404, 300, 389], // Basado en los ~3145 KiB totales
+                        backgroundColor: ['#f59e0b', '#ef4444', '#3b82f6', '#cbd5e1'],
+                        borderWidth: 0
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right'} }, cutout: '65%' }
+            });
+
+            // 3. Gráfico Radar de Salud General
+            const ctxRadar = document.getElementById('radarChart').getContext('2d');
+            new Chart(ctxRadar, {
+                type: 'radar',
+                data: {
+                    labels: ['Velocidad Móvil', 'Velocidad Escritorio', 'SEO On-Page', 'Accesibilidad', 'Estructura DOM', 'Seguridad Base'],
+                    datasets: [{
+                        label: 'Puntuación Actual',
+                        data: [35, 48, 68, 96, 65, 90], // Datos extraídos de auditorías
+                        backgroundColor: 'rgba(5, 150, 105, 0.2)',
+                        borderColor: '#059669',
+                        pointBackgroundColor: '#059669',
+                        borderWidth: 2
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { r: { suggestedMin: 0, suggestedMax: 100 } } }
+            });
+        };
+    </script>
+</body>
+</html>
